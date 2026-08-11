@@ -1,0 +1,161 @@
+/* The fixed layer above the travelling scale strip: ghost sparkline, spine, the centre
+   pointer chip and the range stats footer. Split from tape.css to respect the per-component
+   style budget. */
+
+/* ---- ghost sparkline along the right edge ---- */
+
+/* Width follows the measured face grid (tapeFaceLayout): a wider column earns a wider ghost
+   strip, and the viewBox re-lays with it so the drawing never merely stretches. */
+.tape__spark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--tape-spark-w, 32px);
+  height: 100%;
+  border-left: 1px solid var(--cs-hairline);
+  background: color-mix(in srgb, var(--cs-panel) 45%, transparent);
+}
+
+.tape__spark path {
+  fill: none;
+  stroke: var(--cs-text);
+  stroke-opacity: 0.25;
+  stroke-width: 1px;
+  transition: stroke-opacity var(--cs-dur-c) var(--cs-ease);
+}
+
+:host(:hover) .tape__spark path {
+  stroke-opacity: 0.5;
+}
+
+.tape__spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 1px;
+  background: var(--cs-hairline);
+}
+
+/* ---- the fixed centre pointer chip ---- */
+
+.tape__chip {
+  --tape-status: var(--cs-hairline-strong);
+  --tape-pointer: var(--cs-accent);
+
+  /* On a wide face the chip is capped (--tape-chip-w) and stays hugging the scale its beak
+     reads; being over-constrained, the right offset yields. Unmeasured faces stretch to the
+     ghost strip exactly as before. */
+  position: absolute;
+  top: 50%;
+  right: var(--tape-spark-w, 32px);
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem;
+  max-width: var(--tape-chip-w, none);
+  height: calc(48px * var(--cs-density));
+  padding-top: calc(0.65rem * var(--cs-density));
+  transform: translateY(-50%);
+  background: var(--cs-panel-raised);
+  border: 1px solid var(--tape-status);
+  border-left: none;
+  border-radius: 0 calc(var(--cs-r-ctl) - 2px) calc(var(--cs-r-ctl) - 2px) 0;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 30%, transparent);
+  transition: border-color var(--cs-dur-c) var(--cs-ease);
+}
+
+.tape__chip--warning {
+  --tape-status: var(--cs-warn);
+  --tape-pointer: var(--cs-warn);
+}
+
+.tape__chip--critical {
+  --tape-status: var(--cs-crit);
+  --tape-pointer: var(--cs-crit);
+}
+
+/* Pointer beak aimed at the scale. */
+.tape__chip::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 8px solid var(--tape-pointer);
+  transition: border-left-color var(--cs-dur-c) var(--cs-ease);
+}
+
+/* The centre reference line carrying on from the chip's edge to the face's right edge —
+   across the ghost strip alone when the chip stretches, across the open face when capped. */
+.tape__chip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--tape-tail-w, var(--tape-spark-w, 32px)));
+  width: var(--tape-tail-w, var(--tape-spark-w, 32px));
+  height: 1px;
+  background: color-mix(in srgb, var(--tape-pointer) 40%, transparent);
+}
+
+.tape__value {
+  font-size: calc(22px * var(--cs-density));
+  font-weight: 500;
+  line-height: 1;
+  color: var(--cs-text);
+  transition: color var(--cs-dur-c) var(--cs-ease);
+}
+
+.tape__chip--warning .tape__value {
+  color: var(--cs-warn);
+}
+
+.tape__chip--critical .tape__value {
+  color: var(--cs-crit);
+}
+
+/* §8b: during the ignition sweep the numeral only fades in — it is live data, so it never
+   scrambles. It finishes before the sweep, whose animationend then settles the whole tape. */
+:host(.tape--ignite) .tape__value {
+  animation: tape-ignite-value 380ms ease-out both;
+  animation-delay: calc(var(--tape-ignite-delay, 0ms) + 180ms);
+}
+
+@keyframes tape-ignite-value {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The unit scales with the density-driven value beside it (§3) — a frozen unit next to a
+   scaling numeral reads as a mismatch. */
+.tape__unit {
+  font-size: calc(0.71875rem * var(--cs-density));
+  color: var(--cs-muted);
+}
+
+/* ---- range stats footer ---- */
+
+.tape__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.125rem 0.5rem;
+  padding: calc(var(--tape-pad-y) * 0.85) var(--tape-pad-x);
+  border-top: 1px solid var(--cs-hairline);
+  /* Footer is casing chrome like the head: its type rides density with the padding above. */
+  font-size: calc(0.625rem * var(--cs-density));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--cs-muted) 80%, transparent);
+}
+
+.tape__foot b {
+  font-weight: 400;
+  color: var(--cs-muted);
+}

@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.alarms-list,
+.alarms-list__skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+}
+
+.alarms-list__skeletons {
+  gap: calc(0.5rem * var(--cs-density));
+}
+
+/* Announced, not drawn: the skeletons already say "loading" to anyone who can see them. */
+
+/* The placeholder mirrors the two-deck phone entry; from tablet width up it thins back to the
+   single log line it stands in for. */
+.alarms-list__skeleton {
+  height: calc(4.25rem * var(--cs-density));
+}
+
+@media (min-width: 768px) {
+  .alarms-list__skeleton {
+    height: calc(3.25rem * var(--cs-density));
+  }
+}
+
+.alarms-list__refresh {
+  height: 2px;
+  margin-bottom: calc(0.5rem * var(--cs-density));
+}
+
+/*
+ * Sticky inside its own section, so each heading yields to the next instead of stacking.
+ * The background repeats the shell canvas so rows slide underneath without any blur tricks.
+ * The system strip scrolls away with the page off the Dashboard (§5), so the headings pin
+ * to the viewport top itself.
+ */
+.alarms-list__heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: calc(0.5rem * var(--cs-density));
+  padding: calc(0.5rem * var(--cs-density)) 0 calc(0.4rem * var(--cs-density));
+  border-bottom: 1px solid color-mix(in srgb, var(--cs-glass-rim) 60%, var(--cs-hairline-strong));
+  background: var(--cs-canvas);
+}
+
+/* Rail tick: a short static extender ahead of the caption, marking where the day's rule begins —
+   the same machined-hairline vocabulary as the heading's own border. */
+.alarms-list__heading::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 1px;
+  align-self: center;
+  background: var(--cs-hairline-strong);
+}
+
+.alarms-list__heading-day {
+  min-width: 0;
+}
+
+/* The tally sits at the rail's far end in plain mono — the caption keeps the engraved voice,
+   the numbers keep their natural case and tracking. */
+.alarms-list__heading-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(0.6rem * var(--cs-density));
+  margin-inline-start: auto;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.alarms-list__heading-count {
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+/* The one coloured mark a day may carry: its critical share. Warning days stay quiet (§8b). */
+.alarms-list__heading-critical {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.25rem * var(--cs-density));
+  color: var(--cs-status-critical-text);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+.alarms-list__heading-critical cs-icon {
+  font-size: calc(0.625rem * var(--cs-density));
+}
+
+/* Below-the-fold day groups assemble as they scroll into view: an 8px rise driven by the view
+   timeline, so it runs on the compositor and reverses on the way back up. Groups already in
+   view sit past the entry range and never move; browsers without scroll-driven animations
+   simply render the settled state. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .alarms-list__day {
+      animation: alarms-day-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+@keyframes alarms-day-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.alarms-list__group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alarms-list__pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(1rem * var(--cs-density));
+  margin-top: var(--cs-gap-section);
+}
+
+.alarms-list__page {
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+.alarms-list__back {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 480px) {
+  .alarms-list__pager {
+    gap: calc(0.5rem * var(--cs-density)) calc(1rem * var(--cs-density));
+  }
+
+  .alarms-list__page {
+    order: -1;
+    flex-basis: 100%;
+    text-align: center;
+  }
+}

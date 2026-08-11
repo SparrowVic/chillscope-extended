@@ -1,0 +1,47 @@
+<cs-filter-shell
+  label="measurements.filters.title"
+  [activeCount]="activeCount()"
+  (applied)="commitStaged()"
+  (discarded)="discardStaged()"
+  (resetted)="discardStaged()"
+>
+  <span csFilterSummary>
+    {{ 'filters.seriesCount' | transloco: { count: selectedSeries().length } }}
+    · {{ summaryRangeKey() | transloco }} · {{ 'bucket.' + bucket() | transloco }}
+  </span>
+
+  <!-- The ONE control tree. The shell embeds it inline on desktop and inside the sheet/drawer
+       on phone/tablet — never both, so control ids exist exactly once. -->
+  <ng-template #controls>
+    <div class="measurements-filters__row">
+      <cs-multi-select
+        class="measurements-filters__series"
+        label="measurements.filters.series"
+        placeholder="common.placeholderSelectMany"
+        [options]="seriesOptions()"
+        [value]="pickedSeries()"
+        (valueChange)="onSeriesPicked($event)"
+      />
+
+      <cs-date-range
+        class="measurements-filters__range"
+        label="measurements.filters.range"
+        placeholder="common.placeholderDateRange"
+        [showButtonBar]="false"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
+        [value]="pickedRange()"
+        (valueChange)="onRangePicked($event)"
+      />
+
+      <cs-select
+        class="measurements-filters__bucket"
+        label="measurements.filters.bucket"
+        placeholder="common.placeholderSelect"
+        [options]="bucketOptions"
+        [value]="bucket()"
+        (valueChange)="onBucketPicked($event)"
+      />
+    </div>
+  </ng-template>
+</cs-filter-shell>

@@ -1,0 +1,35 @@
+{
+  "name": "@chillscope/chart",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/chillscope-chart.js",
+  "module": "./dist/chillscope-chart.js",
+  "types": "./src/types.ts",
+  "exports": {
+    ".": {
+      "types": "./src/types.ts",
+      "default": "./dist/chillscope-chart.js"
+    },
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "build": "yarn typecheck && vite build",
+    "watch": "vite build --watch",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "echarts": "^6.1.0",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.14",
+    "vitest": "^4.0.8",
+    "vue": "^3.5.40",
+    "vue-tsc": "^3.2.0"
+  },
+  "resolutions": {
+    "vite": "^7.1.14"
+  }
+}

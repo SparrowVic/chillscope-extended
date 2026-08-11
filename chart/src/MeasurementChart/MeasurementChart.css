@@ -1,0 +1,40 @@
+.chart {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 320px;
+}
+
+.chart__canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 320px;
+  /* Vertical swipes stay with the page, while pinch and horizontal drags reach ECharts. */
+  touch-action: pan-y;
+}
+
+@media (pointer: fine) {
+  .chart__canvas {
+    cursor: crosshair;
+  }
+}
+
+.chart__brush {
+  position: absolute;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--cs-accent) 12%, transparent);
+  border-inline: 1px solid color-mix(in srgb, var(--cs-accent) 45%, transparent);
+}
+
+.chart__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  pointer-events: none;
+  font-family: var(--cs-font-sans, sans-serif);
+  font-size: 0.8125rem;
+  color: var(--cs-muted);
+  background: color-mix(in srgb, var(--cs-panel) 68%, transparent);
+}

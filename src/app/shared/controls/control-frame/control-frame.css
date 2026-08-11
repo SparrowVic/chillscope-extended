@@ -1,0 +1,75 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.3125rem * var(--cs-density));
+  min-width: 0;
+}
+
+:host(.cs-control-frame--inline) {
+  flex-direction: row;
+  align-items: center;
+  gap: calc(0.5rem * var(--cs-density));
+}
+
+:host(.cs-control-frame--inline) .cs-control-frame__label {
+  order: 2;
+}
+
+/* Field captions are quieter than standalone instrument captions: selection and value carry the
+   hierarchy, while this label remains a precise engraved locator. */
+.cs-control-frame__label {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.3125rem * var(--cs-density));
+  min-height: 1rem;
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-control-label);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.075em;
+}
+
+.cs-control-frame__required {
+  color: var(--cs-status-critical-text);
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.cs-control-frame__info {
+  color: var(--p-text-muted-color);
+  font-size: var(--cs-font-support);
+  cursor: help;
+}
+
+.cs-control-frame__hint,
+.cs-control-frame__error {
+  max-inline-size: 65ch;
+  font-size: var(--cs-font-support);
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.cs-control-frame__hint {
+  color: var(--p-text-muted-color);
+}
+
+.cs-control-frame__error {
+  display: flex;
+  align-items: baseline;
+  gap: calc(0.3125rem * var(--cs-density));
+  color: var(--cs-status-critical-text);
+}
+
+.cs-control-frame__error-icon {
+  flex: none;
+  font-size: var(--cs-font-control-label);
+}
+
+@media (pointer: coarse) {
+  .cs-control-frame__hint,
+  .cs-control-frame__error {
+    font-size: max(var(--cs-font-support), 0.75rem);
+  }
+}

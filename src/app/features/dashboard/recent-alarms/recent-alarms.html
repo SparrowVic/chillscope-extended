@@ -1,0 +1,62 @@
+<header class="recent-alarms__head cs-caption-row">
+  <h2 class="cs-label">{{ 'dashboard.alarms.title' | transloco }}</h2>
+  <a class="recent-alarms__link cs-focus-ring" routerLink="/alarms">
+    {{ 'dashboard.alarms.viewAll' | transloco }}
+    <cs-icon name="arrow-right" aria-hidden="true" />
+  </a>
+</header>
+
+@let items = entries();
+
+@if (failed()) {
+  <app-error-panel titleKey="errors.loadAlarms" [retrying]="loading()" (retry)="retry.emit()" />
+}
+@if (items.length > 0) {
+  <ul class="recent-alarms__list">
+    @for (entry of items; track entry.id) {
+      <li class="recent-alarms__item">
+        <div class="recent-alarms__row">
+          <span class="cs-tag cs-tag--{{ entry.severity }}">
+            {{ entry.severityKey | transloco }}
+          </span>
+          <!-- The one truncating cell in the row; the title keeps a clipped name readable. -->
+          <span class="recent-alarms__series" [attr.title]="entry.seriesKey | transloco">{{
+            entry.seriesKey | transloco
+          }}</span>
+          <time
+            class="cs-mono recent-alarms__time"
+            [attr.datetime]="entry.isoTime"
+            [attr.title]="entry.exactTime"
+          >
+            <span aria-hidden="true">{{ entry.relativeTime }}</span>
+            <span class="sr-only">{{ entry.exactTime }}</span>
+          </time>
+        </div>
+        <div class="recent-alarms__row recent-alarms__row--values">
+          <span class="cs-mono recent-alarms__value">
+            {{ entry.value
+            }}<span class="recent-alarms__unit">{{ entry.unitKey | transloco }}</span>
+          </span>
+          <span class="cs-mono recent-alarms__threshold">
+            {{ 'dashboard.journal.threshold' | transloco }} {{ entry.threshold
+            }}<span class="recent-alarms__unit">{{ entry.unitKey | transloco }}</span>
+          </span>
+        </div>
+      </li>
+    }
+  </ul>
+} @else if (!failed() && loading()) {
+  <div class="recent-alarms__skeletons" role="status">
+    <span class="sr-only">{{ 'common.loading' | transloco }}</span>
+    @for (placeholder of placeholders; track placeholder) {
+      <!-- Height mirrors a real two-line journal row, so it follows the same density scale. -->
+      <p-skeleton width="100%" height="calc(2.6rem * var(--cs-density))" borderRadius="6px" />
+    }
+  </div>
+} @else if (!failed()) {
+  <app-empty-state
+    icon="bell"
+    titleKey="dashboard.alarms.empty"
+    messageKey="alarms.empty.message"
+  />
+}

@@ -1,0 +1,306 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  /* viewport-fit=cover: the rail may paint under a notch, its content may not. */
+  padding-inline: max(var(--cs-page-gutter), env(safe-area-inset-left))
+    max(var(--cs-page-gutter), env(safe-area-inset-right));
+  background: var(--cs-canvas);
+}
+
+/* The system strip is an etched instrument rail. It stays near-opaque and blur-free so a sticky
+   dashboard header never repaints the page behind it. */
+.strip__inner {
+  display: grid;
+  grid-template-areas:
+    'context telemetry controls'
+    'messages messages messages';
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0 0.875rem;
+  box-sizing: border-box;
+  min-height: var(--app-top-bar-height, 3.25rem);
+  max-width: calc(var(--cs-content-max) - (2 * var(--cs-page-gutter)));
+  margin-inline: auto;
+  padding: calc(0.375rem + env(safe-area-inset-top)) 0.75rem 0.375rem;
+  overflow: clip;
+  border: 1px solid var(--cs-glass-rim);
+  border-top: 0;
+  border-radius: 0 0 var(--cs-r-ovl) var(--cs-r-ovl);
+  background: var(--cs-glass-rail);
+  box-shadow: var(--cs-glass-etch-strong);
+}
+
+/* §5: the strip is content, not navigation. It docks only where the machine schematic needs a
+   persistent reference; on every other route it scrolls away with the page. */
+:host(.strip--docked) {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.strip__context,
+.strip__telemetry,
+.strip__controls,
+.strip__messages {
+  display: flex;
+  align-items: center;
+}
+
+.strip__context {
+  grid-area: context;
+  min-width: 0;
+  gap: 0.625rem;
+}
+
+.strip__telemetry {
+  grid-area: telemetry;
+  gap: 0.875rem;
+  padding-inline-start: 0.875rem;
+  border-inline-start: 1px solid var(--cs-hairline);
+}
+
+.strip__controls {
+  grid-area: controls;
+  gap: 0.375rem;
+  padding-inline-start: 0.875rem;
+  border-inline-start: 1px solid var(--cs-hairline);
+}
+
+.strip__messages {
+  grid-area: messages;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  border-top: 1px solid var(--cs-hairline);
+}
+
+.strip__state {
+  flex: none;
+}
+
+.uptime {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 0.4375rem;
+}
+
+.uptime__label {
+  font-size: 0.5625rem;
+}
+
+.uptime__value {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cs-text);
+}
+
+.brand {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--cs-control-height);
+  padding-inline: 0.25rem 0.375rem;
+  border-radius: var(--cs-r-ctl);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    color var(--cs-dur-fast) var(--cs-ease),
+    background-color var(--cs-dur-fast) var(--cs-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .brand:hover {
+    background: color-mix(in srgb, var(--cs-accent) 6%, transparent);
+  }
+}
+
+/* The mark keeps 4px of air inside the control-height link, so the tile follows density
+   instead of freezing at one size next to scaling controls. */
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: calc(var(--cs-control-height) - 0.5rem);
+  height: calc(var(--cs-control-height) - 0.5rem);
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-accent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cs-accent-ink) 22%, transparent);
+  color: var(--cs-accent-ink);
+  font-size: 0.8125rem;
+}
+
+.brand__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* The shared select carries the same K3 surface, focus ring and density behavior as forms.
+   The floor keeps a crowded row from flexing the switcher to nothing — the label ellipsizes
+   inside a still-usable control instead. */
+.machine-select {
+  display: block;
+  width: min(22rem, 30vw);
+  min-width: 9rem;
+}
+
+.machine-select__error,
+.settings-persistence-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 38rem;
+  padding-block: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.machine-select__error {
+  color: var(--cs-status-critical-text);
+}
+
+.settings-persistence-error {
+  color: var(--cs-status-warning-text);
+}
+
+/* The lamp's pre-painted bloom reaches 7px past the dot; the gap stays wider than that so the
+   halo breathes into clear air instead of washing over the icon and the caption. */
+.live {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5625rem;
+  color: var(--cs-muted);
+}
+
+.live--on {
+  color: var(--cs-ok);
+}
+
+.live--on .cs-led {
+  --cs-led-color: var(--cs-ok);
+}
+
+.live__icon {
+  font-size: 0.8125rem;
+}
+
+.live__text {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.clock {
+  flex: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cs-text);
+}
+
+/* Below this width the rail uses two intentional rows instead of relying on flex-wrap
+   arithmetic. Machine context stays complete; telemetry and preferences share the second row.
+   The threshold covers tablets: a single row carries brand + switcher + tag + uptime + live +
+   clock + preferences, and below ~1025px that inventory (measured with the longer Polish
+   captions) crushed the switcher toward zero width. */
+@media (max-width: 1024px) {
+  .strip__inner {
+    grid-template-areas:
+      'context context'
+      'telemetry controls'
+      'messages messages';
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.3125rem 0.625rem;
+    padding-block-start: calc(0.375rem + env(safe-area-inset-top));
+  }
+
+  .strip__telemetry {
+    padding-inline-start: 0.25rem;
+    border-inline-start: 0;
+  }
+
+  .strip__controls {
+    padding-inline-start: 0.625rem;
+  }
+
+  .machine-select {
+    width: min(18rem, 48vw);
+  }
+}
+
+/* The fixed sidebar owns the brand at this width; the strip keeps the machine context. */
+@media (min-width: 900px) {
+  .brand {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .uptime {
+    display: none;
+  }
+
+  /* The name leaves the rail but keeps naming the home link for AT — the mark alone is
+     aria-hidden, so `display: none` here would strip the link's accessible name. */
+  .brand__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .strip__context {
+    gap: 0.4375rem;
+  }
+
+  .machine-select {
+    width: min(12rem, 48vw);
+  }
+}
+
+/* ————— Phone app-bar (320–600px), a designed inventory rather than a squeezed toolbar.
+   PRIORITY LADDER — the top survives longest:
+     1. machine switcher — the context the whole app follows; flexes to the row, never leaves;
+     2. state tag — the one-glance verdict; never leaves;
+     3. LIVE lamp — reports the stream; never leaves;
+     4. clock — compact and useful on a wall-mounted phone; stays (it was hidden under 400px
+        only while theme/language still crowded the row);
+     5. uptime — redundant precision, already gone below 520px;
+     6. theme + language switches — leave the rail here; both remain fully reachable in
+        Settings › Appearance, so nothing is lost functionally;
+     7. brand wordmark — sr-only below 520px; the mark stays as the home key.
+   Result: row one is context (mark · switcher · state), row two is telemetry (LIVE · clock). */
+@media (max-width: 600px) {
+  .strip__inner {
+    grid-template-areas:
+      'context context'
+      'telemetry telemetry'
+      'messages messages';
+  }
+
+  .strip__controls {
+    display: none;
+  }
+
+  .strip__telemetry {
+    justify-content: space-between;
+    padding-inline: 0.25rem;
+  }
+
+  .machine-select {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+}
+
+@media (pointer: coarse) {
+  .brand {
+    min-height: max(var(--cs-control-height), 44px);
+    min-width: max(var(--cs-control-height), 44px);
+    justify-content: center;
+  }
+}

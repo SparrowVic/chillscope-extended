@@ -1,0 +1,330 @@
+/*
+ * The interaction choreography of the Diagram tab — drag lift and settle, the materialising
+ * grid, the hover dependency web, bracket selection and the floating toolbar. Split from the
+ * base sheet so each stays inside the per-stylesheet budget. All motion is transform/opacity
+ * driven; §2.2's base-sheet 1ms clamp makes every rule here instant under reduced motion, and
+ * the block at the end removes the states that must not appear at all (lift, tilt, fade-outs).
+ */
+
+/* ---- the grid: dots at rest, full lines materialise while a node is being placed ---- */
+
+.diagram__grid-lines {
+  opacity: 0;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__grid-dots {
+  opacity: 0.4;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__grid {
+  stroke: var(--cs-hairline);
+  stroke-width: 1;
+}
+
+.diagram__dot {
+  fill: var(--cs-hairline-strong);
+}
+
+.diagram--gridlit .diagram__grid-lines {
+  opacity: 0.5;
+}
+
+.diagram--gridlit .diagram__grid-dots {
+  opacity: 0.9;
+}
+
+/* No-go cells while a node is lifted: the critical hue kept at whisper alpha. */
+.diagram__blocked {
+  animation: cs-cells-in var(--cs-dur-fast) var(--cs-ease) backwards;
+  pointer-events: none;
+}
+
+.diagram__blocked-cell {
+  fill: color-mix(in srgb, var(--cs-crit) 6%, transparent);
+  stroke: color-mix(in srgb, var(--cs-crit) 22%, transparent);
+  stroke-width: 1;
+}
+
+@keyframes cs-cells-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---- drag: pick-up lifts the node; the position group springs on drop and arrow moves ---- */
+
+.diagram__node-pos {
+  transition:
+    transform 300ms var(--cs-spring-soft),
+    opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* The pointer drives the node 1:1 — no transform transition while lifted. */
+.diagram__node-pos--dragging {
+  transition: none;
+}
+
+.diagram__node {
+  transition:
+    transform var(--cs-dur-c) var(--cs-spring-soft),
+    filter var(--cs-dur-c) var(--cs-ease),
+    color var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__node--dragging {
+  cursor: grabbing;
+  transform: scale(1.03) rotate(0.5deg);
+  filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.35));
+}
+
+.diagram__node--shake {
+  animation: cs-diagram-shake 350ms var(--cs-ease);
+}
+
+@keyframes cs-diagram-shake {
+  20% {
+    transform: translateX(-4px);
+  }
+
+  40% {
+    transform: translateX(4px);
+  }
+
+  60% {
+    transform: translateX(-3px);
+  }
+
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+/* After a drop the re-routed polylines crossfade into place instead of teleporting. */
+.diagram__pipes--settle .diagram__pipe {
+  animation: cs-pipe-settle 300ms var(--cs-ease);
+}
+
+@keyframes cs-pipe-settle {
+  from {
+    opacity: 0.12;
+  }
+}
+
+/* ---- hover dependency web: the hovered node's pipes and tags surface, the rest recede ---- */
+
+.diagram--webbed .diagram__pipe:not(.diagram__pipe--related) {
+  opacity: 0.16;
+}
+
+.diagram--webbed .diagram__pipe--related {
+  opacity: 0.95;
+  stroke-width: 3;
+}
+
+.diagram--webbed .diagram__node-pos--dim {
+  opacity: 0.45;
+}
+
+.diagram--webbed .diagram__tag:not(.diagram__tag--related) {
+  opacity: 0.3;
+}
+
+.diagram__tag--related .diagram__tag-box {
+  stroke: var(--cs-accent);
+}
+
+/* ---- ghost + keyboard preview: the target cell, dashes tell accept from reject ---- */
+
+/* The wrapper transitions its transform, so the ghost hops magnetically cell to cell. */
+.diagram__ghost-pos {
+  transition: transform 120ms var(--cs-ease);
+  pointer-events: none;
+}
+
+.diagram__ghost,
+.diagram__key-flash {
+  fill: color-mix(in srgb, var(--cs-accent) 8%, transparent);
+  stroke: var(--cs-accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+  pointer-events: none;
+}
+
+.diagram__ghost {
+  animation: cs-cells-in var(--cs-dur-fast) var(--cs-ease) backwards;
+}
+
+.diagram__key-flash {
+  animation: cs-key-flash 700ms var(--cs-ease) forwards;
+}
+
+.diagram__ghost--reject,
+.diagram__key-flash--reject {
+  fill: color-mix(in srgb, var(--cs-crit) 8%, transparent);
+  stroke: var(--cs-crit);
+  stroke-dasharray: 2 4;
+}
+
+@keyframes cs-key-flash {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- K3 selection, instrument edition: corner brackets draw in over a whisper fill ---- */
+
+.diagram__marker-fill {
+  fill: color-mix(in srgb, var(--cs-accent) 5%, transparent);
+  stroke: none;
+  pointer-events: none;
+  animation: cs-cells-in 120ms var(--cs-ease) backwards;
+}
+
+.diagram__bracket {
+  fill: none;
+  stroke: var(--cs-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  pointer-events: none;
+  animation: cs-bracket-in 120ms var(--cs-ease) backwards;
+}
+
+@keyframes cs-bracket-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.diagram__marker-pipe {
+  fill: none;
+  stroke: var(--cs-accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 9;
+  pointer-events: none;
+}
+
+.diagram__marker-end {
+  fill: var(--cs-accent);
+  stroke: var(--cs-panel);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+/* ---- floating selection toolbar: an overlay-step chip pinned near the brackets ---- */
+
+/* The selection toolbar is the one transient floating overlay in the diagram (§7). */
+.diagram__toolbar {
+  --cs-toolbar-shift: -100%;
+
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--cs-glass-rim);
+  border-radius: var(--cs-r-ovl);
+  background: var(--cs-overlay);
+  box-shadow: var(--cs-glass-etch-strong), var(--cs-shadow-ovl);
+  transform: translate(-50%, var(--cs-toolbar-shift));
+  animation: cs-toolbar-in var(--cs-dur-c) var(--cs-spring-pop) backwards;
+}
+
+/* Frost only where supported and welcome; otherwise the opaque overlay above stands. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @media (prefers-reduced-transparency: no-preference) and (prefers-contrast: no-preference) {
+    .diagram__toolbar {
+      background: var(--cs-glass-overlay);
+      -webkit-backdrop-filter: var(--cs-glass-blur);
+      backdrop-filter: var(--cs-glass-blur);
+    }
+  }
+}
+
+.diagram__toolbar--below {
+  --cs-toolbar-shift: 0%;
+}
+
+@keyframes cs-toolbar-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, var(--cs-toolbar-shift)) scale(0.9);
+  }
+}
+
+.diagram__tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(40px * var(--cs-density));
+  height: calc(40px * var(--cs-density));
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--cs-r-ovl) - 3px);
+  background: transparent;
+  color: var(--cs-text);
+  cursor: pointer;
+  transition:
+    background var(--cs-dur-fast) var(--cs-ease),
+    color var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__tool:hover {
+  background: var(--cs-hover-tint);
+}
+
+.diagram__tool--danger:hover {
+  background: color-mix(in srgb, var(--cs-crit) 14%, transparent);
+  color: var(--cs-crit);
+}
+
+/* Density may shrink the chip, never the finger target. */
+@media (pointer: coarse) {
+  .diagram__tool {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.diagram__tool-sep {
+  width: 1px;
+  height: 16px;
+  margin-inline: 1px;
+  background: var(--cs-hairline);
+}
+
+/* §6/§8: what must not merely be instant but absent under reduced motion — the lift and tilt
+   never appear, the rejection shake stays still, the keyboard preview shows statically. */
+@media (prefers-reduced-motion: reduce) {
+  .diagram__node--shake {
+    animation: none;
+  }
+
+  .diagram__node--dragging {
+    transform: none;
+    filter: none;
+  }
+
+  .diagram__key-flash {
+    animation: none;
+    opacity: 0.9;
+  }
+}

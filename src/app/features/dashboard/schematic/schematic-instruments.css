@@ -1,0 +1,225 @@
+/* Equipment and instrument layer. Split from the process sheet so both remain independently
+   inspectable and inside Angular's component-style budget. */
+
+.schematic__node {
+  color: var(--cs-muted);
+  outline: none;
+}
+
+/* SVG outlines have no painted interior, so this cross-browser target makes the whole equipment
+   body inspectable instead of limiting hover to a few hairline strokes. */
+.schematic__node-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.schematic__node--medium-cold {
+  color: color-mix(in srgb, var(--cs-cold) 66%, var(--cs-muted));
+}
+
+.schematic__node--medium-hot {
+  color: color-mix(in srgb, var(--cs-hot) 66%, var(--cs-muted));
+}
+
+.schematic__node--medium-mixed {
+  color: color-mix(in srgb, var(--cs-cold) 48%, var(--cs-hot));
+}
+
+/* Attached-instrument severity outranks the loop-side colour. */
+.schematic__node--warning {
+  color: color-mix(in srgb, var(--cs-warn) 55%, var(--cs-muted));
+}
+
+.schematic__node--critical {
+  color: color-mix(in srgb, var(--cs-crit) 70%, var(--cs-muted));
+}
+
+.schematic__focus-brackets {
+  fill: none;
+  stroke: var(--cs-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 12;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms var(--cs-ease);
+}
+
+.schematic__node:is(:hover, :focus-visible, .schematic__node--inspected)
+  .schematic__focus-brackets {
+  opacity: 1;
+}
+
+.schematic__node:focus-visible .schematic__focus-brackets {
+  stroke-width: 2.5;
+}
+
+.schematic__node-label {
+  fill: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  paint-order: stroke;
+  stroke: var(--cs-panel);
+  stroke-width: 5px;
+  cursor: default;
+}
+
+/* A pixel-tuned instrument chip: it is anchored to a point on the drawing, so no named spacing
+   token fits its box. The whole chip therefore rides --cs-density (§6); its rim, radius, LED and
+   gauge hairlines stay fixed, because those are optics rather than size. */
+.schematic-tag {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.2rem * var(--cs-density));
+  width: calc(9.5rem * var(--cs-density));
+  padding: calc(0.4rem * var(--cs-density)) calc(0.6rem * var(--cs-density))
+    calc(0.5rem * var(--cs-density));
+  border: 1px solid var(--cs-hairline);
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+}
+
+/* Inspection densifies the chip through an active rim, one
+   surface step up, a faint machined top highlight. Hover mirrors it because a hover IS what
+   drives inspection on fine pointers. */
+.schematic-tag--inspected {
+  border-color: var(--cs-glass-rim-active);
+  background: var(--cs-overlay);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 18%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .schematic-tag:hover {
+    border-color: var(--cs-glass-rim-active);
+    background: var(--cs-overlay);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 18%, transparent);
+  }
+}
+
+/* Severity outranks the inspected rim (source order) — the LED and gauge mark keep carrying it
+   while the pointer sits directly on the chip. */
+.schematic-tag--warning {
+  border-color: color-mix(in srgb, var(--cs-warn) 45%, var(--cs-hairline));
+}
+
+.schematic-tag--critical {
+  border-color: color-mix(in srgb, var(--cs-crit) 55%, var(--cs-hairline));
+}
+
+.schematic-tag--top {
+  transform: translate(-50%, -100%);
+}
+
+/* Keep the bottom tag clear of the node caption. */
+.schematic-tag--bottom {
+  transform: translate(-50%, 10px);
+}
+
+.schematic-tag--left {
+  transform: translate(-100%, -50%);
+}
+
+.schematic-tag--right {
+  transform: translate(0, -50%);
+}
+
+.schematic-tag__head {
+  display: flex;
+  align-items: center;
+  gap: calc(0.4rem * var(--cs-density));
+}
+
+.schematic-tag__led--ok {
+  --cs-led-color: var(--cs-ok);
+}
+
+.schematic-tag__led--warning {
+  --cs-led-color: var(--cs-warn);
+}
+
+.schematic-tag__led--critical {
+  --cs-led-color: var(--cs-crit);
+}
+
+.schematic-tag__series {
+  overflow: hidden;
+  font-size: calc(0.72rem * var(--cs-density));
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schematic-tag__isa {
+  margin-inline-start: auto;
+  font-size: calc(0.625rem * var(--cs-density));
+  letter-spacing: 0.06em;
+}
+
+.schematic-tag__value {
+  display: flex;
+  align-items: baseline;
+  gap: calc(0.3rem * var(--cs-density));
+  margin: 0;
+  font-size: calc(1.05rem * var(--cs-density));
+  font-weight: 500;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.schematic-tag--idle .schematic-tag__value {
+  color: var(--cs-muted);
+}
+
+.schematic-tag__unit {
+  color: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: calc(0.7rem * var(--cs-density));
+  font-weight: 400;
+}
+
+.schematic-tag__gauge {
+  position: relative;
+  height: 5px;
+  margin-top: calc(0.15rem * var(--cs-density));
+  border-block-end: 1px solid var(--cs-hairline-strong);
+}
+
+.schematic-tag__zone {
+  position: absolute;
+  bottom: -1px;
+  height: 1px;
+}
+
+.schematic-tag__zone--warning {
+  background: color-mix(in srgb, var(--cs-warn) 55%, transparent);
+}
+
+.schematic-tag__zone--critical {
+  background: color-mix(in srgb, var(--cs-crit) 60%, transparent);
+}
+
+.schematic-tag__mark-position {
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: -3px;
+  width: calc(100% - 1.5px);
+  transition: transform 600ms var(--cs-ease);
+}
+
+.schematic-tag__mark {
+  display: block;
+  width: 1.5px;
+  height: 5px;
+  background: var(--cs-text);
+}
+
+.schematic-tag__mark--warning {
+  background: var(--cs-warn);
+}
+
+.schematic-tag__mark--critical {
+  background: var(--cs-crit);
+}

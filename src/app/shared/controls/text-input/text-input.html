@@ -1,0 +1,19 @@
+<cs-control-frame [state]="frame()">
+  <input
+    pInputText
+    type="text"
+    inputmode="text"
+    [id]="controlId"
+    [attr.aria-labelledby]="labelledBy()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (blur)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [pSize]="primeSize()"
+    [fluid]="true"
+    [class.cs-mono]="mono()"
+    [attr.placeholder]="placeholderText()"
+  />
+</cs-control-frame>

@@ -1,0 +1,23 @@
+<cs-select
+  label="settings.appearance.language"
+  placeholder="common.placeholderSelect"
+  [options]="languageOptions"
+  [value]="language()"
+  (valueChange)="setLanguage($event)"
+/>
+
+<cs-select
+  label="settings.appearance.theme"
+  hint="settings.appearance.themeHint"
+  placeholder="common.placeholderSelect"
+  [options]="themeOptions"
+  [value]="theme()"
+  (valueChange)="setTheme($event)"
+/>
+
+<cs-segmented-control
+  label="settings.appearance.density.label"
+  [options]="densityOptions"
+  [value]="density()"
+  (selected)="setDensity($event)"
+/>

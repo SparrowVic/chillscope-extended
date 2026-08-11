@@ -1,0 +1,44 @@
+@if (pending()) {
+  <!-- One block standing in for the one strip below, so the page does not jump on arrival. -->
+  <p-skeleton
+    width="100%"
+    height="calc(5.5rem * var(--cs-density))"
+    borderRadius="var(--cs-r-card)"
+  />
+} @else {
+  <!-- One annunciator strip, not three cards: the three counters share a single panel separated
+       by hairlines (the system strip's grouping grammar), so the summary holds one compact row
+       even on a phone. The severity meter docks into the strip's bottom edge as its rail. -->
+  <div class="cs-panel alarms-summary__strip">
+    <div class="alarms-summary__grid">
+      @for (counter of counters(); track counter.tone) {
+        <div class="alarms-summary__counter alarms-summary__counter--{{ counter.tone }}">
+          <span class="alarms-summary__head">
+            <span class="cs-label alarms-summary__label">{{ counter.labelKey | transloco }}</span>
+            <span
+              class="cs-led"
+              [class.cs-led--pulse]="counter.pulse"
+              [class.alarms-summary__led--dim]="counter.dim"
+              aria-hidden="true"
+            ></span>
+          </span>
+          <span class="cs-mono alarms-summary__count"
+            ><cs-digit-morph [value]="counter.value"
+          /></span>
+        </div>
+      }
+    </div>
+
+    <!-- A visual restatement of the three counts above, so it stays out of the accessibility tree. -->
+    <div class="alarms-summary__meter" aria-hidden="true">
+      <span
+        class="alarms-summary__meter-fill alarms-summary__meter-fill--warning"
+        [style.transform]="'scaleX(' + meter().warningScale + ')'"
+      ></span>
+      <span
+        class="alarms-summary__meter-fill alarms-summary__meter-fill--critical"
+        [style.transform]="'scaleX(' + meter().criticalScale + ')'"
+      ></span>
+    </div>
+  </div>
+}

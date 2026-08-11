@@ -1,0 +1,32 @@
+<cs-control-frame [state]="frame()">
+  <div
+    #group
+    class="cs-segmented-control"
+    [class.cs-segmented-control--small]="primeSize() === 'small'"
+    [class.cs-segmented-control--large]="primeSize() === 'large'"
+    [class.cs-segmented-control--invalid]="showError()"
+    role="group"
+    [attr.aria-labelledby]="labelledBy()"
+    [attr.aria-invalid]="showError()"
+    [attr.aria-disabled]="disabled()"
+    (focusout)="onFocusOut($event)"
+  >
+    <span class="cs-segmented-control__thumb" aria-hidden="true"></span>
+    @for (option of renderedOptions(); track option.value) {
+      <button
+        #optionButton
+        type="button"
+        class="cs-segmented-control__option"
+        [class.cs-mono]="numeric()"
+        [class.cs-segmented-control__option--active]="option.selected"
+        [disabled]="disabled() || option.disabled"
+        [attr.aria-pressed]="option.selected"
+        [attr.aria-label]="option.label | transloco"
+        [attr.title]="option.label | transloco"
+        (click)="select(option)"
+      >
+        {{ option.shortLabel ?? option.label | transloco }}
+      </button>
+    }
+  </div>
+</cs-control-frame>

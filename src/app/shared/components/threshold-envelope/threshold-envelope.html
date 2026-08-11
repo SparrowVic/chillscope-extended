@@ -1,0 +1,25 @@
+@if (envelope(); as env) {
+  <div
+    class="envelope__zones"
+    [style.--env-critical-min]="env.criticalMin"
+    [style.--env-warning-min]="env.warningMin"
+    [style.--env-warning-max]="env.warningMax"
+    [style.--env-critical-max]="env.criticalMax"
+  ></div>
+  <span
+    class="envelope__tick envelope__tick--crit"
+    [style.inset-inline-start]="env.criticalMin"
+  ></span>
+  <span
+    class="envelope__tick envelope__tick--warn"
+    [style.inset-inline-start]="env.warningMin"
+  ></span>
+  <span
+    class="envelope__tick envelope__tick--warn"
+    [style.inset-inline-start]="env.warningMax"
+  ></span>
+  <span
+    class="envelope__tick envelope__tick--crit"
+    [style.inset-inline-start]="env.criticalMax"
+  ></span>
+}

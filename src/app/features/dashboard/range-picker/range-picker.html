@@ -1,0 +1,29 @@
+<cs-segmented-control
+  class="range-picker__presets"
+  label="range.label"
+  [numeric]="true"
+  [options]="presetOptions"
+  [value]="activePresetChoice()"
+  (selected)="onPresetPicked($event)"
+/>
+
+<cs-date-range
+  class="range-picker__custom"
+  label="range.custom"
+  placeholder="common.placeholderDateRange"
+  [showTime]="true"
+  [dateFormat]="dateFormat()"
+  [minDate]="minDate()"
+  [maxDate]="maxDate()"
+  [value]="pickedDates()"
+  (valueChange)="onDatesPicked($event)"
+/>
+
+<cs-select
+  class="range-picker__bucket"
+  label="dashboard.filters.bucket"
+  placeholder="common.placeholderSelect"
+  [options]="bucketChoices"
+  [value]="bucketChoice()"
+  (valueChange)="onBucketPicked($event)"
+/>

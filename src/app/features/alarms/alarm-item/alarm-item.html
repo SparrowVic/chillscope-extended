@@ -1,0 +1,51 @@
+@let unit = unitKey() | transloco;
+
+<!-- The lamp slot is always rendered so every row starts on the same column; only a critical
+     episode that is still active actually lights (and pulses) it. -->
+<span class="alarm-item__lamp" aria-hidden="true">
+  @if (live()) {
+    <span class="cs-led cs-led--pulse alarm-item__led"></span>
+  }
+</span>
+
+<!-- Two decks on a phone, one log line on a wide screen — same DOM, CSS only. The reading
+     order matches the visual hierarchy: severity and series first, then the numbers. -->
+<span class="alarm-item__body">
+  <span class="alarm-item__head">
+    <span class="cs-tag cs-tag--{{ alarm().severity }} alarm-item__tag">
+      {{ severityKey() | transloco }}
+    </span>
+    <span class="alarm-item__series">{{ seriesKey() | transloco }}</span>
+  </span>
+
+  <span class="alarm-item__reading-row">
+    <span class="alarm-item__reading">
+      <span class="cs-mono alarm-item__value">{{ value() }}</span>
+      <span class="alarm-item__unit">{{ unit }}</span>
+    </span>
+
+    <span class="alarm-item__detail">
+      {{ 'alarms.table.threshold' | transloco }}
+      <span class="cs-mono">{{ threshold() }}</span>
+      {{ unit }}
+    </span>
+
+    <!--
+      The label used to live in a hover tooltip on a non-focusable span, so keyboard, screen-reader
+      and touch users were left with "1.5 h" and nothing saying what it measured.
+    -->
+    <span class="alarm-item__detail">
+      <cs-icon name="clock" aria-hidden="true" />
+      <span class="sr-only">{{ 'alarms.item.duration' | transloco }}</span>
+      <span class="cs-mono">{{ duration() }}</span>
+    </span>
+  </span>
+</span>
+
+<!-- Both clocks are visible: the exact time anchors the row inside its day group, the age is the
+     glance read. Nothing important hides behind a title attribute — a phone has no hover. -->
+<time class="alarm-item__when" [attr.datetime]="isoTime()">
+  <span class="cs-mono alarm-item__clock" aria-hidden="true">{{ timeOfDay() }}</span>
+  <span class="cs-mono alarm-item__ago" aria-hidden="true">{{ relativeTime() }}</span>
+  <span class="sr-only">{{ absoluteTime() }} · {{ relativeTime() }}</span>
+</time>

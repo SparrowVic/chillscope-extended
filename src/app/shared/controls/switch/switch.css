@@ -1,0 +1,7 @@
+@media (pointer: coarse) {
+  :host ::ng-deep .p-toggleswitch::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+  }
+}

@@ -1,0 +1,10 @@
+/* Frame, states, the §7 line metric and a11y come from the shared .cs-segment recipe
+   (styles.css); only the glyph metric is this component's own. */
+
+:host {
+  display: inline-flex;
+}
+
+.theme-switch__option cs-icon {
+  font-size: 0.8125rem;
+}

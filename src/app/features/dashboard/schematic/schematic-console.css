@@ -1,0 +1,65 @@
+/* Console chrome (§8b): the drafting sheet the machine is drawn on. Split from the process
+   sheet to stay inside the per-component style budget — everything here is static framing,
+   painted once and never animated. */
+
+/* Confines the grid's negative z-index so it slots between the panel surface and the drawing
+   instead of falling behind the panel background in the route's stacking context. */
+.schematic__stage {
+  isolation: isolate;
+}
+
+/* Interior drafting grid — engineering vellum under the schematic. 24px placement pitch with a
+   heavier line every 96px for the major engineering rhythm; the drawing scales with the
+   stage, so the vellum is a material reference, not a projection of the cells. The radial mask
+   dissolves it toward the edges so it reads as sheet, not cage. */
+.schematic__stage::before {
+  --grid-minor: color-mix(in srgb, var(--cs-text) 4%, transparent);
+  --grid-major: color-mix(in srgb, var(--cs-text) 8%, transparent);
+
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, var(--grid-major) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(0deg, var(--grid-major) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(90deg, var(--grid-minor) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(0deg, var(--grid-minor) 0 1px, transparent 1px 24px);
+  /* Alpha-only mask — `black` means opaque here, not a colour. */
+  -webkit-mask-image: radial-gradient(ellipse at center, black 45%, transparent 92%);
+  mask-image: radial-gradient(ellipse at center, black 45%, transparent 92%);
+}
+
+/* '+' registration marks in the panel corners: two crossed hairlines apiece, printed at the
+   sheet's text-at-30% strength. Chrome of the console, so they frame the error slab too. */
+.schematic__regmark {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--cs-text) 30%, transparent);
+  background:
+    linear-gradient(currentcolor, currentcolor) 50% 50% / 100% 1px no-repeat,
+    linear-gradient(currentcolor, currentcolor) 50% 50% / 1px 100% no-repeat;
+}
+
+.schematic__regmark--tl {
+  top: 7px;
+  left: 7px;
+}
+
+.schematic__regmark--tr {
+  top: 7px;
+  right: 7px;
+}
+
+.schematic__regmark--bl {
+  bottom: 7px;
+  left: 7px;
+}
+
+.schematic__regmark--br {
+  bottom: 7px;
+  right: 7px;
+}

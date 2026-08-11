@@ -1,0 +1,29 @@
+@let frame = state();
+
+@if (frame.label) {
+  <label class="cs-label cs-control-frame__label" [id]="frame.labelId" [attr.for]="frame.labelFor">
+    {{ frame.label | transloco }}
+    @if (frame.required) {
+      <span class="cs-control-frame__required" aria-hidden="true">*</span>
+    }
+    @if (frame.tooltip) {
+      <cs-icon
+        name="circle-info"
+        class="cs-control-frame__info"
+        tooltipPosition="top"
+        [pTooltip]="frame.tooltip | transloco"
+      />
+    }
+  </label>
+}
+
+<ng-content />
+
+@if (frame.errorKey) {
+  <small class="cs-control-frame__error" role="alert" [id]="frame.errorId">
+    <cs-icon name="circle-exclamation" class="cs-control-frame__error-icon" aria-hidden="true" />
+    <span>{{ frame.errorKey | transloco: frame.errorParams }}</span>
+  </small>
+} @else if (frame.hint) {
+  <small class="cs-control-frame__hint" [id]="frame.hintId">{{ frame.hint | transloco }}</small>
+}

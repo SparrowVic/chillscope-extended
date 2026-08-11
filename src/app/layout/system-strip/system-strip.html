@@ -1,0 +1,73 @@
+<div class="strip__inner">
+  <div class="strip__context">
+    <a class="brand cs-focus-ring" routerLink="/dashboard">
+      <span class="brand__mark" aria-hidden="true">
+        <cs-icon name="wave-pulse" />
+      </span>
+      <span class="brand__name">{{ 'app.title' | transloco }}</span>
+    </a>
+
+    <!-- The shared control keeps machine switching consistent with every other select. -->
+    <cs-select
+      #machineSelect
+      class="machine-select"
+      ariaLabel="strip.machineSelect"
+      appendTo="body"
+      literalLabels
+      [ariaDescribedBy]="machineSwitchFailed() ? 'machine-select-error' : undefined"
+      [options]="machines()"
+      [(value)]="selectedMachineId"
+    />
+
+    <!-- §5 state tag: the worst active alarm severity, the strip's one-glance verdict. -->
+    <span class="cs-tag cs-tag--{{ state() }} strip__state">
+      <span class="sr-only">{{ 'strip.machineState' | transloco }}: </span>
+      {{ 'severity.' + state() | transloco }}
+    </span>
+  </div>
+
+  <div class="strip__telemetry">
+    <!-- §5 uptime — a natural digit-morph consumer, engraved caption beside it. -->
+    <span class="uptime">
+      <span class="cs-label uptime__label">{{ 'app.uptime' | transloco }}</span>
+      <span class="cs-mono uptime__value"><cs-digit-morph [value]="uptimeText()" /></span>
+    </span>
+
+    <span class="live" [class.live--on]="live()">
+      <cs-icon class="live__icon" aria-hidden="true" name="tower-broadcast" />
+      <span class="cs-led" [class.cs-led--pulse]="live()" aria-hidden="true"></span>
+      <span class="live__text" aria-hidden="true">{{ 'live.short' | transloco }}</span>
+      <span class="sr-only">{{ (live() ? 'live.enabled' : 'live.disabled') | transloco }}</span>
+    </span>
+
+    <time
+      class="clock cs-mono"
+      [attr.aria-label]="'strip.currentTime' | transloco"
+      [attr.datetime]="clockDateTime()"
+    >
+      <cs-digit-morph [value]="clockText()" />
+    </time>
+  </div>
+
+  <div class="strip__controls">
+    <app-theme-switch />
+    <app-language-switch />
+  </div>
+
+  @if (machineSwitchFailed() || settingsPersistenceFailed()) {
+    <div class="strip__messages">
+      @if (machineSwitchFailed()) {
+        <span class="machine-select__error" id="machine-select-error" role="alert">
+          <cs-icon name="triangle-exclamation" aria-hidden="true" />
+          <span>{{ 'machines.library.persistenceMessage' | transloco }}</span>
+        </span>
+      }
+      @if (settingsPersistenceFailed()) {
+        <span class="settings-persistence-error" role="alert">
+          <cs-icon name="triangle-exclamation" aria-hidden="true" />
+          <span>{{ 'settings.actions.persistenceFailed' | transloco }}</span>
+        </span>
+      }
+    </div>
+  }
+</div>

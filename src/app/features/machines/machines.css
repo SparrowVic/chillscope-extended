@@ -1,0 +1,115 @@
+:host {
+  --machines-dock: var(--cs-mobile-navigation-reserve);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+}
+
+@media (max-height: 420px) {
+  :host {
+    --machines-dock: calc(
+      var(--cs-mobile-navigation-height) + 0.375rem + env(safe-area-inset-bottom)
+    );
+  }
+}
+
+.machines__layout {
+  display: grid;
+  /* The library rail is chrome, not content: it narrows with density so the editor keeps the
+     width the compact setting frees up. */
+  grid-template-columns:
+    minmax(calc(17rem * var(--cs-density)), calc(21rem * var(--cs-density)))
+    minmax(0, 1fr);
+  align-items: start;
+  gap: var(--cs-gap-section);
+}
+
+.machines__pane {
+  min-width: 0;
+}
+
+.machines__pane:focus {
+  outline: none;
+}
+
+.machines__pane--library {
+  position: sticky;
+  top: var(--cs-gap-field);
+}
+
+/* The editor is a panel like every other screen section; the surface itself is .cs-panel.
+   No display declarations on either child: both own their :host layout, and a parent-scoped
+   class would out-specify it. */
+.machines__editor {
+  min-width: 0;
+  padding: var(--cs-pad-panel-tight) var(--cs-pad-panel) var(--cs-pad-panel);
+}
+
+/* §6 RWD: below 900px the panes become stages — one column, one visible at a time (template
+   [hidden]), the editor stage led by its back key. */
+@media (width < 900px) {
+  .machines__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .machines__pane--library {
+    position: static;
+  }
+
+  /* Stage entry rises like a §8 panel enter; @starting-style covers the display:none → visible
+     hand-off, and browsers without it simply swap instantly. The base sheet's reduced-motion
+     clamp flattens the transition to 1ms. */
+  .machines__pane {
+    transition:
+      opacity var(--cs-dur-c) var(--cs-ease),
+      translate var(--cs-dur-c) var(--cs-ease);
+  }
+
+  @starting-style {
+    .machines__pane:not([hidden]) {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+}
+
+/* The back key: quiet up-navigation at the line metric, 44px under a fingertip. */
+.machines__back {
+  display: flex;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  box-sizing: border-box;
+  min-height: var(--cs-control-height);
+  margin-block-end: var(--cs-gap-field);
+  padding: 0 var(--cs-gap-field);
+  border: none;
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  color: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-control);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color var(--cs-dur-fast) ease-out,
+    background-color var(--cs-dur-fast) ease-out;
+}
+
+.machines__back:hover {
+  color: var(--cs-text);
+  background: var(--cs-hover-tint);
+}
+
+/* The roster has no left arrow; the shared arrow-right mirrored is the same glyph family. */
+.machines__back-glyph {
+  display: inline-flex;
+  transform: scaleX(-1);
+}
+
+@media (pointer: coarse) {
+  .machines__back {
+    min-height: max(var(--cs-control-height), 2.75rem);
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+}

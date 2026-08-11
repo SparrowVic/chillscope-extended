@@ -1,0 +1,25 @@
+<cs-control-frame [state]="frame()">
+  <p-inputnumber
+    inputStyleClass="cs-mono cs-number-input"
+    [inputId]="controlId"
+    [ariaDescribedBy]="describedBy()"
+    [pt]="passThrough()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (onBlur)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [min]="min()"
+    [max]="max()"
+    [step]="step()"
+    [showButtons]="showButtons()"
+    [minFractionDigits]="minFractionDigits()"
+    [maxFractionDigits]="maxFractionDigits()"
+    [suffix]="suffix()"
+    [locale]="locale()"
+    [size]="primeSize()"
+    [fluid]="true"
+    [placeholder]="placeholder() | transloco"
+  />
+</cs-control-frame>

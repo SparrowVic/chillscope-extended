@@ -1,0 +1,68 @@
+/* One pipe route row: FROM —conduit→ TO, the temperature side and the remove key. The FROM→TO
+   pair never separates from its arrow. Shared strip chrome lives in row-fields.css. */
+
+.pipe-fields {
+  display: grid;
+  grid-template-columns:
+    minmax(8rem, 1fr)
+    calc(2.5rem * var(--cs-density))
+    minmax(8rem, 1fr)
+    auto
+    var(--cs-control-height);
+  grid-template-areas: 'from conduit to side remove';
+  gap: var(--cs-gap-field);
+  align-items: end;
+}
+
+.pipe-fields__from {
+  grid-area: from;
+}
+
+.pipe-fields__to {
+  grid-area: to;
+}
+
+.pipe-fields__side {
+  grid-area: side;
+}
+
+/* A static route glyph, never animated: its colour is the document's side, full stop. The box
+   spans the control metric so the dash sits on the control line beside the selects. */
+.pipe-fields__conduit {
+  grid-area: conduit;
+  display: flex;
+  align-items: center;
+  height: var(--cs-control-height);
+  color: var(--cs-cold);
+  /* No colour transition: §7 — the conduit tint flips with the side switch, never animates. */
+  opacity: var(--cs-pipe-opacity);
+}
+
+.pipe-fields--hot .pipe-fields__conduit {
+  color: var(--cs-hot);
+}
+
+.pipe-fields__conduit svg {
+  width: 100%;
+}
+
+.pipe-fields__conduit line {
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.pipe-fields__conduit path {
+  fill: currentColor;
+}
+
+@container (max-width: 560px) {
+  .pipe-fields {
+    grid-template-columns:
+      minmax(0, 1fr)
+      calc(2.5rem * var(--cs-density))
+      minmax(0, 1fr);
+    grid-template-areas:
+      'from conduit to'
+      'side side remove';
+  }
+}

@@ -1,0 +1,48 @@
+<app-page-header icon="triangle-exclamation" titleKey="alarms.title" subtitleKey="alarms.subtitle">
+  <p-button
+    type="button"
+    severity="secondary"
+    [disabled]="facade.isLoading()"
+    [styleClass]="facade.isLoading() ? 'cs-loading-bar' : ''"
+    [attr.aria-busy]="facade.isLoading()"
+    [label]="'common.refresh' | transloco"
+    (onClick)="facade.reload()"
+  >
+    <ng-template #icon>
+      <cs-icon name="arrow-rotate-right" />
+    </ng-template>
+  </p-button>
+</app-page-header>
+
+<app-alarms-filters
+  class="cs-rise"
+  style="--rise: 0"
+  [range]="facade.range()"
+  [severity]="facade.severity()"
+  [series]="facade.series()"
+  (rangeChange)="facade.setRange($event.from, $event.to)"
+  (severityChange)="facade.setSeverity($event)"
+  (seriesChange)="facade.setSeries($event)"
+/>
+
+@if (facade.error()) {
+  <app-error-panel
+    titleKey="errors.loadAlarms"
+    [retrying]="facade.isLoading()"
+    (retry)="facade.reload()"
+  />
+}
+@if (!facade.error() || facade.alarms().length > 0) {
+  <app-alarms-summary
+    class="cs-rise"
+    style="--rise: 1"
+    [alarms]="facade.alarms()"
+    [loading]="facade.isLoading()"
+  />
+  <app-alarms-list
+    class="cs-rise"
+    style="--rise: 2"
+    [alarms]="facade.alarms()"
+    [loading]="facade.isLoading()"
+  />
+}

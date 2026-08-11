@@ -1,0 +1,131 @@
+:host {
+  display: block;
+}
+
+.tape-deck__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: var(--cs-gap-field);
+}
+
+.tape-deck__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  min-width: 0;
+}
+
+.tape-deck__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  /* Rides the density scale with the cs-label title beside it (§6). */
+  font-size: calc(0.625rem * var(--cs-density));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cs-muted);
+}
+
+.tape-deck__legend-item::before {
+  content: '';
+  width: 0.75rem;
+  height: 0.5rem;
+  border-radius: 2px;
+}
+
+/* Same recipe as the zones printed on the tapes, so the legend is literal. */
+.tape-deck__legend-item--warning::before {
+  background: color-mix(in srgb, var(--cs-warn) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cs-warn) 55%, transparent);
+}
+
+.tape-deck__legend-item--critical::before {
+  background: color-mix(in srgb, var(--cs-crit) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cs-crit) 55%, transparent);
+}
+
+/* The shared live toggle brings its own inline row; the deck only pushes it to the far edge. */
+.tape-deck__live {
+  margin-inline-start: auto;
+}
+
+/* The grid reflows as series are selected and deselected — each tape shares the row equally. */
+/* Tapes are physical instruments with a bounded face: 13-19rem each. auto-fit would stretch
+   two selected tapes across an ultrawide container, smearing the pointer chip over half the
+   screen — capping the track and centring the deck keeps the instrument metaphor honest.
+   The face is bespoke chrome, so the track follows --cs-density; the deck's own gap is an
+   ordinary in-section gap and follows the named token. */
+.tape-deck__grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(13rem * var(--cs-density)), calc(19rem * var(--cs-density)))
+  );
+  justify-content: center;
+  gap: var(--cs-gap-field);
+}
+
+@media (min-width: 1280px) {
+  .tape-deck__grid:has(> :nth-child(4)) {
+    width: 100%;
+    max-width: calc(76rem * var(--cs-density) + 3 * var(--cs-gap-field));
+    margin-inline: auto;
+    grid-template-columns: repeat(4, minmax(calc(13rem * var(--cs-density)), 1fr));
+  }
+}
+
+/* First load, nothing held yet: the K3 loading bar on a quiet placeholder, never a spinner.
+   The height mirrors the tape window (tape.css, --tape-window-h) so the deck does not jump
+   when tapes arrive. */
+.tape-deck__pending {
+  height: var(--tape-window-h, calc(clamp(17rem, 42vh, 30rem) * var(--cs-density)));
+  border: 1px dashed var(--cs-hairline);
+  border-radius: var(--cs-r-card);
+}
+
+/* Below the desktop tier nothing scrolls sideways — ever. Each tape prints complete at its
+   column's full width and re-lays its own pixel grid to it (tape.math tapeFaceLayout); the
+   page scrolls naturally. The tiers share the app's 640/1024 thresholds (filter-layout.ts). */
+
+/* Phone: one full-width instrument per row. The face is shorter here — four stacked 42vh
+   tapes would bury the log a screen and a half down. */
+@media (max-width: 640px) {
+  :host {
+    --tape-window-h: calc(clamp(13rem, 30vh, 17rem) * var(--cs-density));
+  }
+
+  .tape-deck__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Tablet portrait: two full columns; an odd last tape takes the whole row rather than leaving
+   a hole — the wider face is a deliberate re-layout, not a stretch. */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+  .tape-deck__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tape-deck__grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Tablet landscape: fill the width — auto-fit yields 2–4 complete columns by device width,
+   and trailing empty tracks collapse so fewer tapes share the row equally. */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) {
+  .tape-deck__grid {
+    grid-template-columns: repeat(auto-fit, minmax(calc(13rem * var(--cs-density)), 1fr));
+  }
+}
+
+/* A landscape phone has ~380px of height (the shell trims its navigation reserve on the same
+   condition); the face gives most of it back. Last in the file so it outranks the width tiers
+   at equal specificity. */
+@media (max-height: 480px) {
+  :host {
+    --tape-window-h: calc(clamp(10rem, 55vh, 14rem) * var(--cs-density));
+  }
+}

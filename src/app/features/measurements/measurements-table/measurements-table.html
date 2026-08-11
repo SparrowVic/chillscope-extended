@@ -1,0 +1,119 @@
+@if (phone()) {
+  <div class="measurements-table__mobile-sort">
+    <cs-select
+      class="measurements-table__sort-select"
+      label="measurements.table.sortBy"
+      [options]="mobileSortOptions"
+      [value]="sort()"
+      (valueChange)="onMobileSortField($event)"
+    />
+    <button
+      class="measurements-table__sort-direction cs-focus-ring"
+      type="button"
+      [attr.aria-label]="
+        (direction() === 'asc'
+          ? 'measurements.table.sortDescending'
+          : 'measurements.table.sortAscending'
+        ) | transloco
+      "
+      (click)="toggleMobileDirection()"
+    >
+      {{
+        (direction() === 'asc' ? 'measurements.table.ascending' : 'measurements.table.descending')
+          | transloco
+      }}
+    </button>
+  </div>
+}
+
+@if (loading()) {
+  <div
+    class="measurements-table__loading cs-loading-bar"
+    role="status"
+    [attr.aria-label]="'common.loading' | transloco"
+  ></div>
+}
+
+@if (phone()) {
+  <app-measurement-list
+    [rows]="displayRows()"
+    [total]="total()"
+    [page]="page()"
+    [pageSize]="pageSize()"
+    [loading]="loading()"
+    (pageChange)="onListPage($event)"
+  />
+} @else {
+  <p-table
+    dataKey="id"
+    [value]="displayRows()"
+    [lazy]="true"
+    [lazyLoadOnInit]="false"
+    [paginator]="true"
+    [first]="first()"
+    [rows]="pageSize()"
+    [totalRecords]="total()"
+    [rowsPerPageOptions]="pageSizes"
+    [sortField]="sort()"
+    [sortOrder]="sortOrder()"
+    [showCurrentPageReport]="true"
+    [currentPageReportTemplate]="'table.showing' | transloco: pageReportParams"
+    [pt]="passThrough()"
+    (onLazyLoad)="onLazyLoad($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th scope="col" class="cs-label" pSortableColumn="date">
+          {{ 'measurements.table.date' | transloco }}
+          <p-sortIcon field="date" />
+        </th>
+        <th scope="col" class="cs-label" pSortableColumn="name">
+          {{ 'measurements.table.series' | transloco }}
+          <p-sortIcon field="name" />
+        </th>
+        <th scope="col" class="cs-label measurements-table__cell--numeric" pSortableColumn="value">
+          {{ 'measurements.table.value' | transloco }}
+          <p-sortIcon field="value" />
+        </th>
+        <th scope="col" class="cs-label">{{ 'measurements.table.status' | transloco }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-row>
+      <tr>
+        <td>
+          <span class="cs-mono measurements-table__date">{{ row.dateText }}</span>
+        </td>
+        <td>
+          <span>{{ row.seriesKey | transloco }}</span>
+        </td>
+        <td class="measurements-table__cell--numeric">
+          <span class="measurements-table__reading">
+            <span class="cs-mono measurements-table__value">{{ row.valueText }}</span>
+            <span class="measurements-table__unit">{{ row.unitKey | transloco }}</span>
+          </span>
+        </td>
+        <td>
+          <span class="log-status log-status--{{ row.status }}">
+            <span class="cs-led" aria-hidden="true"></span>
+            <span class="cs-tag cs-tag--{{ row.status }}">{{ row.statusKey | transloco }}</span>
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="4" class="measurements-table__cell--empty">
+          @if (!loading()) {
+            <app-empty-state
+              icon="table-list"
+              titleKey="measurements.empty.title"
+              messageKey="measurements.empty.message"
+            />
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+}

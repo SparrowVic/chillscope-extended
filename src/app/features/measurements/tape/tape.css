@@ -1,0 +1,268 @@
+/* One tape instrument, dressed on SYGNAL surfaces: the .cs-panel card on the host, hairline
+   seams, chroma only where it is information — the threshold zones and the pointer chip's
+   status. Only the rim's hover response is the tape's own. */
+:host {
+  /* The casing is pixel-tuned chrome: one density measure for head, footer and chip. The scale
+     strip keeps its own pixel grid — the reading is a translate over TAPE_SCALE_HEIGHT. */
+  --tape-pad-x: calc(0.8rem * var(--cs-density));
+  --tape-pad-y: calc(0.6rem * var(--cs-density));
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  transition: border-color var(--cs-dur-c) var(--cs-ease);
+}
+
+:host(:hover) {
+  border-color: var(--cs-glass-rim-active);
+}
+
+.tape__head {
+  display: flex;
+  align-items: center;
+  gap: var(--tape-pad-y);
+  padding: var(--tape-pad-y) var(--tape-pad-x) calc(var(--tape-pad-y) * 0.9);
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+/* Head and footer are casing, not scale strip: their type rides the density scale with the
+   cs-label name (§6); the printed tape face keeps its own pixel grid. */
+.tape__icon {
+  flex: none;
+  color: var(--cs-muted);
+  font-size: calc(0.85rem * var(--cs-density));
+}
+
+.tape__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.tape__name {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tape__tag {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: calc(0.625rem * var(--cs-density));
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--cs-muted) 70%, transparent);
+}
+
+.tape__trend {
+  display: inline-flex;
+  flex: none;
+  color: var(--cs-muted);
+}
+
+.tape__trend svg {
+  transition: transform var(--cs-dur-t) var(--cs-ease);
+}
+
+.tape__trend--up {
+  color: var(--cs-text);
+}
+
+.tape__trend--down svg {
+  transform: rotate(180deg);
+}
+
+/* ---- the window: a fixed viewport the scale strip travels behind ---- */
+
+/* Face height is casing, not scale geometry: the strip is anchored at the window centre and
+   translated by the value's own row, so a denser window shows fewer ticks, never a wrong
+   value. The deck stamps --tape-window-h per viewport tier (phones stack full-width tapes, so
+   42vh each would bury the log); the fallback is the desktop face, kept in step with
+   .tape-deck__pending. */
+.tape__window {
+  position: relative;
+  height: var(--tape-window-h, calc(clamp(17rem, 42vh, 30rem) * var(--cs-density)));
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, var(--cs-panel), transparent 9%, transparent 91%, var(--cs-panel)),
+    var(--cs-canvas);
+}
+
+/* §8 sub-pixel breathing drift: the instrument is alive even between samples. */
+.tape__drift {
+  position: absolute;
+  inset: 0;
+  animation: tape-breathe 5.2s ease-in-out infinite;
+}
+
+@keyframes tape-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(0.85px);
+  }
+}
+
+/* §8 tape sample recipe: 600ms ease-out reposition. Anchored at the window centre, so the
+   translate is simply minus the value's own row on the strip — no measuring. */
+.tape__scale {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  transition: transform 600ms var(--cs-ease);
+  will-change: transform;
+}
+
+/* §8b ignition self-test: on entry the strip sweeps ONCE from its top end (translateY(0) puts
+   the domain maximum under the pointer — full-scale deflection) down to the live reading. Only
+   the start is a keyframe; the end is the live inline translate, so a sample landing mid-sweep
+   still wins. The host staggers tapes via --tape-ignite-delay and drops the class on
+   animationend, so a settled deck runs nothing. */
+:host(.tape--ignite) .tape__scale {
+  animation: tape-ignite 620ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  animation-delay: var(--tape-ignite-delay, 0ms);
+}
+
+@keyframes tape-ignite {
+  from {
+    transform: translateY(0);
+  }
+}
+
+/* ---- threshold zones printed on the tape (they scroll with it) ---- */
+
+.tape__zone {
+  position: absolute;
+  right: 0;
+  left: 0;
+}
+
+.tape__zone--warning {
+  background: color-mix(in srgb, var(--cs-warn) 8%, transparent);
+}
+
+.tape__zone--critical {
+  background: color-mix(in srgb, var(--cs-crit) 9%, transparent);
+}
+
+/* The classify() edge of each band gets the stronger rule — that line is the threshold. */
+.tape__zone--warning.tape__zone--high {
+  border-top: 1px solid color-mix(in srgb, var(--cs-warn) 30%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cs-warn) 55%, transparent);
+}
+
+.tape__zone--warning.tape__zone--low {
+  border-top: 1px solid color-mix(in srgb, var(--cs-warn) 55%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cs-warn) 30%, transparent);
+}
+
+.tape__zone--critical.tape__zone--high {
+  border-bottom: 1px solid color-mix(in srgb, var(--cs-crit) 55%, transparent);
+}
+
+.tape__zone--critical.tape__zone--low {
+  border-top: 1px solid color-mix(in srgb, var(--cs-crit) 55%, transparent);
+}
+
+/* Horizontal insets follow the measured face grid (tapeFaceLayout): everything printed near
+   the right edge clears the ghost strip, whatever width the strip currently earns. */
+.tape__zone-tag {
+  position: absolute;
+  right: calc(var(--tape-spark-w, 32px) + 8px);
+  bottom: 4px;
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tape__zone--low .tape__zone-tag {
+  top: 4px;
+  bottom: auto;
+}
+
+.tape__zone--warning .tape__zone-tag {
+  color: var(--cs-warn);
+}
+
+.tape__zone--critical .tape__zone-tag {
+  color: var(--cs-crit);
+}
+
+/* ---- ticks ---- */
+
+.tape__tick {
+  position: absolute;
+  left: 0;
+  width: 9px;
+  height: 1px;
+  background: var(--cs-hairline-strong);
+}
+
+.tape__tick--major {
+  width: 16px;
+  background: color-mix(in srgb, var(--cs-muted) 75%, transparent);
+}
+
+.tape__tick-label {
+  position: absolute;
+  left: 22px;
+  transform: translateY(-50%);
+  font-size: 0.6875rem;
+  color: var(--cs-muted);
+}
+
+.tape__tick-label--warning {
+  color: var(--cs-warn);
+}
+
+.tape__tick-label--critical {
+  color: var(--cs-crit);
+}
+
+/* ---- min/max notches of the loaded range (printed on the tape) ---- */
+
+.tape__notch {
+  position: absolute;
+  right: calc(var(--tape-spark-w, 32px) + 4px);
+  left: 0;
+  height: 0;
+  border-top: 1px dashed var(--cs-hairline-strong);
+}
+
+.tape__notch em {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 0 0.25rem;
+  background: var(--cs-canvas);
+  font-size: 0.5625rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cs-muted);
+}
+
+/* The fixed pointer layer (sparkline, spine, centre chip) and the stats footer live in
+   tape-pointer.css to respect the per-component style budget. */
+
+@media (prefers-reduced-motion: reduce) {
+  .tape__drift {
+    animation: none;
+  }
+
+  .tape__scale {
+    transition: none;
+  }
+
+  /* The component never adds the class under reduced motion; this is the CSS backstop a
+     travelling keyframe owes the global clamp. */
+  :host(.tape--ignite) .tape__scale {
+    animation: none;
+  }
+}

@@ -1,0 +1,30 @@
+<header class="cycle-panel__head cs-caption-row">
+  <h2 class="cs-label">{{ 'dashboard.cycle.title' | transloco }}</h2>
+  <p class="cycle-panel__hint">{{ 'dashboard.cycle.hint' | transloco }}</p>
+</header>
+
+<div class="cycle-panel__controls">
+  <cs-segmented-control
+    label="dashboard.cycle.seriesLabel"
+    [options]="seriesOptions"
+    [value]="cycle.seriesId()"
+    (selected)="cycle.setSeries($event)"
+  />
+  <cs-segmented-control
+    class="cycle-panel__days"
+    label="dashboard.cycle.rangeLabel"
+    [numeric]="true"
+    [options]="dayOptions"
+    [value]="cycle.days()"
+    (selected)="cycle.setDays($event)"
+  />
+</div>
+
+<chillscope-cycle-heatmap
+  class="cycle-panel__canvas"
+  [matrix]="matrix()"
+  [labels]="labels()"
+  [locale]="language()"
+  [theme]="theme()"
+  [loading]="cycle.isInitialLoading()"
+/>

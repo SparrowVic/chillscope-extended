@@ -1,0 +1,146 @@
+/*
+ * The workbench controls around the canvas — the instruction/zoom bar above it and the
+ * action strip below it (save/revert, and the touch NUDGE cluster). Split from the base sheet
+ * on the mobile redesign so each stays inside the per-stylesheet budget: this one owns the
+ * chrome a fingertip operates, the base sheet owns the drawing and the properties panel.
+ */
+
+/* The canvas toolbar row: instructions breathe, the zoom cluster hangs on the end edge. */
+.diagram__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cs-gap-field);
+}
+
+.diagram__hints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: min(100%, 14rem);
+  flex: 1 1 14rem;
+}
+
+/* The touch grammar speaks only where a fingertip exists (capability, not UA sniffing). */
+.diagram__hint--touch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .diagram__hint--touch {
+    display: block;
+  }
+}
+
+/* Zoom detent keys: raised K3 squares at the line metric; the reset key prints the factor. */
+.diagram__zoom {
+  display: flex;
+  align-items: center;
+  gap: calc(0.25rem * var(--cs-density));
+}
+
+.diagram__zoom-key,
+.diagram__nudge-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: var(--cs-control-height);
+  height: var(--cs-control-height);
+  padding: 0 calc(0.5rem * var(--cs-density));
+  border: 1px solid transparent;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  color: var(--cs-text);
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-control);
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) ease-out;
+}
+
+.diagram__zoom-key:hover:not(:disabled),
+.diagram__nudge-key:hover {
+  background: color-mix(in srgb, var(--cs-text) 4%, var(--cs-panel-raised));
+}
+
+.diagram__zoom-key:disabled {
+  color: var(--cs-muted);
+  cursor: default;
+  opacity: 0.55;
+}
+
+.diagram__zoom-key--reset {
+  font-size: var(--cs-font-support);
+}
+
+/* The base etch beats the layered .cs-focus-ring utility (styles.css caveat); restate both. */
+.diagram__zoom-key:focus-visible,
+.diagram__nudge-key:focus-visible {
+  box-shadow: var(--cs-focus-ring), var(--cs-glass-etch);
+}
+
+@media (pointer: coarse) {
+  .diagram__zoom-key,
+  .diagram__nudge-key {
+    min-width: max(var(--cs-control-height), 2.75rem);
+    height: max(var(--cs-control-height), 2.75rem);
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+}
+
+.diagram__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--cs-gap-field);
+}
+
+/* The NUDGE cluster: the precision-drag alternative. Absent in fine-pointer rooms — drag and
+   arrow keys already serve them — present for fingertips and on compact widths, where the dock
+   below keeps it in the thumb zone while the canvas stays in view. */
+.diagram__nudge {
+  display: none;
+  align-items: center;
+  gap: calc(0.25rem * var(--cs-density));
+  margin-inline-end: auto;
+}
+
+@media (width < 900px), (pointer: coarse) {
+  .diagram__nudge {
+    display: flex;
+  }
+}
+
+/* The roster's one arrow, pointed by rotation — the glyph family stays consistent. */
+.diagram__nudge-glyph {
+  display: inline-flex;
+}
+
+.diagram__nudge-glyph--left {
+  transform: scaleX(-1);
+}
+
+.diagram__nudge-glyph--up {
+  transform: rotate(-90deg);
+}
+
+.diagram__nudge-glyph--down {
+  transform: rotate(90deg);
+}
+
+/* The ACTION DOCK (compact stage) pins above the mobile navigation reserve. Sticky stays
+   in flow, so the strip can always be scrolled to under an on-screen keyboard. */
+@media (width < 900px) {
+  .diagram__actions {
+    position: sticky;
+    bottom: var(--machines-dock, 0px);
+    z-index: 2;
+    margin-inline: calc(-1 * var(--cs-pad-panel));
+    padding: var(--cs-gap-field) var(--cs-pad-panel);
+    border-top: 1px solid var(--cs-hairline);
+    background: var(--cs-panel);
+  }
+}

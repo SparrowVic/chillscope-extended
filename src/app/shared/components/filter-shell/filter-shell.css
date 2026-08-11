@@ -1,0 +1,330 @@
+/* The adaptive filter shell (Mission A). Inline keeps the original quiet toolbar; the overlay
+   modes wear the same floating material as every other transient surface (§7): machined rim,
+   overlay radius step, frost where supported. Stacking: navigation sits at 100, this dialog
+   above it at 1150/1151, and PrimeNG's own floating chrome above both (config zIndex pass). */
+
+:host {
+  display: block;
+}
+
+.filter-shell__inline {
+  /* The projected template owns the row layout; the shell owns only the panel surface. */
+  padding: var(--cs-pad-panel-tight);
+}
+
+/* ————— Entry bar (sheet/drawer tiers) ————— */
+
+.filter-shell__bar {
+  padding: calc(0.375rem * var(--cs-density));
+}
+
+.filter-shell__entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--cs-control-height);
+  padding: 0.375rem 0.625rem;
+  border: 0;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  color: var(--cs-text);
+  font: inherit;
+  font-size: var(--cs-font-control);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filter-shell__entry:hover {
+    background: color-mix(in srgb, var(--cs-panel-raised) 96%, var(--cs-text));
+  }
+}
+
+@media (pointer: coarse) {
+  .filter-shell__entry {
+    min-height: max(var(--cs-control-height), 2.75rem);
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+}
+
+.filter-shell__entry-icon {
+  flex: none;
+  font-size: 0.8125rem;
+  color: var(--cs-muted);
+}
+
+.filter-shell__entry-label {
+  flex: none;
+  font-weight: 500;
+}
+
+/* The applied state at a glance; ellipsis, never wrapping the 44px key open. */
+.filter-shell__summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cs-muted);
+  font-size: var(--cs-font-support);
+}
+
+.filter-shell__count {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: 0.25rem;
+  border-radius: var(--cs-r-tag);
+  background: var(--cs-accent);
+  color: var(--cs-accent-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* ————— The dialog ————— */
+
+/* The wrapper the component re-parents onto document.body; it contributes no box of its own. */
+.filter-shell__portal {
+  display: contents;
+}
+
+.filter-shell__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1150;
+  background: color-mix(in srgb, var(--cs-canvas) 62%, transparent);
+  animation: filter-shell-fade var(--cs-dur-c) ease-out;
+}
+
+@keyframes filter-shell-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.filter-shell__dialog {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1151;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(100%, 40rem);
+  max-height: calc(100dvh - 2.5rem - env(safe-area-inset-top));
+  margin-inline: auto;
+  border: 1px solid var(--cs-glass-rim);
+  border-bottom: 0;
+  border-radius: var(--cs-r-ovl) var(--cs-r-ovl) 0 0;
+  background: var(--cs-overlay);
+  box-shadow: var(--cs-glass-etch-strong), var(--cs-shadow-ovl);
+  /* §2.2 rule of asymmetry: the sheet OPENS on the soft spring. Closing destroys the view —
+     abnormal-to-normal is an instant hand-back, not a choreography. */
+  animation: filter-shell-rise 360ms var(--cs-spring-soft);
+  outline: none;
+}
+
+@keyframes filter-shell-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+}
+
+/* Deliberately NOT frosted: the sheet is a content-heavy editing surface, and its base rule
+   keeps the opaque --cs-overlay step + machined rim, so it can never see through to the page.
+   Frost stays with small transient PrimeNG panels (§7). */
+
+/* Tablet: a side drawer keeps the filtered content visible while it is being requeried. */
+.filter-shell__dialog--drawer {
+  inset-block: 0;
+  inset-inline: auto 0;
+  width: min(26rem, 92vw);
+  max-height: none;
+  margin-inline: 0;
+  border: 1px solid var(--cs-glass-rim);
+  border-inline-end: 0;
+  border-radius: var(--cs-r-ovl) 0 0 var(--cs-r-ovl);
+  padding-inline-end: env(safe-area-inset-right);
+  animation: filter-shell-slide 360ms var(--cs-spring-soft);
+}
+
+@keyframes filter-shell-slide {
+  from {
+    opacity: 0;
+    transform: translateX(2.5rem);
+  }
+}
+
+.filter-shell__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: none;
+  padding: var(--cs-pad-panel-tight) var(--cs-pad-panel);
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+.filter-shell__title {
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+.filter-shell__close {
+  display: grid;
+  place-items: center;
+  width: var(--cs-control-height);
+  height: var(--cs-control-height);
+  border: 0;
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  color: var(--cs-muted);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    color var(--cs-dur-fast) ease-out;
+}
+
+.filter-shell__close:hover {
+  background: var(--cs-hover-tint);
+  color: var(--cs-text);
+}
+
+/* The scroll region: the on-screen keyboard and short landscape phones shrink the dialog, and
+   the controls scroll inside it rather than pushing Apply off the viewport. */
+.filter-shell__body {
+  --cs-filter-field-basis: 100%;
+  --cs-filter-field-grow: 1;
+  --cs-filter-field-max: none;
+
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--cs-pad-panel);
+}
+
+.filter-shell__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  flex: none;
+  padding: var(--cs-pad-panel-tight) var(--cs-pad-panel)
+    calc(var(--cs-pad-panel-tight) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--cs-hairline);
+}
+
+.filter-shell__foot-gap {
+  flex: 1 1 auto;
+}
+
+/* K3 raised action; Apply is the one accent-filled key on the surface. */
+.filter-shell__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--cs-control-height);
+  padding-inline: calc(0.875rem * var(--cs-density));
+  border: 0;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  color: var(--cs-text);
+  font: inherit;
+  font-size: var(--cs-font-control);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    transform 200ms var(--cs-ease),
+    box-shadow 200ms var(--cs-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filter-shell__action:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--cs-glass-etch), var(--cs-shadow-ctl);
+  }
+}
+
+.filter-shell__action:active {
+  transform: translateY(0);
+  box-shadow: var(--cs-glass-etch);
+  transition-duration: 120ms;
+}
+
+.filter-shell__action--primary {
+  background: var(--cs-accent);
+  color: var(--cs-accent-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filter-shell__action--primary:hover {
+    background: color-mix(in srgb, var(--cs-accent) 92%, var(--cs-panel));
+  }
+}
+
+@media (pointer: coarse) {
+  .filter-shell__close,
+  .filter-shell__action {
+    min-width: 2.75rem;
+    min-height: max(var(--cs-control-height), 2.75rem);
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+}
+
+/* These two set box-shadow in their base rule, which outranks the layered .cs-focus-ring
+   utility (styles.css caveat) — so they carry the §7 ring themselves. */
+.filter-shell__entry:focus-visible,
+.filter-shell__action:focus-visible {
+  outline: none;
+  box-shadow: var(--cs-glass-etch), var(--cs-focus-ring);
+}
+
+@media (forced-colors: active) {
+  .filter-shell__entry:focus-visible,
+  .filter-shell__action:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 3px;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .filter-shell__backdrop {
+    background: color-mix(in srgb, var(--cs-canvas) 82%, transparent);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .filter-shell__dialog {
+    border-color: var(--cs-text);
+  }
+}
+
+@media (forced-colors: active) {
+  .filter-shell__dialog {
+    border: 1px solid CanvasText;
+  }
+
+  .filter-shell__entry,
+  .filter-shell__action {
+    border: 1px solid ButtonText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-shell__dialog,
+  .filter-shell__dialog--drawer,
+  .filter-shell__backdrop {
+    animation: none;
+  }
+}

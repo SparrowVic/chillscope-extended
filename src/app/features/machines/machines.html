@@ -1,0 +1,60 @@
+<app-page-header titleKey="machines.title" subtitleKey="machines.subtitle" icon="diagram-project" />
+
+<!-- §8b power-on: the two instruments of this view rise one beat apart. Both panes stay MOUNTED
+     at every width — compact viewports only hide one stage, so the editor's shared draft and a
+     half-typed field survive stage navigation. The wrappers carry no author display, which is
+     what lets the plain [hidden] attribute keep working. -->
+<div class="machines__layout">
+  <div
+    #libraryPane
+    class="machines__pane machines__pane--library cs-rise"
+    style="--rise: 0"
+    tabindex="-1"
+    [hidden]="compact() && stage() !== 'library'"
+  >
+    <app-machine-library
+      class="machines__library"
+      [rows]="rows()"
+      (selected)="select($event)"
+      (created)="create($event)"
+      (duplicated)="duplicate($event)"
+      (removed)="remove($event)"
+      (activated)="activate($event)"
+    />
+  </div>
+
+  <div
+    #editorPane
+    class="machines__pane machines__pane--editor cs-rise"
+    style="--rise: 1"
+    tabindex="-1"
+    [hidden]="compact() && stage() !== 'editor'"
+  >
+    @if (compact()) {
+      <!-- The stage's up-navigation: back to the library, the compact machine selector. -->
+      <button
+        type="button"
+        class="machines__back cs-focus-ring"
+        [attr.aria-label]="'machines.stage.back' | transloco"
+        (click)="showLibrary()"
+      >
+        <span class="machines__back-glyph" aria-hidden="true"><cs-icon name="arrow-right" /></span>
+        <span>{{ 'machines.library.title' | transloco }}</span>
+      </button>
+    }
+    <app-machine-editor
+      class="machines__editor cs-panel"
+      [doc]="selectedDoc()"
+      [locked]="selectedLocked()"
+      [active]="selectedActive()"
+      [series]="series()"
+      [telemetryLoading]="telemetryLoading()"
+      [telemetryFailed]="telemetryFailed()"
+      (saved)="onSaved($event)"
+      (dirtyChange)="onDirtyChange($event)"
+      (duplicateRequested)="duplicate(selectedDoc().id)"
+    />
+  </div>
+</div>
+
+<p-toast position="bottom-right" />

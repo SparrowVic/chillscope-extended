@@ -1,0 +1,29 @@
+<cs-control-frame [state]="frame()">
+  <!-- appendTo body: an inline panel gets buried under sibling stacking contexts. -->
+  <p-datepicker
+    appendTo="body"
+    panelStyleClass="cs-date-range-panel"
+    selectionMode="range"
+    [inputId]="controlId"
+    [ariaLabelledBy]="labelledBy()"
+    [pt]="passThrough()"
+    inputStyleClass="cs-date-range__input cs-mono"
+    rangeSeparator="–"
+    [ngModel]="pickedDates()"
+    (ngModelChange)="onPicked($event)"
+    (onBlur)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [minDate]="minDate()"
+    [maxDate]="maxDate()"
+    [dateFormat]="dateFormat()"
+    [showTime]="showTime()"
+    [showButtonBar]="showButtonBar()"
+    [showIcon]="true"
+    [readonlyInput]="true"
+    [size]="primeSize()"
+    [fluid]="true"
+    [placeholder]="placeholder() | transloco"
+  />
+</cs-control-frame>

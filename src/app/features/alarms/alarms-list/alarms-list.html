@@ -1,0 +1,92 @@
+@if (loading() && days().length === 0) {
+  <!-- `role="status"` implies a polite live region; the text must be in the DOM to be announced. -->
+  <div class="alarms-list__skeletons" role="status">
+    <span class="sr-only">{{ 'common.loading' | transloco }}</span>
+    @for (row of skeletonRows; track row) {
+      <!-- The wrapper owns the height so the placeholder can track the entry's responsive box. -->
+      <div class="alarms-list__skeleton">
+        <p-skeleton width="100%" height="100%" borderRadius="6px" />
+      </div>
+    }
+  </div>
+} @else if (days().length === 0) {
+  <app-empty-state
+    icon="circle-check"
+    titleKey="alarms.empty.title"
+    messageKey="alarms.empty.message"
+  />
+} @else {
+  @if (loading()) {
+    <div
+      class="alarms-list__refresh cs-loading-bar"
+      role="status"
+      [attr.aria-label]="'common.loading' | transloco"
+    ></div>
+  }
+  <div class="alarms-list" [attr.aria-busy]="loading()">
+    @for (day of days(); track day.dayStart) {
+      <section class="alarms-list__day">
+        <h2 class="cs-label alarms-list__heading">
+          <span class="alarms-list__heading-day">{{ day.heading }}</span>
+          <!-- The day tally: how many entries this group holds, and its critical share when one
+               exists (dark cockpit: a clean day earns no extra ink). Visible numbers, spoken
+               labels — nothing important hides behind hover on a phone. -->
+          <span class="alarms-list__heading-meta">
+            <span class="cs-mono alarms-list__heading-count">
+              <span aria-hidden="true">{{ day.count }}</span>
+              <span class="sr-only">
+                {{ 'alarms.list.dayCount' | transloco: { count: day.count } }}
+              </span>
+            </span>
+            @if (day.critical > 0) {
+              <span class="cs-mono alarms-list__heading-critical">
+                <cs-icon name="triangle-exclamation" aria-hidden="true" />
+                <span aria-hidden="true">{{ day.critical }}</span>
+                <span class="sr-only">
+                  {{ 'alarms.list.dayCritical' | transloco: { count: day.critical } }}
+                </span>
+              </span>
+            }
+          </span>
+        </h2>
+
+        <ul class="alarms-list__group">
+          @for (alarm of day.alarms; track alarm.id) {
+            <li>
+              <app-alarm-item [alarm]="alarm" [now]="now()" />
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+
+  @if (pageCount() > 1) {
+    <nav class="alarms-list__pager" [attr.aria-label]="'alarms.list.pagination' | transloco">
+      <p-button
+        type="button"
+        severity="secondary"
+        [label]="'alarms.list.previous' | transloco"
+        [disabled]="page() === 0"
+        (onClick)="previousPage()"
+      >
+        <ng-template #icon><cs-icon class="alarms-list__back" name="arrow-right" /></ng-template>
+      </p-button>
+      <span class="alarms-list__page cs-mono" aria-live="polite">
+        {{
+          'alarms.list.page'
+            | transloco: { page: page() + 1, pages: pageCount(), count: alarms().length }
+        }}
+      </span>
+      <p-button
+        type="button"
+        severity="secondary"
+        [label]="'alarms.list.next' | transloco"
+        [disabled]="page() >= pageCount() - 1"
+        (onClick)="nextPage()"
+      >
+        <ng-template #icon><cs-icon name="arrow-right" /></ng-template>
+      </p-button>
+    </nav>
+  }
+}

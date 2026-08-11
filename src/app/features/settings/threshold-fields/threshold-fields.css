@@ -1,0 +1,156 @@
+:host {
+  display: block;
+}
+
+.threshold-fields {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* The float pulls the legend out of the fieldset's anonymous box so it can lay out as a row. */
+.threshold-fields__legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* The disclosure key: the whole header is the target, at the line metric with the summary as
+   its second row. The negative inline margin keeps its text flush with the section's content
+   while hover/focus paint bleeds a little past it, like the machines back key. */
+.threshold-fields__toggle {
+  box-sizing: border-box;
+  width: calc(100% + 2 * calc(0.375rem * var(--cs-density)));
+  min-height: var(--cs-control-height);
+  margin-inline: calc(-0.375rem * var(--cs-density));
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: calc(0.5rem * var(--cs-density));
+  row-gap: 0.125rem;
+  padding: calc(0.375rem * var(--cs-density));
+  border: 0;
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  color: var(--cs-text);
+  font-family: var(--cs-font-sans);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) ease-out;
+}
+
+.threshold-fields__toggle:hover {
+  background: var(--cs-hover-tint);
+}
+
+@media (pointer: coarse) {
+  .threshold-fields__toggle {
+    min-height: max(var(--cs-control-height), 2.75rem);
+  }
+}
+
+/* An LED-sized dot: it stays the same size at every density, like every other status light. */
+.threshold-fields__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.threshold-fields__title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(0.5rem * var(--cs-density));
+  min-width: 0;
+}
+
+.threshold-fields__name {
+  font-size: var(--cs-font-control);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.threshold-fields__unit {
+  font-size: var(--cs-font-support);
+  color: var(--cs-muted);
+}
+
+/* A folded group may not hide its problems: the crit voice on the header, message inside. */
+.threshold-fields__flag {
+  display: inline-flex;
+  align-items: center;
+  color: var(--cs-crit);
+  font-size: var(--cs-font-support);
+}
+
+/* The roster has no chevron; arrow-right rotating to point down is the disclosure glyph. */
+.threshold-fields__chevron {
+  color: var(--cs-muted);
+  font-size: var(--cs-font-support);
+  transition: rotate var(--cs-dur-fast) var(--cs-ease);
+}
+
+.threshold-fields__toggle[aria-expanded='true'] .threshold-fields__chevron {
+  rotate: 90deg;
+}
+
+/* The four bounds under the series name, in mono — the collapsed row still reads as data. */
+.threshold-fields__summary {
+  grid-column: 2 / -1;
+  font-size: var(--cs-font-support);
+  color: var(--cs-muted);
+}
+
+/* The zone map itself is the shared cs-threshold-envelope; it stays out of the fold because it
+   IS the summary — the header row plus this rail describe the band at a glance. */
+.threshold-fields__envelope {
+  clear: both;
+  margin-block: calc(0.5 * var(--cs-gap-field)) 0;
+}
+
+/* Progressive disclosure, one mounted tree: the body collapses through the 0fr grid track and
+   leaves the a11y tree via [inert] + visibility — the field components underneath stay alive,
+   so folding a group never touches form state. Open rides the spring, close calms down (§8);
+   the base sheet's reduced-motion clamp flattens both to 1ms. */
+.threshold-fields__body {
+  clear: both;
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 300ms var(--cs-spring-soft);
+}
+
+.threshold-fields__body[inert] {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--cs-dur-c) var(--cs-ease),
+    visibility 0s var(--cs-dur-c);
+}
+
+/* The clip's padding gives focus rings their 5px of air inside the clipped box while open; it
+   transitions to zero when folded so the collapsed track really reaches zero height. */
+.threshold-fields__clip {
+  overflow: hidden;
+  min-height: 0;
+  padding: 0.375rem;
+  margin: -0.375rem;
+  transition:
+    padding var(--cs-dur-c) var(--cs-ease),
+    margin var(--cs-dur-c) var(--cs-ease);
+}
+
+.threshold-fields__body[inert] .threshold-fields__clip {
+  padding: 0;
+  margin: 0;
+}
+
+/* The min() guard keeps the track from overflowing a container narrower than one column,
+   matching the simulation and appearance grids. */
+.threshold-fields__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(calc(9.5rem * var(--cs-density)), 100%), 1fr));
+  gap: var(--cs-gap-field) var(--cs-gap-section);
+  align-items: start;
+  padding-block-start: calc(0.5 * var(--cs-gap-field));
+}

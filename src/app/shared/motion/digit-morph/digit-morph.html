@@ -1,0 +1,12 @@
+@for (cell of cells(); track cell.key) {
+  <span class="ch">
+    @if (cell.outChar !== null) {
+      <span class="out" [style.animation-delay]="cell.delay" aria-hidden="true">{{
+        cell.outChar
+      }}</span>
+      <span class="in" [style.animation-delay]="cell.delay">{{ cell.char }}</span>
+    } @else {
+      {{ cell.char }}
+    }
+  </span>
+}

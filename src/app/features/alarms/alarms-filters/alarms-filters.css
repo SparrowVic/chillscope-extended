@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+/* A quiet toolbar row inside the adaptive shell, wrapping when the width narrows; inside the
+   phone sheet the 13rem basis stacks the same controls one per line. */
+.alarms-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--cs-gap-field);
+}
+
+.alarms-filters__row > * {
+  flex: var(--cs-filter-field-grow, 1) 1 var(--cs-filter-field-basis, 13rem);
+  max-width: var(--cs-filter-field-max, 22rem);
+  min-width: 0;
+}
+
+.alarms-filters__severity {
+  flex-basis: var(--cs-filter-field-basis, 11rem);
+  min-width: min(10rem, 100%);
+}
+
+.alarms-filters__series {
+  flex-basis: var(--cs-filter-field-basis, 15rem);
+  min-width: min(13rem, 100%);
+}
+
+.alarms-filters__range {
+  flex-basis: var(--cs-filter-field-basis, 11.5rem);
+  min-width: min(11.5rem, 100%);
+}
+
+.alarms-filters__custom-range {
+  flex-basis: var(--cs-filter-field-basis, 18.5rem);
+  min-width: min(18.5rem, 100%);
+}

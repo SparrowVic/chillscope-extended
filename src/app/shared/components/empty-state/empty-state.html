@@ -1,0 +1,9 @@
+<cs-icon class="empty-state__icon" aria-hidden="true" [name]="icon()" />
+
+<p class="empty-state__title">{{ titleKey() | transloco }}</p>
+
+@if (messageKey(); as message) {
+  <p class="empty-state__message">{{ message | transloco }}</p>
+}
+
+<ng-content />

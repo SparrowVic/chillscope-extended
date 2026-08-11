@@ -1,0 +1,96 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+}
+
+/* The quiet filter toolbar now lives inside app-dashboard-filters (the adaptive filter shell):
+   its row layout moved to dashboard-filters.css with the same terms. */
+
+/* Control-room seating: the synoptic hero with the alarm journal at its side, then each chart
+   band on a full-width row of its own — a time axis is as readable as it is wide, and the
+   journal no longer leaves a dead column beside the tall band stack. */
+
+/* One column (phones and portrait tablets): operational rank, not analytics rank. The machine's
+   current state leads, the alarm journal outranks both history bands — an operator glancing at a
+   phone asks "is it healthy" and "what fired" before "what happened over time" — then the chart,
+   then the long-window heatmap. This order matches the template's DOM order exactly, so the
+   visual, tab and screen-reader sequences agree on narrow screens. */
+.dashboard__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'hero'
+    'journal'
+    'chart'
+    'cycle';
+  gap: var(--cs-gap-section);
+}
+
+@media (min-width: 1100px) {
+  .dashboard__layout {
+    /* The journal column follows density: its rows are text, and they shrink with it. */
+    grid-template-columns: minmax(0, 1fr) calc(21rem * var(--cs-density));
+    grid-template-areas:
+      'hero journal'
+      'chart chart'
+      'cycle cycle';
+    align-items: start;
+  }
+}
+
+.dashboard__hero {
+  grid-area: hero;
+  min-width: 0;
+}
+
+.dashboard__journal {
+  grid-area: journal;
+  min-width: 0;
+}
+
+.dashboard__chart-area {
+  grid-area: chart;
+  min-width: 0;
+}
+
+.dashboard__cycle-area {
+  grid-area: cycle;
+  min-width: 0;
+}
+
+/*
+ * Same height as the resolved chart band, so nothing below it jumps when the deferred chunk lands.
+ * The terms mirror chart-panel.css by hand: 20rem canvas (the chart element's own floor, which is
+ * why it does not scale) + a 1.5rem heading line + the head-to-canvas gap + both panel paddings.
+ * Any change to that sheet's box must be restated here.
+ */
+.dashboard__chart-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  min-height: calc(20rem + 1.5rem + var(--cs-gap-field) + var(--cs-pad-panel) * 2);
+  padding: var(--cs-pad-panel);
+}
+
+/* A percentage-height skeleton needs a definite height; the stretched grid area provides one. */
+.dashboard__chart-skeleton-body {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+}
+
+/* The cycle band's twin of the chart slot: 16.25rem canvas + heading + controls line + gaps.
+   The controls line is a labelled segmented row, so its height is the control frame's label line
+   plus its 0.375rem label-to-track gap on top of the pinned track — omitting the label made the
+   placeholder ~1.4rem shorter than the landed panel, so everything below it jumped. */
+.dashboard__cycle-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  min-height: calc(
+    16.25rem + 1.5rem + var(--cs-label-line) + 0.375rem + var(--cs-control-height) +
+      var(--cs-gap-field) * 2 + var(--cs-pad-panel) * 2
+  );
+  padding: var(--cs-pad-panel);
+}

@@ -1,0 +1,4 @@
+@if (enabled()) {
+  <span class="live-toggle__led cs-led cs-led--pulse" aria-hidden="true"></span>
+}
+<cs-switch label="live.short" [checked]="enabled()" (checkedChange)="enabled.set($event)" />

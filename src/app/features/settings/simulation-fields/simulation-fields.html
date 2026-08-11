@@ -1,0 +1,48 @@
+<div class="simulation-fields__pair">
+  <cs-input-number
+    label="settings.live.interval"
+    hint="settings.live.intervalHint"
+    suffix=" ms"
+    inputMode="numeric"
+    [formField]="liveIntervalMs()"
+    [step]="500"
+  />
+  <cs-slider
+    class="simulation-fields__slider"
+    label="settings.live.interval"
+    [showValue]="false"
+    [min]="intervalRange.min"
+    [max]="intervalRange.max"
+    [step]="500"
+    [value]="intervalSliderValue()"
+    (valueChange)="setFromSlider(liveIntervalMs(), $event)"
+  />
+</div>
+
+<div class="simulation-fields__pair">
+  <cs-input-number
+    label="settings.simulation.failureRate"
+    hint="settings.simulation.failureRateHint"
+    suffix=" %"
+    inputMode="numeric"
+    [formField]="failureRatePercent()"
+  />
+  <cs-slider
+    class="simulation-fields__slider"
+    label="settings.simulation.failureRate"
+    [showValue]="false"
+    [min]="failureRange.min"
+    [max]="failureRange.max"
+    [step]="5"
+    [value]="failureSliderValue()"
+    (valueChange)="setFromSlider(failureRatePercent(), $event)"
+  />
+</div>
+
+<div class="simulation-fields__seed">
+  <span class="cs-label">{{ 'settings.simulation.seed' | transloco }}</span>
+  <span class="cs-mono simulation-fields__seed-value">{{ seed }}</span>
+  <small class="simulation-fields__seed-hint">
+    {{ 'settings.simulation.seedHint' | transloco }}
+  </small>
+</div>

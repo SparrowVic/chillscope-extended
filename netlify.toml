@@ -1,0 +1,81 @@
+[build]
+  command = "yarn build"
+  publish = "dist/chillscope/browser"
+
+[build.environment]
+  YARN_FLAGS = "--frozen-lockfile"
+
+[[redirects]]
+  from = "/assets/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/icons/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/media/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/chunk-*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/main-*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/styles-*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/worker-*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/ngsw*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/safety-*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/manifest.webmanifest"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/manifest.webmanifest"
+
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    Permissions-Policy = "camera=(), geolocation=(), microphone=()"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"

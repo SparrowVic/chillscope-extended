@@ -1,0 +1,28 @@
+<cs-control-frame [state]="frame()">
+  <p-select
+    optionLabel="text"
+    optionValue="value"
+    optionDisabled="disabled"
+    panelStyleClass="cs-select-panel"
+    [inputId]="controlId"
+    [ariaLabel]="ariaLabel() ? (ariaLabel() | transloco) : undefined"
+    [ariaLabelledBy]="labelledBy()"
+    [appendTo]="appendTo()"
+    [pt]="passThrough()"
+    [options]="resolvedOptions()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (onBlur)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [showClear]="showClear()"
+    [filter]="filter()"
+    [autofocusFilter]="false"
+    [size]="primeSize()"
+    [fluid]="true"
+    [placeholder]="placeholder() | transloco"
+    [emptyMessage]="'common.noResults' | transloco"
+    [emptyFilterMessage]="'common.noResults' | transloco"
+  />
+</cs-control-frame>

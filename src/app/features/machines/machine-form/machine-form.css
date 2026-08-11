@@ -1,0 +1,182 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+  /* Folds below measure the pane, not the viewport: the form renders inside the editor's tab
+     pane, whose width the viewport knows nothing about. */
+  container-type: inline-size;
+  container-name: mform;
+}
+
+/* MASZYNA is a nameplate, not a fieldset: id | name | revision on one engraved line. */
+.mform__machine {
+  display: grid;
+  grid-template-columns: minmax(7rem, 10rem) minmax(0, 1.6fr) minmax(6.5rem, 9rem);
+  grid-template-areas: 'id name revision';
+  gap: var(--cs-gap-field);
+}
+
+.mform__machine-id {
+  grid-area: id;
+}
+
+.mform__machine-name {
+  grid-area: name;
+}
+
+.mform__machine-revision {
+  grid-area: revision;
+}
+
+.mform__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The author display above would defeat the plain attribute; the fold contract depends on it. */
+.mform__rows[hidden] {
+  display: none;
+}
+
+.mform__rows app-node-fields,
+.mform__rows app-pipe-fields,
+.mform__rows app-sensor-fields {
+  padding-block: var(--cs-gap-field);
+}
+
+.mform__rows > :first-child {
+  padding-block-start: 0;
+}
+
+.mform__rows app-node-fields + app-node-fields,
+.mform__rows app-pipe-fields + app-pipe-fields,
+.mform__rows app-sensor-fields + app-sensor-fields {
+  border-top: 1px solid var(--cs-hairline);
+}
+
+.mform__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.5rem * var(--cs-density));
+  min-height: var(--cs-control-height);
+  margin: 0 0 var(--cs-gap-field);
+  color: var(--cs-muted);
+}
+
+/* The ghost slot: an empty record waiting to exist. Hover fills the paper — no lift. */
+.mform__ghost {
+  display: flex;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--cs-control-height);
+  padding-inline: var(--cs-gap-field);
+  border: 1px dashed var(--cs-hairline-strong);
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  color: var(--cs-muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color var(--cs-dur-fast) var(--cs-ease),
+    background-color var(--cs-dur-fast) var(--cs-ease),
+    color var(--cs-dur-fast) var(--cs-ease);
+}
+
+.mform__ghost:not([aria-disabled='true']):hover,
+.mform__ghost:not([aria-disabled='true']):focus-visible {
+  border-style: solid;
+  background: var(--cs-panel-raised);
+  color: var(--cs-text);
+}
+
+/* A blocked add stays a readable fact: the frame dims, the label keeps its >=4.5:1 muted ink
+   (§7 disabled contract) — and the slot stays focusable so the rule it names is announced. */
+.mform__ghost[aria-disabled='true'] {
+  border-color: var(--cs-hairline);
+  cursor: default;
+}
+
+.mform__ghost[aria-disabled='true'] .mform__ghost-well {
+  opacity: 0.45;
+}
+
+/* The node ghost's leading square prefigures the strip's symbol well. */
+.mform__ghost--node {
+  padding-inline-start: 0;
+}
+
+.mform__ghost-well {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 calc(2.75rem * var(--cs-density));
+  align-self: stretch;
+  border-inline-end: 1px dashed var(--cs-hairline-strong);
+  transition: border-color var(--cs-dur-fast) var(--cs-ease);
+}
+
+.mform__ghost:not([aria-disabled='true']):hover .mform__ghost-well,
+.mform__ghost:not([aria-disabled='true']):focus-visible .mform__ghost-well {
+  border-inline-end-style: solid;
+}
+
+/* A fingertip outranks the metric (§6): the slot clears 44px on coarse pointers. */
+@media (pointer: coarse) {
+  .mform__ghost {
+    height: max(var(--cs-control-height), 2.75rem);
+  }
+}
+
+.mform__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  border-top: 1px solid var(--cs-hairline);
+  padding-top: var(--cs-gap-section);
+}
+
+.mform__dirty {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.5rem * var(--cs-density));
+  color: var(--cs-muted);
+}
+
+/* The one .cs-led vocabulary in its steady warn voice: unsaved work is a state, not an alarm —
+   no pulse (§7 reserves it for live + critical). */
+.mform__dirty-lamp {
+  --cs-led-color: var(--cs-warn);
+}
+
+/* The spring: actions hold the right edge whether or not the dirty lamp is lit. */
+.mform__actions p-button:first-of-type {
+  margin-inline-start: auto;
+}
+
+/* The ACTION DOCK (compact stage) pins above the mobile navigation reserve. Sticky keeps it in
+   flow, so with an
+   on-screen keyboard open it can always be scrolled back into view; full-bleed margins let its
+   opaque panel surface seal the editor panel's gutters while content passes beneath. */
+@media (width < 900px) {
+  .mform__actions {
+    position: sticky;
+    bottom: var(--machines-dock, 0px);
+    z-index: 1;
+    margin-inline: calc(-1 * var(--cs-pad-panel));
+    padding: var(--cs-gap-field) var(--cs-pad-panel);
+    background: var(--cs-panel);
+  }
+}
+
+@container mform (max-width: 560px) {
+  .mform__machine {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'id revision'
+      'name name';
+  }
+}

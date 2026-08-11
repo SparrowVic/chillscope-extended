@@ -1,0 +1,116 @@
+<header class="tape__head">
+  <cs-icon class="tape__icon" [name]="icon()" />
+  <div class="tape__title">
+    <!-- The name truncates with ellipsis on narrow faces; the title restores the full text. -->
+    <h3 class="cs-label tape__name" [title]="labelKey() | transloco">
+      {{ labelKey() | transloco }}
+    </h3>
+    <!-- Keyed on the designation: the decode churn replaces the node's text, so a machine
+         switch must recreate the element (a fresh signal lock) rather than write into a
+         detached text node. Once per identity is the directive's own contract. -->
+    @for (designation of [tag()]; track designation) {
+      <span class="cs-mono tape__tag" [appDecode]="designation">{{ designation }}</span>
+    }
+  </div>
+  <span
+    class="tape__trend tape__trend--{{ trend() }}"
+    role="img"
+    [attr.aria-label]="trendKey() | transloco"
+  >
+    <svg
+      viewBox="0 0 10 10"
+      width="11"
+      height="11"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path [attr.d]="trendGlyph()" />
+    </svg>
+  </span>
+</header>
+
+<div class="tape__window" #tapeWindow>
+  <div
+    class="tape__drift"
+    [style.animation-duration]="drift().duration"
+    [style.animation-delay]="drift().delay"
+  >
+    <div
+      class="tape__scale"
+      aria-hidden="true"
+      [style.height.px]="scaleHeight"
+      [style.transform]="scaleTransform()"
+    >
+      @for (zone of zones(); track zone.kind + zone.edge) {
+        <div
+          class="tape__zone tape__zone--{{ zone.kind }} tape__zone--{{ zone.edge }}"
+          [style.top.px]="zone.top"
+          [style.height.px]="zone.height"
+        >
+          <span class="cs-mono tape__zone-tag">
+            {{ zoneKey(zone.kind) | transloco }} {{ zone.thresholdText }}
+          </span>
+        </div>
+      }
+
+      @for (tick of ticks(); track tick.value) {
+        <span
+          class="tape__tick"
+          [class.tape__tick--major]="tick.major"
+          [style.top.px]="tick.y"
+        ></span>
+        @if (tick.label !== undefined) {
+          <span
+            class="cs-mono tape__tick-label tape__tick-label--{{ tick.status }}"
+            [style.top.px]="tick.y"
+            >{{ tick.label }}</span
+          >
+        }
+      }
+
+      @if (notches(); as notch) {
+        <span class="tape__notch" [style.top.px]="notch.maxY">
+          <em class="cs-mono">{{ 'measurements.tape.max' | transloco }}</em>
+        </span>
+        <span class="tape__notch" [style.top.px]="notch.minY">
+          <em class="cs-mono">{{ 'measurements.tape.min' | transloco }}</em>
+        </span>
+      }
+    </div>
+  </div>
+
+  <svg
+    class="tape__spark"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    [attr.viewBox]="sparkViewBox()"
+  >
+    <path [attr.d]="sparkPath()" vector-effect="non-scaling-stroke" />
+  </svg>
+  <span class="tape__spine" aria-hidden="true"></span>
+
+  <div class="tape__chip tape__chip--{{ status() }}">
+    <cs-digit-morph class="cs-mono tape__value" [value]="valueText()" />
+    <span class="tape__unit">{{ unitKey() | transloco }}</span>
+    <!-- The chip's tint is the visual severity channel; this is the same fact as text. -->
+    <span class="sr-only">{{ 'severity.' + status() | transloco }}</span>
+  </div>
+</div>
+
+@if (stats(); as extent) {
+  <footer class="cs-mono tape__foot">
+    <span
+      >{{ 'measurements.tape.min' | transloco }} <b>{{ extent.min }}</b></span
+    >
+    <span
+      >{{ 'measurements.tape.avg' | transloco }} <b>{{ extent.avg }}</b></span
+    >
+    <span
+      >{{ 'measurements.tape.max' | transloco }} <b>{{ extent.max }}</b></span
+    >
+  </footer>
+}

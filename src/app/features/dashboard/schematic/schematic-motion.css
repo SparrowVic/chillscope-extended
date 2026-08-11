@@ -1,0 +1,262 @@
+/* State motion for the synoptic scene. Continuous work is opt-in: without a positive flow
+   reading every loop is both paused and visually absent, so missing telemetry never looks alive. */
+
+.schematic__flow--running {
+  opacity: 0.66;
+}
+
+.schematic__packet--running {
+  opacity: 0.85;
+}
+
+.schematic__packet-tail--running {
+  opacity: 0.38;
+}
+
+.schematic__fx-anim {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.schematic__spin {
+  transform-origin: 0 0;
+}
+
+.schematic__fx {
+  opacity: 0;
+  transition: opacity 320ms var(--cs-ease);
+}
+
+.schematic__fx--active {
+  opacity: 1;
+}
+
+.schematic__fx-anim {
+  opacity: var(--fx-opacity, 0.2);
+}
+
+.schematic__fx--tone-cold {
+  color: var(--cs-cold);
+}
+
+.schematic__fx--tone-hot {
+  color: var(--cs-hot);
+}
+
+.schematic__fx--tone-status {
+  color: var(--cs-ok);
+}
+
+.schematic__fx--tone-status.schematic__fx--warning {
+  color: var(--cs-warn);
+}
+
+.schematic__fx--tone-status.schematic__fx--critical {
+  color: var(--cs-crit);
+}
+
+.schematic__stage--unknown .schematic__pipe {
+  opacity: 0.34;
+}
+
+.schematic__stage--unknown .schematic__joint {
+  opacity: 0.38;
+}
+
+.schematic__stage--stopped .schematic__pipe {
+  opacity: 0.62;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A switch hands the scene over in under 900ms: components, circuit, then annotations. */
+  .schematic__body,
+  .schematic__spin-shapes {
+    --dd: 600;
+
+    stroke-dasharray: 600;
+    animation: cs-draw 220ms var(--cs-ease) var(--draw-delay, 0ms) backwards;
+  }
+
+  .schematic__pipe {
+    animation: cs-draw 200ms var(--cs-ease) var(--draw-delay, 380ms) backwards;
+  }
+
+  .schematic__joint,
+  .schematic__leader,
+  .schematic__node-label,
+  .schematic-tag {
+    animation: cs-fade 140ms linear 740ms backwards;
+  }
+
+  /* Dash velocity follows flow; stopped layers own no continuous animation. */
+  .schematic__flow--running {
+    animation:
+      cs-flow-dash var(--cs-flow-dur, 6s) linear infinite,
+      cs-fade 140ms linear 740ms backwards;
+  }
+
+  .schematic__flow--hot.schematic__flow--running {
+    animation:
+      cs-flow-dash var(--cs-flow-dur, 6s) linear infinite,
+      cs-fade 140ms linear 740ms backwards,
+      cs-shimmer 2.8s ease-in-out 880ms infinite;
+  }
+
+  /* Equal flow gives equal apparent packet velocity: routed length is folded into --packet-dur. */
+  .schematic__packet--running {
+    animation:
+      cs-packet var(--packet-dur, 12s) linear calc(var(--pipe-i, 0) * -1.73s) infinite,
+      cs-fade 140ms linear 740ms backwards;
+  }
+
+  .schematic__packet-tail--running {
+    animation:
+      cs-packet var(--packet-dur, 12s) linear
+        calc(var(--pipe-i, 0) * -1.73s + var(--packet-dur, 12s) * 0.014) infinite,
+      cs-fade 140ms linear 740ms backwards;
+  }
+
+  /* One-shot: enters after the pipe finishes drawing, sweeps through, exits, never returns. */
+  .schematic__prime {
+    animation: cs-prime 640ms var(--cs-ease) calc(560ms + var(--pipe-i, 0) * 130ms) both;
+  }
+
+  .schematic__spin--running {
+    animation: cs-spin calc(var(--spin-dur, 3s) / var(--spin-speed, 1)) linear 740ms infinite
+      backwards;
+  }
+
+  .schematic__spin--reverse.schematic__spin--running {
+    animation-direction: reverse;
+  }
+
+  .schematic__spin--piston.schematic__spin--running {
+    animation-name: cs-piston;
+    animation-timing-function: var(--cs-ease);
+  }
+
+  /* Each effect is data geometry wrapped by one cheap transform/opacity compositor layer. */
+  .schematic__fx--active .schematic__fx-anim {
+    animation-duration: var(--fx-dur, 3s);
+    animation-timing-function: var(--fx-ease, ease-in-out);
+    animation-delay: calc(740ms + var(--i, 0) * var(--fx-step, 0s));
+    animation-iteration-count: infinite;
+  }
+
+  .schematic__fx--active {
+    animation: cs-fade 140ms linear 740ms backwards;
+  }
+
+  :is(
+      .schematic__fx--active.schematic__fx--halo,
+      .schematic__fx--active.schematic__fx--coil-glow,
+      .schematic__fx--active.schematic__fx--level-breath,
+      .schematic__fx--active.schematic__fx--discharge,
+      .schematic__fx--active.schematic__fx--heat-pulse
+    )
+    > .schematic__fx-anim {
+    animation-name: cs-fx-breathe;
+  }
+
+  :is(
+      .schematic__fx--active.schematic__fx--heat-rise,
+      .schematic__fx--active.schematic__fx--air-tick,
+      .schematic__fx--active.schematic__fx--heat-fade,
+      .schematic__fx--active.schematic__fx--vapor
+    )
+    > .schematic__fx-anim {
+    animation-name: cs-fx-rise;
+  }
+
+  .schematic__fx--active.schematic__fx--ripple > .schematic__fx-anim {
+    animation-name: cs-fx-drift;
+  }
+
+  .schematic__fx--active.schematic__fx--drip > .schematic__fx-anim {
+    animation-name: cs-fx-fall;
+  }
+
+  .schematic__fx--active.schematic__fx--spray > .schematic__fx-anim {
+    animation-name: cs-fx-spray;
+  }
+
+  .schematic__fx--active.schematic__fx--throttle > .schematic__fx-anim {
+    animation-name: cs-fx-flicker;
+  }
+
+  .schematic__fx--heat-rise {
+    --fx-ease: linear;
+    --fx-step: 0.7s;
+  }
+
+  .schematic__fx--air-tick {
+    --fx-ease: linear;
+    --fx-step: 0.5s;
+  }
+
+  .schematic__fx--heat-fade {
+    --fx-ease: linear;
+    --fx-step: 0.72s;
+  }
+
+  .schematic__fx--vapor {
+    --fx-ease: linear;
+    --fx-step: 0.84s;
+  }
+
+  .schematic__fx--drip {
+    --fx-ease: ease-in;
+    --fx-step: 0.8s;
+  }
+
+  .schematic__fx--spray {
+    --fx-ease: ease-out;
+    --fx-step: 0.4s;
+  }
+
+  .schematic__fx--throttle {
+    --fx-ease: linear;
+  }
+
+  .schematic__node--pump.schematic__node--running .schematic__body {
+    animation:
+      cs-draw 220ms var(--cs-ease) var(--draw-delay, 0ms) backwards,
+      cs-vibe 240ms linear 740ms infinite;
+  }
+
+  .schematic__node--critical.schematic__node--running .schematic__body {
+    animation:
+      cs-draw 220ms var(--cs-ease) var(--draw-delay, 0ms) backwards,
+      cs-alarm 2s var(--cs-ease) 740ms infinite;
+  }
+
+  .schematic__anomaly-wave--warning,
+  .schematic__anomaly-wave--critical {
+    animation:
+      cs-anomaly-wave var(--packet-dur, 8s) linear infinite,
+      cs-fade 140ms linear 740ms backwards;
+  }
+
+  .schematic__anomaly-wave--warning {
+    stroke: var(--cs-warn);
+    opacity: 0.72;
+  }
+
+  .schematic__anomaly-wave--critical {
+    stroke: var(--cs-crit);
+    opacity: 0.9;
+  }
+
+  .schematic__anomaly-wave--reverse {
+    animation-direction: reverse, normal;
+  }
+
+  .schematic-tag__led--pulse {
+    animation: cs-led-attention 2s var(--cs-ease) infinite;
+  }
+
+  .schematic__node:is(:hover, :focus-visible, .schematic__node--inspected)
+    .schematic__focus-brackets {
+    animation: cs-bracket-reveal 160ms var(--cs-ease) both;
+  }
+}

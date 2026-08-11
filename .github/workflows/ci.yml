@@ -1,0 +1,75 @@
+name: Continuous integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Activate the pinned Yarn version
+        run: |
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+          test "$(yarn --version)" = "1.22.22"
+
+      - name: Locate the Yarn cache
+        id: yarn-cache
+        run: echo "directory=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the dependency cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.yarn-cache.outputs.directory }}
+          key: yarn-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.nvmrc', 'yarn.lock', 'chart/yarn.lock') }}
+          restore-keys: |
+            yarn-v1-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Install frozen dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+
+      - name: Run the quality gate
+        run: yarn verify
+
+  container:
+    name: Container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build the production image
+        run: docker build --tag chillscope:ci .
+
+      - name: Smoke-test the production image
+        env:
+          CHILLSCOPE_IMAGE: chillscope:ci
+        run: sh scripts/smoke-docker.sh

@@ -1,0 +1,22 @@
+/* The toolbar in dashboard.css lays the pieces out; the host adds no box of its own. */
+:host {
+  display: contents;
+}
+
+.range-picker__presets {
+  flex: var(--cs-filter-field-grow, 0) 1 var(--cs-filter-field-basis, auto);
+  max-width: var(--cs-filter-field-max, 100%);
+}
+
+/* Flex sizing against the toolbar row in dashboard.css. */
+.range-picker__custom {
+  flex: var(--cs-filter-field-grow, 1) 1 var(--cs-filter-field-basis, 20rem);
+  min-width: min(18.5rem, 100%);
+  max-width: var(--cs-filter-field-max, 24rem);
+}
+
+.range-picker__bucket {
+  flex: var(--cs-filter-field-grow, 0) 1 var(--cs-filter-field-basis, 11.5rem);
+  min-width: min(11.5rem, 100%);
+  max-width: var(--cs-filter-field-max, none);
+}

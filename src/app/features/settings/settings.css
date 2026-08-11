@@ -1,0 +1,76 @@
+:host {
+  --settings-dock: var(--cs-mobile-navigation-reserve);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+}
+
+@media (max-height: 420px) {
+  :host {
+    --settings-dock: calc(
+      var(--cs-mobile-navigation-height) + 0.375rem + env(safe-area-inset-bottom)
+    );
+  }
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+}
+
+.settings__workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--cs-gap-section);
+}
+
+.settings__section {
+  min-width: 0;
+}
+
+.settings__caption {
+  padding: var(--cs-pad-panel-tight) var(--cs-pad-panel);
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+.settings__body {
+  padding: var(--cs-pad-panel);
+}
+
+.settings__description {
+  margin: 0 0 var(--cs-gap-section);
+  font-size: 1.04em;
+  color: var(--cs-muted);
+}
+
+.settings__thresholds {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Series separate with hairlines and spacing, not nested boxes. The rows are disclosure
+   headers now, so they sit closer than full sections would. */
+.settings__thresholds app-threshold-fields {
+  padding-block: var(--cs-gap-field);
+}
+
+.settings__thresholds app-threshold-fields:first-child {
+  padding-block-start: 0;
+}
+
+.settings__thresholds app-threshold-fields:last-child {
+  padding-block-end: 0;
+}
+
+.settings__thresholds app-threshold-fields + app-threshold-fields {
+  border-top: 1px solid var(--cs-hairline);
+}
+
+@media (min-width: 1180px) {
+  .settings__workspace {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

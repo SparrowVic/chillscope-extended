@@ -1,0 +1,38 @@
+/* The surface comes from .cs-panel on the host; only the panel's own box lives here. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  padding: var(--cs-pad-panel);
+}
+
+.cycle-panel__head {
+  flex-wrap: wrap;
+  gap: 0.35rem var(--cs-gap-field);
+}
+
+/* Same wrapped-line anchoring as the chart hint: the end edge holds after a wrap. */
+.cycle-panel__hint {
+  margin: 0;
+  margin-inline-start: auto;
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+  text-align: end;
+}
+
+/* Wrap-then-shrink: a track too wide for its line drops to its own row first, and only a track
+   wider than the whole panel scrolls inside the shared control's own box — never the page. */
+.cycle-panel__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--cs-gap-field) var(--cs-gap-section);
+}
+
+/* 16.25rem = 260px of canvas — the heatmap element's own min-block-size, same contract as the
+   chart band: density scales the chrome, never the plot. */
+.cycle-panel__canvas {
+  display: block;
+  width: 100%;
+  height: 16.25rem;
+}

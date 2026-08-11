@@ -1,0 +1,39 @@
+:host {
+  position: relative;
+  display: block;
+  height: 0.375rem;
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--cs-text) 4%, transparent);
+}
+
+/* Zone tints follow §2.1 chroma-is-information: warn 10%, crit 14%, normal stays bare. */
+.envelope__zones {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--cs-crit) 14%, transparent) 0 var(--env-critical-min),
+    color-mix(in srgb, var(--cs-warn) 10%, transparent) var(--env-critical-min)
+      var(--env-warning-min),
+    transparent var(--env-warning-min) var(--env-warning-max),
+    color-mix(in srgb, var(--cs-warn) 10%, transparent) var(--env-warning-max)
+      var(--env-critical-max),
+    color-mix(in srgb, var(--cs-crit) 14%, transparent) var(--env-critical-max) 100%
+  );
+}
+
+/* Each threshold value is a 1px machined tick at full token voice — the mark IS the datum. */
+.envelope__tick {
+  position: absolute;
+  inset-block: 0;
+  width: 1px;
+}
+
+.envelope__tick--warn {
+  background: var(--cs-warn);
+}
+
+.envelope__tick--crit {
+  background: var(--cs-crit);
+}

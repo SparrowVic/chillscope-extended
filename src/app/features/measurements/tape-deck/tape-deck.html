@@ -1,0 +1,48 @@
+<section class="tape-deck" [attr.aria-label]="'measurements.deck.title' | transloco">
+  <!-- §8b power-on beats for this view: legend row 0, deck 1; the log section takes 2. -->
+  <header class="tape-deck__head cs-rise" style="--rise: 0">
+    <h2 class="cs-label tape-deck__title">{{ 'measurements.deck.title' | transloco }}</h2>
+
+    <span class="tape-deck__legend" aria-hidden="true">
+      <span class="cs-mono tape-deck__legend-item tape-deck__legend-item--warning">
+        {{ 'measurements.deck.legendWarning' | transloco }}
+      </span>
+      <span class="cs-mono tape-deck__legend-item tape-deck__legend-item--critical">
+        {{ 'measurements.deck.legendCritical' | transloco }}
+      </span>
+    </span>
+
+    <app-live-toggle
+      class="tape-deck__live"
+      [enabled]="measurements.liveEnabled()"
+      (enabledChange)="measurements.setLiveEnabled($event)"
+    />
+  </header>
+
+  @if (deck.error()) {
+    <app-error-panel
+      titleKey="errors.loadMeasurements"
+      [retrying]="deck.isLoading()"
+      (retry)="deck.reload()"
+    />
+  }
+  @if (deck.series().length > 0) {
+    <div class="tape-deck__grid cs-rise" style="--rise: 1">
+      @for (entry of deck.series(); track entry.id; let i = $index) {
+        <app-tape [series]="entry" [index]="i" />
+      }
+    </div>
+  } @else if (!deck.error() && deck.isLoading()) {
+    <div
+      class="tape-deck__pending cs-loading-bar"
+      role="status"
+      [attr.aria-label]="'common.loading' | transloco"
+    ></div>
+  } @else if (!deck.error()) {
+    <app-empty-state
+      icon="table-list"
+      titleKey="measurements.empty.title"
+      messageKey="measurements.empty.message"
+    />
+  }
+</section>

@@ -1,0 +1,105 @@
+<!-- §8b power-on: the bridge assembles top-down — header, filters, hero, journal, chart band —
+     one .cs-rise beat apiece. The measurements error panel deliberately carries no index:
+     abnormal SNAPS into place, it does not glide. -->
+<app-page-header
+  class="cs-rise"
+  style="--rise: 0"
+  titleKey="dashboard.title"
+  subtitleKey="dashboard.subtitle"
+  icon="gauge-high"
+>
+  <app-live-toggle
+    [enabled]="measurements.liveEnabled()"
+    (enabledChange)="measurements.setLiveEnabled($event)"
+  />
+</app-page-header>
+
+<app-dashboard-filters
+  class="cs-rise"
+  style="--rise: 1"
+  [available]="measurements.catalogue()"
+  [selected]="measurements.selectedSeries()"
+  [range]="measurements.range()"
+  [bucket]="measurements.bucket()"
+  (selectedChange)="measurements.setSeries($event)"
+  (rangeChange)="onFilterRangeChange($event.from, $event.to)"
+  (bucketChange)="measurements.setBucket($event)"
+  (bucketReset)="measurements.resetBucket()"
+/>
+
+@if (measurements.error()) {
+  <app-error-panel
+    titleKey="errors.loadMeasurements"
+    [retrying]="measurements.isLoading()"
+    (retry)="measurements.reload()"
+  />
+}
+
+<div class="dashboard__layout">
+  <app-schematic-panel
+    class="dashboard__hero cs-rise"
+    style="--rise: 2"
+    [doc]="activeMachine()"
+    [series]="measurements.schematicSeries()"
+    [telemetryLoading]="measurements.isLoadingSchematic()"
+    [telemetryFailed]="measurements.schematicError() !== undefined"
+  />
+
+  <app-recent-alarms
+    class="dashboard__journal cs-rise"
+    style="--rise: 3"
+    [alarms]="alarms.dashboardAlarms()"
+    [loading]="alarms.dashboardIsLoading()"
+    [failed]="alarms.dashboardError() !== undefined"
+    (retry)="alarms.reloadDashboard()"
+  />
+
+  <!-- Both chart bands span the full row below the hero+journal line: a time axis is exactly
+       as readable as it is wide, and the 24-column heatmap needs every column it can get. -->
+  <div class="dashboard__chart-area">
+    @defer (on viewport; prefetch on idle) {
+      <!-- isInitialLoading, not isLoading: live ticks refresh the held series in place, and the
+           overlay only belongs over a chart that has nothing to show yet. -->
+      <!-- No --rise index: the chunk lands on its own clock, so the chart plays its rise the
+           moment it comes online instead of waiting out a stagger that has already passed. -->
+      <app-chart-panel
+        class="cs-rise"
+        [series]="measurements.series()"
+        [theme]="theme()"
+        [loading]="measurements.isInitialLoading()"
+        [zoomDepth]="chartZoomDepth()"
+        [resetKey]="chartResetKey()"
+        (rangeSelected)="onChartRangeSelected($event)"
+        (undoRange)="undoChartRange()"
+        (restoreRange)="restoreChartRange()"
+      />
+    } @placeholder {
+      <div class="dashboard__chart-slot cs-panel cs-rise" style="--rise: 4" role="status">
+        <span class="sr-only">{{ 'common.loading' | transloco }}</span>
+        <p-skeleton width="11rem" height="1rem" borderRadius="4px" />
+        <div class="dashboard__chart-skeleton-body">
+          <p-skeleton width="100%" height="100%" borderRadius="6px" />
+        </div>
+      </div>
+    } @error {
+      <app-error-panel titleKey="chart.error" messageKey="errors.generic" (retry)="reloadPage()" />
+    }
+  </div>
+
+  <div class="dashboard__cycle-area">
+    @defer (on viewport; prefetch on idle) {
+      <!-- Same off-stagger reasoning as the chart: the chunk lands on its own clock. -->
+      <app-cycle-panel class="cs-rise" [theme]="theme()" />
+    } @placeholder {
+      <div class="dashboard__cycle-slot cs-panel cs-rise" style="--rise: 5" role="status">
+        <span class="sr-only">{{ 'common.loading' | transloco }}</span>
+        <p-skeleton width="11rem" height="1rem" borderRadius="4px" />
+        <div class="dashboard__chart-skeleton-body">
+          <p-skeleton width="100%" height="100%" borderRadius="6px" />
+        </div>
+      </div>
+    } @error {
+      <app-error-panel titleKey="chart.error" messageKey="errors.generic" (retry)="reloadPage()" />
+    }
+  </div>
+</div>

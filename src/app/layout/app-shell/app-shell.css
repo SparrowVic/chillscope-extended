@@ -1,0 +1,100 @@
+:host {
+  --app-top-bar-height: 3.25rem;
+  --app-navigation-width: 13.5rem;
+  --app-mobile-navigation-height: var(--cs-mobile-navigation-height);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--cs-canvas);
+  color: var(--cs-text);
+}
+
+app-system-strip {
+  grid-row: 1;
+  min-width: 0;
+}
+
+.shell__content {
+  grid-row: 2;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  max-width: var(--cs-content-max);
+  margin-inline: auto;
+  padding-block: 1.5rem var(--cs-mobile-navigation-reserve);
+  padding-inline: max(var(--cs-page-gutter), env(safe-area-inset-left))
+    max(var(--cs-page-gutter), env(safe-area-inset-right));
+}
+
+.shell__content:focus {
+  outline: none;
+}
+
+.skip-link {
+  position: fixed;
+  top: -3.5rem;
+  inset-inline-start: 0.75rem;
+  z-index: 40;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-accent);
+  color: var(--cs-accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* Plain :focus as well: a skip link must never stay parked off-screen while it holds focus. */
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: calc(0.75rem + env(safe-area-inset-top));
+}
+
+@media (max-width: 640px) {
+  .shell__content {
+    padding-block: 1.25rem var(--cs-mobile-navigation-reserve);
+    padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  }
+}
+
+@media (min-width: 900px) {
+  :host {
+    grid-template-columns: var(--app-navigation-width) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  app-navigation {
+    grid-row: 1 / -1;
+    grid-column: 1;
+  }
+
+  app-system-strip,
+  .shell__content {
+    grid-column: 2;
+  }
+
+  .shell__content {
+    padding-block-end: 2rem;
+  }
+
+  .skip-link {
+    inset-inline-start: calc(var(--app-navigation-width) + 0.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+
+@media (width < 900px) and (height <= 420px) {
+  .shell__content {
+    padding-block-end: calc(
+      var(--app-mobile-navigation-height) + 0.375rem + env(safe-area-inset-bottom)
+    );
+  }
+}

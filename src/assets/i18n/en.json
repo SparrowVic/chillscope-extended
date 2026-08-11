@@ -1,0 +1,619 @@
+{
+  "app": {
+    "title": "Chillscope",
+    "skipToContent": "Skip to content",
+    "machineId": "CHILLER K-207 · LINE B",
+    "uptime": "Uptime"
+  },
+  "menu": {
+    "label": "Main menu",
+    "dashboard": "Dashboard",
+    "dashboardCompact": "Home",
+    "measurements": "Measurements",
+    "measurementsCompact": "Readings",
+    "alarms": "Alarms",
+    "settings": "Settings",
+    "machines": "Machines"
+  },
+  "navigation": {
+    "activeAlarms": "Active alarms: {{count}}"
+  },
+  "common": {
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "close": "Close",
+    "confirm": "Confirm",
+    "retry": "Try again",
+    "refresh": "Refresh",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading…",
+    "noResults": "No results",
+    "all": "All",
+    "today": "Today",
+    "selectAll": "Select all",
+    "clearAll": "Clear all",
+    "placeholderSelect": "Select…",
+    "placeholderSelectMany": "Select one or more…",
+    "placeholderDateRange": "Pick a date range",
+    "discardChanges": "Discard your unsaved changes?",
+    "updateReady": "New app version — reloading in a moment"
+  },
+  "states": {
+    "emptyTitle": "Nothing to show",
+    "errorTitle": "Could not load the data",
+    "errorMessage": "Something went wrong on the server. Please try again."
+  },
+  "errors": {
+    "generic": "An unexpected error occurred.",
+    "loadMeasurements": "Could not load measurements.",
+    "loadAlarms": "Could not load alarms."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "min": "The value must be at least {{min}}.",
+    "max": "The value must be at most {{max}}.",
+    "minLength": "Enter at least {{minLength}} characters.",
+    "maxLength": "Enter no more than {{maxLength}} characters.",
+    "pattern": "The value has an invalid format.",
+    "email": "Enter a valid e-mail address.",
+    "invalid": "The value is invalid.",
+    "thresholdOrder": "The lower threshold must be smaller than the upper one.",
+    "criticalOutsideWarning": "Critical thresholds must lie outside the warning thresholds.",
+    "isaTag": "The tag must match LL-NNN (e.g. TT-101).",
+    "tagPrefix": "The tag must start with \"{{prefix}}-\".",
+    "pipeSelf": "A pipe cannot connect a node to itself."
+  },
+  "series": {
+    "label": "Series",
+    "select": "Select series",
+    "selected": "{{count}} of {{total}} selected",
+    "temperature": "Temperature",
+    "pressure": "Pressure",
+    "flow": "Flow",
+    "rpm": "RPM"
+  },
+  "units": {
+    "celsius": "°C",
+    "bar": "bar",
+    "litersPerMinute": "l/min",
+    "rpm": "rpm"
+  },
+  "severity": {
+    "all": "All",
+    "ok": "Normal",
+    "warning": "Warning",
+    "critical": "Critical"
+  },
+  "bucket": {
+    "auto": "Automatic",
+    "raw": "No aggregation",
+    "5m": "5 minutes",
+    "15m": "15 minutes",
+    "1h": "1 hour",
+    "6h": "6 hours",
+    "1d": "1 day"
+  },
+  "range": {
+    "label": "Time range",
+    "from": "From",
+    "to": "To",
+    "custom": "Custom range",
+    "preset": {
+      "lastHour": "Last hour",
+      "last6Hours": "Last 6 hours",
+      "last24Hours": "Last 24 hours",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days"
+    },
+    "presetShort": {
+      "lastHour": "1h",
+      "last6Hours": "6h",
+      "last24Hours": "24h",
+      "last7Days": "7d",
+      "last30Days": "30d"
+    }
+  },
+  "live": {
+    "short": "Live",
+    "enabled": "Live mode is on",
+    "disabled": "Live mode is off"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language",
+    "pl": "Polish",
+    "en": "English",
+    "shortPl": "PL",
+    "shortEn": "EN"
+  },
+  "stats": {
+    "trendUp": "Trending up",
+    "trendDown": "Trending down",
+    "trendFlat": "No change"
+  },
+  "chart": {
+    "title": "Measurements over time",
+    "empty": "No data in the selected range",
+    "loading": "Loading the chart…",
+    "zoomHint": "Drag in the plot to zoom. Use the bar below to pan; double-click the plot to show the full range.",
+    "error": "Could not load the chart",
+    "ariaLabel": "Measurements over time",
+    "zoomHintTouch": "Pinch out to zoom; use the bar below to pan. Full range restores the view.",
+    "rangeActions": "Chart range",
+    "undoRange": "Undo",
+    "restoreRange": "Full range"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page",
+    "showing": "Showing {{first}}–{{last}} of {{total}}"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Current state of the cooling system",
+    "filters": {
+      "title": "Filters",
+      "series": "Measurement series",
+      "bucket": "Aggregation"
+    },
+    "chart": {
+      "title": "Measurements over time"
+    },
+    "cycle": {
+      "title": "Daily rhythm",
+      "hint": "Hourly means: columns are hours of the day, rows are consecutive days.",
+      "seriesLabel": "Series",
+      "rangeLabel": "Window",
+      "days7": "7 days",
+      "days14": "14 days",
+      "days30": "30 days",
+      "ariaLabel": "Daily rhythm map of measurements"
+    },
+    "alarms": {
+      "title": "Recent alarms",
+      "viewAll": "View all",
+      "empty": "No alarms in the selected range"
+    },
+    "schematic": {
+      "title": "COOLING CIRCUIT — SCHEMATIC",
+      "ariaLabel": "Live synoptic diagram for {{machine}}. Focus equipment to trace its connected circuit.",
+      "scrollLabel": "Scrollable machine schematic",
+      "invalid": "Invalid schematic document",
+      "invalidMessage": "The machine document failed validation — the errors are listed below.",
+      "noReading": "No telemetry reading available",
+      "state": {
+        "syncing": "Flow state: synchronising telemetry",
+        "error": "Flow state: telemetry request failed",
+        "stale": "Flow state: delayed — last reading held",
+        "unknown": "Flow state: telemetry unavailable",
+        "stopped": "Flow state: stopped",
+        "running": "Flow state: running"
+      },
+      "viewLabel": "View",
+      "view": {
+        "pan": "Detail",
+        "fit": "Overview"
+      }
+    },
+    "journal": {
+      "threshold": "threshold"
+    }
+  },
+  "measurements": {
+    "title": "Measurements",
+    "subtitle": "Complete measurement history",
+    "filters": {
+      "title": "Filters",
+      "series": "Measurement series",
+      "range": "Time range",
+      "bucket": "Aggregation"
+    },
+    "table": {
+      "date": "Date and time",
+      "series": "Series",
+      "value": "Value",
+      "unit": "Unit",
+      "status": "Status",
+      "caption": "List of measurements",
+      "sortBy": "Sort by",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "sortAscending": "Sort ascending",
+      "sortDescending": "Sort descending"
+    },
+    "export": {
+      "label": "Export to CSV",
+      "filename": "measurements",
+      "empty": "Nothing to export"
+    },
+    "empty": {
+      "title": "No measurements",
+      "message": "Change the time range or pick different series."
+    },
+    "deck": {
+      "title": "Series tapes",
+      "legendWarning": "Warning zone",
+      "legendCritical": "Critical zone",
+      "scrollLabel": "Scrollable series tapes"
+    },
+    "log": {
+      "title": "Measurement log",
+      "pagination": "Measurement log pagination"
+    },
+    "tape": {
+      "min": "min",
+      "avg": "avg",
+      "max": "max",
+      "warningZone": "warn",
+      "criticalZone": "crit"
+    }
+  },
+  "alarms": {
+    "title": "Alarms",
+    "subtitle": "Warning and critical threshold crossings",
+    "filters": {
+      "title": "Filters",
+      "severity": "Severity",
+      "series": "Measurement series",
+      "seriesHint": "Leave empty to include every series.",
+      "range": "Time range"
+    },
+    "item": {
+      "duration": "Duration"
+    },
+    "list": {
+      "pagination": "Alarm pages",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{page}} of {{pages}} · {{count}} alarms",
+      "dayCount": "{{count}} alarms",
+      "dayCritical": "{{count}} critical"
+    },
+    "table": {
+      "threshold": "Threshold"
+    },
+    "summary": {
+      "total": "Total alarms",
+      "warning": "Warnings",
+      "critical": "Critical"
+    },
+    "empty": {
+      "title": "No alarms",
+      "message": "No series crossed its thresholds in the selected range."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Application and simulation configuration",
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "themeHint": "The initial value comes from your system preference.",
+      "language": "Interface language",
+      "density": {
+        "label": "Interface density",
+        "compact": "Compact",
+        "normal": "Normal",
+        "comfortable": "Comfortable"
+      }
+    },
+    "live": {
+      "interval": "Refresh interval",
+      "intervalHint": "Between 1000 and 60000 milliseconds."
+    },
+    "simulation": {
+      "title": "Simulation",
+      "failureRate": "Failure rate",
+      "failureRateHint": "The share of requests the fake backend answers with a 500 error.",
+      "seed": "Generator seed",
+      "seedHint": "The same value always produces the same history."
+    },
+    "thresholds": {
+      "title": "Alarm thresholds",
+      "description": "These defaults drive alarms and chart zones. An override on the active machine takes precedence.",
+      "warningMin": "Lower warning threshold",
+      "warningMax": "Upper warning threshold",
+      "criticalMin": "Lower critical threshold",
+      "criticalMax": "Upper critical threshold",
+      "groupInvalid": "Contains validation errors"
+    },
+    "actions": {
+      "save": "Save settings",
+      "reset": "Reset to defaults",
+      "resetConfirm": "Reset every setting to its default value?",
+      "saved": "Settings saved",
+      "resetDone": "Defaults restored",
+      "persistenceFailed": "Settings apply for this session, but browser storage is unavailable.",
+      "unsaved": "Unsaved changes",
+      "blocked": "Fix the highlighted fields to save"
+    }
+  },
+  "primeng": {
+    "dayNamesMin": "Su Mo Tu We Th Fr Sa",
+    "dateFormat": "mm/dd/yy",
+    "firstDayOfWeek": "0",
+    "chooseDate": "Choose a date",
+    "chooseMonth": "Choose a month",
+    "chooseYear": "Choose a year",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "prevYear": "Previous year",
+    "nextYear": "Next year",
+    "prevDecade": "Previous decade",
+    "nextDecade": "Next decade",
+    "prevHour": "Previous hour",
+    "nextHour": "Next hour",
+    "prevMinute": "Previous minute",
+    "nextMinute": "Next minute",
+    "prevSecond": "Previous second",
+    "nextSecond": "Next second",
+    "emptySelection": "Nothing selected",
+    "selection": "{0} items selected"
+  },
+  "machines": {
+    "builtIns": {
+      "k207": {
+        "name": "Chiller K-207",
+        "nodes": {
+          "P1": "PUMP P-1",
+          "W1": "COOLER W-1",
+          "Z1": "RESERVOIR Z-1",
+          "M1": "MACHINE M-207"
+        }
+      },
+      "tcu01": {
+        "name": "Temperature control unit TCU-01",
+        "nodes": {
+          "Z1": "RESERVOIR Z-1",
+          "P1": "PUMP P-1",
+          "G1": "HEATER G-1",
+          "M1": "MOULD M-31",
+          "W1": "COOLER W-1",
+          "F1": "STRAINER F-1",
+          "SV1": "RELIEF SV-1",
+          "Y1": "COOLING VALVE Y-1"
+        }
+      },
+      "ch02": {
+        "name": "Chiller CH-02",
+        "nodes": {
+          "Z1": "RESERVOIR Z-1",
+          "P1": "PUMP P-1",
+          "M1": "MACHINE M-2",
+          "W1": "COOLER W-1",
+          "E1": "EVAPORATOR E-1",
+          "S1": "COMPRESSOR S-1",
+          "K1": "CONDENSER K-1",
+          "R1": "EXPANSION VALVE ZR-1",
+          "F1": "STRAINER F-1",
+          "FD1": "FILTER DRIER FD-1",
+          "SG1": "SIGHT GLASS SG-1"
+        }
+      }
+    },
+    "profiles": {
+      "tcu": "TCU (temperature control unit)",
+      "chiller": "Chiller"
+    },
+    "title": "Machines",
+    "subtitle": "Machine library and schematic configurator",
+    "library": {
+      "title": "Library",
+      "builtIn": "Built-in",
+      "custom": "Custom",
+      "active": "Active",
+      "createTcu": "New TCU",
+      "createChiller": "New chiller",
+      "duplicate": "Duplicate",
+      "remove": "Remove",
+      "removeConfirm": "Remove machine {{id}}? This cannot be undone.",
+      "setActive": "Set active",
+      "persistenceTitle": "Machine library not saved",
+      "persistenceMessage": "Browser storage rejected the change. Your previous machine library is unchanged."
+    },
+    "editor": {
+      "builtInHint": "A built-in document — duplicate it to edit.",
+      "preview": "Live preview",
+      "errorsTitle": "Validation errors",
+      "profileErrorsTitle": "Machine profile violations",
+      "diagramLoadError": "Could not load the diagram editor",
+      "tabsLabel": "Editor views",
+      "tabs": {
+        "form": "Form",
+        "json": "JSON",
+        "diagram": "Diagram"
+      },
+      "previewInvalid": "The draft has validation errors"
+    },
+    "validation": {
+      "documentObject": "The schematic document must be a JSON object.",
+      "profileIdAllowed": "\"profileId\" is {{value}}. Allowed values: {{allowed}}.",
+      "nodeInstrumentUnknown": "Node \"{{nodeId}}\" references the unknown instrument tag \"{{tag}}\".",
+      "nodeInstrumentAttachment": "Node \"{{nodeId}}\" uses instrument tag \"{{tag}}\", but that instrument is attached to \"{{attachedTo}}\".",
+      "collectionArray": "Collection \"{{collection}}\" must be an array.",
+      "collectionLimit": "Collection \"{{collection}}\" may contain at most {{limit}} entries.",
+      "duplicateNodeId": "Node id \"{{nodeId}}\" is duplicated; node ids must be unique.",
+      "nodeCollision": "Nodes \"{{firstId}}\" and \"{{secondId}}\" collide at grid [{{column}}, {{row}}].",
+      "nodeOverlap": "Nodes \"{{firstId}}\" at [{{firstColumn}}, {{firstRow}}] and \"{{secondId}}\" at [{{secondColumn}}, {{secondRow}}] have overlapping symbol boxes.",
+      "pathObject": "{{path}} must be a JSON object.",
+      "unknownNodeType": "{{path}}: {{value}} is an unknown node type. Allowed values: {{allowed}}.",
+      "gridIntegerPair": "{{path}}: \"grid\" must be an integer pair [column, row].",
+      "gridNonNegative": "{{path}}: grid position [{{column}}, {{row}}] cannot be negative.",
+      "gridSafeInteger": "{{path}}: grid position [{{column}}, {{row}}] must use safe integers.",
+      "gridMaximum": "{{path}}: grid position [{{column}}, {{row}}] cannot exceed {{maximum}} on either axis.",
+      "optionalBoolean": "{{path}}: \"{{field}}\" must be a boolean when present.",
+      "nodeTagFormat": "{{path}}: node tag {{value}} must use the ISA format LL-NNN, for example \"ST-104\".",
+      "nodePrimaryInstrument": "{{path}}: node type \"{{nodeType}}\" does not accept primary instrument tag \"{{tag}}\".",
+      "reservoirLevel": "{{path}}: \"level\" is allowed only for reservoir nodes.",
+      "machineHeatSource": "{{path}}: \"heatSource\" is allowed only for machine nodes.",
+      "pipeSide": "{{path}}: side {{value}} must be \"cold\" or \"hot\".",
+      "nodeReference": "{{path}}: \"{{field}}\" references the unknown node \"{{nodeId}}\".",
+      "pipeSelf": "{{path}}: a pipe cannot connect node \"{{nodeId}}\" to itself.",
+      "pipeDuplicate": "{{path}}: the pipe connection \"{{from}}\" → \"{{to}}\" is duplicated.",
+      "instrumentTagFormat": "{{path}}: tag {{value}} must use the ISA format LL-NNN, for example \"TT-101\".",
+      "duplicateInstrumentTag": "Instrument tag \"{{tag}}\" is duplicated; instrument tags must be unique.",
+      "seriesId": "{{path}}: {{value}} is not a known series id. Allowed values: {{allowed}}.",
+      "thresholdOrder": "{{path}}: \"thresholds\" must contain finite numbers ordered as criticalMin < warningMin < warningMax < criticalMax.",
+      "fieldRequiredAtPath": "{{path}}: \"{{field}}\" must be a non-empty string.",
+      "fieldRequired": "\"{{field}}\" must be a non-empty string.",
+      "fieldLengthAtPath": "{{path}}: \"{{field}}\" may contain at most {{limit}} characters.",
+      "fieldLength": "\"{{field}}\" may contain at most {{limit}} characters.",
+      "fieldControlAtPath": "{{path}}: \"{{field}}\" cannot contain control characters.",
+      "fieldControl": "\"{{field}}\" cannot contain control characters.",
+      "unknownPropertyAtPath": "{{path}}: unknown property {{property}}.",
+      "unknownProperty": "Unknown property {{property}}.",
+      "profileMismatch": "Document profile \"{{documentProfile}}\" does not match the validated profile \"{{profileId}}\".",
+      "nodeCountMin": "Profile \"{{profileId}}\" requires at least {{minimum}} × {{nodeType}}; found {{count}}.",
+      "nodeCountMax": "Profile \"{{profileId}}\" allows at most {{maximum}} × {{nodeType}}; found {{count}}.",
+      "nodeOutsideGrid": "Node \"{{nodeId}}\" at [{{column}}, {{row}}] is outside the {{columns}}×{{rows}} profile grid.",
+      "loopNoPipes": "The profile requires a closed piping loop, but the document has no pipes.",
+      "loopOnlyTerminalBranches": "The profile requires a closed piping loop; terminal relief branches alone do not form one.",
+      "terminalSafetyValveIncoming": "Terminal safety valve \"{{nodeId}}\" must have exactly 1 incoming pressure branch; found {{count}}.",
+      "loopNodeDisconnected": "Node \"{{nodeId}}\" is not connected to the piping loop.",
+      "loopNoOutgoing": "The piping loop does not close: node \"{{nodeId}}\" has no outgoing pipe.",
+      "loopNoIncoming": "The piping loop does not close: node \"{{nodeId}}\" has no incoming pipe.",
+      "loopGroups": "The piping does not form one circuit; it contains {{count}} disconnected groups.",
+      "loopNotClosed": "The piping is connected but does not form one closed directed circuit.",
+      "sensorSlotAbsent": "Instrument \"{{tag}}\": profile \"{{profileId}}\" has no sensor slot for series {{series}}.",
+      "sensorPrefix": "Instrument \"{{tag}}\": the tag prefix for series {{series}} must be \"{{prefix}}\".",
+      "sensorAttachment": "Instrument \"{{tag}}\" is attached to node \"{{nodeId}}\" of type {{nodeType}}. Allowed types: {{allowed}}.",
+      "sensorSlotCount": "Profile \"{{profileId}}\" allows one {{series}} instrument slot; found {{count}}.",
+      "sensorRequired": "Profile \"{{profileId}}\" requires a {{series}} sensor with tag prefix \"{{prefix}}\"; none was found.",
+      "builtInEdit": "Built-in machines cannot be edited; duplicate the machine first.",
+      "machineMissing": "No machine with id \"{{machineId}}\" exists.",
+      "machineExists": "A machine with id \"{{machineId}}\" already exists.",
+      "builtInRemove": "Built-in machines cannot be removed.",
+      "layoutUnknownNode": "Cannot lay out schematic \"{{documentId}}\": node \"{{nodeId}}\" does not exist. Validate the document first.",
+      "layoutPipeBlocked": "Pipe \"{{from}}\" → \"{{to}}\" has no clear route. Move one of the surrounding components.",
+      "unknown": "The details of this validation error cannot be displayed. Check the document structure."
+    },
+    "form": {
+      "machine": "Machine",
+      "id": "Identifier",
+      "name": "Name",
+      "revision": "Revision",
+      "nodes": "Nodes",
+      "noNodes": "No nodes — add the first element of the circuit.",
+      "addNode": "Add node",
+      "nodeLimit": "Profile limits reached",
+      "gridFull": "No free grid cells",
+      "removeNode": "Remove node",
+      "nodeId": "Id",
+      "nodeType": "Type",
+      "label": "Label",
+      "column": "Column",
+      "row": "Row",
+      "nodeTag": "ISA tag (optional)",
+      "level": "Liquid level",
+      "heatSource": "Heat source",
+      "pipes": "Piping",
+      "noPipes": "No pipes — the circuit needs a closed loop.",
+      "addPipe": "Add pipe",
+      "removePipe": "Remove pipe",
+      "from": "From node",
+      "to": "To node",
+      "side": "Side",
+      "sideCold": "Cold",
+      "sideHot": "Hot",
+      "sensors": "Sensors",
+      "sensorTag": "Tag",
+      "attachTo": "Attached to",
+      "overrideThresholds": "Override thresholds",
+      "save": "Save",
+      "revert": "Discard changes",
+      "saved": "Machine saved.",
+      "unsaved": "Unsaved changes",
+      "sectionInvalid": "Section contains validation errors"
+    },
+    "nodeTypes": {
+      "pump": "Pump",
+      "heatExchanger": "Heat exchanger",
+      "reservoir": "Reservoir",
+      "machine": "Machine (consumer)",
+      "valve": "Valve",
+      "heater": "Heater",
+      "compressor": "Compressor",
+      "condenser": "Condenser",
+      "expansionValve": "Expansion valve",
+      "evaporator": "Evaporator",
+      "filterDrier": "Filter drier",
+      "sightGlass": "Sight glass",
+      "strainer": "Strainer",
+      "safetyValve": "Safety valve"
+    },
+    "json": {
+      "validate": "Validate",
+      "format": "Format",
+      "import": "Import JSON",
+      "exportJson": "Export JSON",
+      "exportXml": "Export XML",
+      "valid": "The document is valid.",
+      "parseError": "Invalid JSON",
+      "inputError": "JSON document unavailable",
+      "syntaxInvalid": "The JSON syntax is invalid. Check commas, quotes and brackets.",
+      "tooLarge": "The JSON document exceeds the {{size}} KB limit.",
+      "sizeHint": "Maximum {{size}} KB. The preview updates after you pause typing.",
+      "checking": "Checking JSON.",
+      "editorLabel": "Machine document JSON editor",
+      "applied": "Document applied.",
+      "readFailed": "Could not read the file.",
+      "serializationFailed": "The JSON document is nested too deeply to process. Reduce its nesting and try again."
+    },
+    "diagram": {
+      "instructions": "Drag a node onto a free grid cell, or move the selected node with the arrow keys. Enter or F2 opens its properties; Esc clears the selection.",
+      "canvasLabel": "Schematic edit canvas",
+      "scrollLabel": "Scrollable schematic editor",
+      "nodeAria": "Node {{id}}",
+      "pipeAria": "Pipe from {{from}} to {{to}}",
+      "sensorAria": "Sensor {{tag}}",
+      "invalid": "The draft fails validation",
+      "invalidMessage": "Fix the document (e.g. in the JSON tab) — the canvas returns once the draft is valid again.",
+      "properties": "Properties",
+      "propertiesEmpty": "Click a node, pipe or sensor to edit its properties.",
+      "node": "Node",
+      "pipe": "Pipe",
+      "sensor": "Sensor",
+      "toolbarLabel": "Selection actions",
+      "editProperties": "Edit properties",
+      "deleteRequired": "Node {{id}} is required by this machine profile and was not removed.",
+      "deleteInstrumented": "Move sensor {{tag}} away from node {{id}} before removing it.",
+      "deleteComplex": "Node {{id}} has a branched connection ({{incoming}} in, {{outgoing}} out). Simplify its piping before removing it.",
+      "deleteWouldInvalidate": "The node was not removed because the resulting circuit would be invalid.",
+      "deletePipeWouldInvalidate": "The pipe was not removed because the resulting circuit would be invalid.",
+      "zoomLabel": "Schematic zoom",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom",
+      "nudgeLabel": "Move the selected node",
+      "nudgeLeft": "Move node left",
+      "nudgeRight": "Move node right",
+      "nudgeUp": "Move node up",
+      "nudgeDown": "Move node down",
+      "touchHint": "Tap an element to select it. Move a selected node with the arrow keys in the action bar, and change zoom with the − and + keys."
+    },
+    "stage": {
+      "back": "Back to the library"
+    }
+  },
+  "strip": {
+    "machineSelect": "Select the active machine",
+    "machineState": "Machine state",
+    "currentTime": "Current time"
+  },
+  "filters": {
+    "activeCount": "Active filters: {{count}}",
+    "reset": "Reset",
+    "seriesCount": "Series: {{count}}",
+    "allSeries": "All series"
+  }
+}

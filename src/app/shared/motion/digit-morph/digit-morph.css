@@ -1,0 +1,53 @@
+:host {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.ch {
+  position: relative;
+  display: inline-block;
+}
+
+.out {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: cs-digit-out 400ms var(--cs-ease) both;
+}
+
+.in {
+  display: inline-block;
+  animation: cs-digit-in 400ms var(--cs-ease) both;
+}
+
+@keyframes cs-digit-in {
+  from {
+    transform: translateY(0.3em);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cs-digit-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-0.3em);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .out {
+    display: none;
+  }
+
+  .in {
+    animation: none;
+  }
+}

@@ -1,0 +1,45 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Chillscope: start",
+      "type": "shell",
+      "command": "yarn start",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Changes detected"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    },
+    {
+      "label": "Chillscope: verify",
+      "type": "shell",
+      "command": "yarn verify",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Chillscope: Docker build",
+      "type": "shell",
+      "command": "yarn docker:build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Chillscope: Docker verify",
+      "type": "shell",
+      "command": "yarn docker:verify",
+      "problemMatcher": []
+    }
+  ]
+}

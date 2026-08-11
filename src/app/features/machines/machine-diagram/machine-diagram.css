@@ -1,0 +1,225 @@
+/* The drawing itself is laid out by the schematic engine in its own grid units and never scales
+   with density; only the surrounding chrome — hints, the properties panel, actions — does. Type
+   sizes outside the SVG are em so they follow --cs-font-base, the density type scale. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-section);
+  min-width: 0;
+}
+
+.diagram__hint,
+.diagram__props-kind,
+.diagram__props-empty {
+  margin: 0;
+  color: var(--cs-muted);
+  font-size: 0.96em;
+}
+
+/* The canvas bar, zoom detents, nudge cluster and the sticky action dock live in
+   diagram-controls.css — the fingertip chrome sheet split off on the mobile redesign. */
+
+/* The drawing keeps its 1:1 cell scale; on narrow widths it pans inside the panel (§6 RWD) —
+   the pinned edge fades the Dashboard hero uses come from .cs-edge-fade. */
+.diagram__scroll {
+  overflow-x: auto;
+}
+
+.diagram__canvas {
+  position: relative; /* anchors the floating selection toolbar */
+  width: fit-content;
+  border-radius: var(--cs-r-ctl);
+}
+
+.diagram__svg {
+  display: block;
+  height: auto;
+  /* The background keeps native page and horizontal-canvas panning on touch devices. */
+  touch-action: pan-x pan-y;
+  user-select: none;
+}
+
+.diagram__backdrop {
+  fill: transparent;
+}
+
+/* ---- drafting paper: static by definition — the drag-materialised cell grid in
+   diagram-interactions.css reads as this same paper lighting up. ---- */
+
+.diagram__draft-line {
+  fill: none;
+  /* The room's 6% ink (styles.css body grid): faint enough to be paper, not information. */
+  stroke: color-mix(in srgb, var(--cs-text) 6%, transparent);
+  stroke-width: 1;
+}
+
+/* Fades the paper at the stage edges so the sheet reads as lit from within, not cropped.
+   `black` is alpha-only here (opaque), not a colour; without mask support the grid simply
+   stays uniform. */
+.diagram__draft {
+  pointer-events: none;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, black 28px, black calc(100% - 28px), transparent),
+    linear-gradient(180deg, transparent, black 28px, black calc(100% - 28px), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent, black 28px, black calc(100% - 28px), transparent),
+    linear-gradient(180deg, transparent, black 28px, black calc(100% - 28px), transparent);
+  mask-composite: intersect;
+}
+
+/* ---- pipes: the dashboard's temperature language, static (an edit surface does not flow) ---- */
+
+.diagram__pipe {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* The §2 static-pipe compositing token: 0.65 dark, 0.85 light — the light scheme needs the
+     stronger ink to hold the 3:1 contract, exactly as the dashboard schematic composites it. */
+  opacity: var(--cs-pipe-opacity);
+  pointer-events: none;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__pipe--cold {
+  stroke: var(--cs-cold);
+}
+
+.diagram__pipe--hot {
+  stroke: var(--cs-hot);
+}
+
+.diagram__pipe-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 24;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  cursor: pointer;
+  outline: none;
+}
+
+.diagram__pipe-hit:focus-visible {
+  stroke: color-mix(in srgb, var(--cs-accent) 16%, transparent);
+}
+
+/* ---- nodes ---- */
+
+.diagram__node {
+  color: var(--cs-muted);
+  cursor: grab;
+  outline: none;
+  /* Only a draggable node owns its touch gesture; the surrounding canvas remains pannable. */
+  touch-action: none;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+.diagram__node-hit,
+.diagram__tag-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.diagram__node:focus-visible .diagram__node-hit,
+.diagram__tag:focus-visible .diagram__tag-hit {
+  fill: color-mix(in srgb, var(--cs-accent) 7%, transparent);
+  stroke: var(--cs-accent);
+  stroke-width: 1;
+}
+
+.diagram__node--locked {
+  cursor: pointer;
+  touch-action: pan-x pan-y;
+}
+
+.diagram__node--cold {
+  color: color-mix(in srgb, var(--cs-cold) 34%, var(--cs-muted));
+}
+
+.diagram__node--hot {
+  color: color-mix(in srgb, var(--cs-hot) 34%, var(--cs-muted));
+}
+
+.diagram__node--mixed {
+  color: color-mix(
+    in srgb,
+    var(--cs-muted) 70%,
+    color-mix(in srgb, var(--cs-cold) 50%, var(--cs-hot))
+  );
+}
+
+.diagram__node--cold:hover {
+  color: color-mix(in srgb, var(--cs-cold) 72%, var(--cs-text));
+}
+
+.diagram__node--hot:hover {
+  color: color-mix(in srgb, var(--cs-hot) 72%, var(--cs-text));
+}
+
+.diagram__node--mixed:hover {
+  color: color-mix(
+    in srgb,
+    var(--cs-text) 36%,
+    color-mix(in srgb, var(--cs-cold) 50%, var(--cs-hot))
+  );
+}
+
+.diagram__node-label {
+  fill: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  paint-order: stroke;
+  stroke: var(--cs-panel);
+  stroke-width: 5px;
+  pointer-events: none;
+}
+
+/* ---- instrument tag chips (edit surface: the tag is an address, not a live reading) ---- */
+
+.diagram__tag {
+  cursor: pointer;
+  outline: none;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+.diagram__tag-box {
+  fill: var(--cs-panel-raised);
+  stroke: var(--cs-hairline-strong);
+  stroke-width: 1;
+}
+
+.diagram__tag-text {
+  fill: var(--cs-text);
+  font-family: var(--cs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+/* ---- properties panel ---- */
+
+.diagram__props {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  padding-block-start: var(--cs-gap-field);
+  border-block-start: 1px solid var(--cs-hairline);
+}
+
+/* The toolbar's "edit properties" action focuses this panel programmatically; that jump must stay
+   silent, so only a real focus-visible is left to wear the ring .cs-focus-ring paints. */
+.diagram__props:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Rounds the corners of that ring — the panel itself has no radius of its own. */
+.diagram__props:focus-visible {
+  border-radius: var(--cs-r-ctl);
+}
+
+/* .diagram__actions and the nudge cluster continue in diagram-controls.css. */

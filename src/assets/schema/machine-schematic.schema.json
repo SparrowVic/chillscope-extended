@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chillscope.dev/schema/machine-schematic.schema.json",
+  "title": "Chillscope machine schematic",
+  "description": "A machine schematic document: nodes on a grid, pipes between them and ISA-tagged instruments hung off nodes, configured within a machine profile. Referential and graph rules, symbol-box collisions, node-tag attachment, threshold ordering and the profile envelope are enforced by the application's validators on top of this schema.",
+  "$comment": "Draft 2020-12 cannot compare sibling numeric properties or express the document graph without non-standard extensions. Import additionally requires criticalMin < warningMin < warningMax < criticalMax, unique node ids and instrument tags, unique unordered pipe connections, valid references and the selected profile envelope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "revision", "profileId", "nodes", "pipes", "instruments"],
+  "properties": {
+    "id": { "$ref": "#/$defs/exchangeString" },
+    "name": { "$ref": "#/$defs/exchangeString" },
+    "revision": { "$ref": "#/$defs/exchangeString" },
+    "profileId": { "enum": ["tcu", "chiller"] },
+    "nodes": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/node" } },
+    "pipes": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/pipe" } },
+    "instruments": { "type": "array", "maxItems": 16, "items": { "$ref": "#/$defs/instrument" } }
+  },
+  "$defs": {
+    "exchangeString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^(?=[\\s\\S]*\\S)(?![\\s\\S]*[\\u0000-\\u001F\\u007F])[\\s\\S]+$",
+      "description": "A non-blank exchange string without C0 or DEL control characters. Length is measured in Unicode code points."
+    },
+    "isaTag": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}-[0-9]{3}$"
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "label", "grid"],
+      "properties": {
+        "id": { "$ref": "#/$defs/exchangeString" },
+        "type": {
+          "enum": [
+            "pump",
+            "heatExchanger",
+            "reservoir",
+            "machine",
+            "valve",
+            "heater",
+            "compressor",
+            "condenser",
+            "expansionValve",
+            "evaporator",
+            "filterDrier",
+            "sightGlass",
+            "strainer",
+            "safetyValve"
+          ]
+        },
+        "label": { "$ref": "#/$defs/exchangeString" },
+        "grid": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "integer", "minimum": 0, "maximum": 255 },
+            { "type": "integer", "minimum": 0, "maximum": 255 }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "tag": { "$ref": "#/$defs/isaTag" },
+        "level": { "type": "boolean" },
+        "heatSource": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["tag"] },
+          "then": {
+            "properties": {
+              "type": { "enum": ["pump", "heatExchanger", "compressor"] }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["level"],
+            "properties": { "level": { "const": true } }
+          },
+          "then": { "properties": { "type": { "const": "reservoir" } } }
+        },
+        {
+          "if": {
+            "required": ["heatSource"],
+            "properties": { "heatSource": { "const": true } }
+          },
+          "then": { "properties": { "type": { "const": "machine" } } }
+        }
+      ]
+    },
+    "pipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "side"],
+      "properties": {
+        "from": { "$ref": "#/$defs/exchangeString" },
+        "to": { "$ref": "#/$defs/exchangeString" },
+        "side": { "enum": ["cold", "hot"] }
+      }
+    },
+    "instrument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tag", "series", "attachTo"],
+      "properties": {
+        "tag": { "$ref": "#/$defs/isaTag" },
+        "series": { "enum": ["temperature", "pressure", "flow", "rpm"] },
+        "attachTo": { "$ref": "#/$defs/exchangeString" },
+        "thresholds": { "$ref": "#/$defs/thresholds" }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "description": "Four finite alarm-band bounds. Import additionally enforces criticalMin < warningMin < warningMax < criticalMax; standard draft 2020-12 cannot compare sibling values.",
+      "$comment": "The strict threshold ordering is intentionally enforced by validateSchematic rather than a non-standard JSON Schema extension.",
+      "additionalProperties": false,
+      "required": ["warningMin", "warningMax", "criticalMin", "criticalMax"],
+      "properties": {
+        "warningMin": { "type": "number" },
+        "warningMax": { "type": "number" },
+        "criticalMin": { "type": "number" },
+        "criticalMax": { "type": "number" }
+      }
+    }
+  }
+}

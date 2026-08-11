@@ -1,0 +1,25 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.live-toggle__led {
+  --cs-led-color: var(--cs-ok);
+}
+
+/* The switch's own label doubles as the mono LIVE tag next to the LED. */
+:host ::ng-deep .cs-control-frame__label {
+  order: 0;
+  font-family: var(--cs-font-mono);
+  font-size: calc(0.71875rem * var(--cs-density));
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cs-muted);
+  transition: color var(--cs-dur-fast) var(--cs-ease);
+}
+
+:host(.live-toggle--on) ::ng-deep .cs-control-frame__label {
+  color: var(--cs-text);
+}

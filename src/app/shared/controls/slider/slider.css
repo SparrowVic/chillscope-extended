@@ -1,0 +1,39 @@
+.cs-slider {
+  display: flex;
+  align-items: center;
+  gap: calc(0.75rem * var(--cs-density));
+}
+
+.cs-slider p-slider {
+  flex: 1 1 auto;
+}
+
+.cs-slider__value {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: calc(0.25rem * var(--cs-density));
+  flex: none;
+  min-width: 5ch;
+  color: var(--p-text-color);
+  font-size: var(--cs-font-control);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.cs-slider__unit {
+  color: var(--p-text-muted-color);
+  font-size: var(--cs-font-support);
+}
+
+@media (pointer: coarse) {
+  .cs-slider__value {
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+
+  :host ::ng-deep .p-slider-handle::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+  }
+}

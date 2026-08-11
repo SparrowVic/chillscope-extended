@@ -1,0 +1,165 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* §7: the track spans the one control metric, so a segment row lines up with the pinned field
+   boxes beside it; keys stretch to fill, and the size steps change inline padding only.
+   A track wider than its panel scrolls inside its own box (scrollbar hidden — the cut-off key
+   peeking at the edge is the affordance) instead of bleeding through the panel padding. */
+.cs-segmented-control {
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 1px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  height: var(--cs-control-height);
+  padding: 0.125rem;
+  border: 1px solid color-mix(in srgb, var(--cs-hairline) 78%, transparent);
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+/* One physical indicator glides between faces on the soft spring instead of two buttons
+   swapping fills, which keeps the selection change grounded.
+   Geometry arrives as --thumb-x/-w, measured in the component after each render. */
+.cs-segmented-control__thumb {
+  position: absolute;
+  top: 0.125rem;
+  bottom: 0.125rem;
+  left: 0;
+  width: var(--thumb-w, 0px);
+  border-radius: calc(var(--cs-r-ctl) - 2px);
+  background: var(--cs-accent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 34%, transparent),
+    0 1px 3px var(--cs-glass-shade);
+  transform: translateX(var(--thumb-x, 0px));
+  opacity: var(--thumb-on, 0);
+  transition:
+    transform 320ms var(--cs-spring-soft),
+    width 320ms var(--cs-spring-soft),
+    opacity 120ms ease-out;
+  pointer-events: none;
+}
+
+.cs-segmented-control--invalid {
+  box-shadow: var(--cs-error-ring);
+}
+
+.cs-segmented-control__option {
+  appearance: none;
+  position: relative;
+  z-index: 0;
+  /* Keys never squeeze: an over-full track scrolls (host rule above), it does not crush faces. */
+  flex: 1 0 auto;
+  min-width: 2.45rem;
+  margin: 0;
+  border: 0;
+  border-radius: calc(var(--cs-r-ctl) - 2px);
+  padding: 0 var(--p-form-field-padding-x, 0.75rem);
+  background: transparent;
+  color: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-control);
+  font-weight: 400;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background-color var(--cs-dur-fast) var(--cs-ease),
+    color var(--cs-dur-fast) var(--cs-ease),
+    box-shadow var(--cs-dur-fast) var(--cs-ease);
+}
+
+.cs-segmented-control__option.cs-mono {
+  font-family: var(--cs-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.cs-segmented-control--small .cs-segmented-control__option {
+  padding-inline: var(--p-form-field-sm-padding-x, 0.625rem);
+}
+
+.cs-segmented-control--large .cs-segmented-control__option {
+  padding-inline: var(--p-form-field-lg-padding-x, 0.875rem);
+}
+
+.cs-segmented-control__option + .cs-segmented-control__option {
+  box-shadow: -1px 0 0 var(--cs-hairline);
+}
+
+@media (hover: hover) {
+  .cs-segmented-control__option:not(:disabled):hover {
+    color: var(--cs-text);
+    background: color-mix(in srgb, var(--cs-text) 7%, transparent);
+  }
+}
+
+.cs-segmented-control__option:focus-visible {
+  z-index: 2;
+  outline: none;
+  box-shadow: var(--cs-focus-ring);
+}
+
+/* The fill lives on the gliding thumb; the active face only recolours above it. */
+.cs-segmented-control__option--active,
+.cs-segmented-control__option--active:not(:disabled):hover {
+  z-index: 1;
+  background: transparent;
+  color: var(--cs-accent-ink);
+  font-weight: 500;
+}
+
+.cs-segmented-control__option:disabled {
+  opacity: var(--p-disabled-opacity, 0.6);
+  cursor: default;
+}
+
+/* A fingertip outranks the metric: keys keep the 44px floor and the track releases to fit. */
+@media (pointer: coarse) {
+  .cs-segmented-control {
+    height: max(var(--cs-control-height), 2.75rem);
+    padding: 0;
+    border: 0;
+    outline: 1px solid color-mix(in srgb, var(--cs-hairline) 78%, transparent);
+    outline-offset: -1px;
+  }
+
+  .cs-segmented-control__option {
+    min-height: max(var(--cs-control-height), 2.75rem);
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-segmented-control__option,
+  .cs-segmented-control__thumb {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  /* The thumb's fill vanishes under forced colours; the active outline below carries state. */
+  .cs-segmented-control__thumb {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .cs-segmented-control__option--active {
+    outline: 1px solid CanvasText;
+    outline-offset: -3px;
+  }
+
+  .cs-segmented-control__option:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,38 @@
+<p-confirmpopup />
+
+<!-- The dirty-lamp vocabulary: unsaved work is a state, not an alarm — steady warn voice in a
+     polite status region. When validation is what blocks Save, the crit line says so here,
+     because the offending field may sit inside a folded group. -->
+<div class="settings-actions__status" role="status">
+  @if (dirty() && invalid()) {
+    <cs-icon name="triangle-exclamation" class="settings-actions__status-flag" aria-hidden="true" />
+    <span>{{ 'settings.actions.blocked' | transloco }}</span>
+  } @else if (dirty()) {
+    <span class="cs-led settings-actions__lamp" aria-hidden="true"></span>
+    <span>{{ 'settings.actions.unsaved' | transloco }}</span>
+  }
+</div>
+
+<p-button
+  #resetButton
+  type="button"
+  size="small"
+  severity="secondary"
+  [label]="'settings.actions.reset' | transloco"
+  (onClick)="confirmReset()"
+>
+  <ng-template #icon>
+    <cs-icon name="arrow-rotate-right" />
+  </ng-template>
+</p-button>
+
+<p-button
+  type="submit"
+  size="small"
+  [label]="'settings.actions.save' | transloco"
+  [disabled]="saveDisabled()"
+>
+  <ng-template #icon>
+    <cs-icon name="check" />
+  </ng-template>
+</p-button>

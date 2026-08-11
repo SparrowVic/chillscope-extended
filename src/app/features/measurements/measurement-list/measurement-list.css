@@ -1,0 +1,122 @@
+/* The phone journal keeps the K3 log guardrail: flat items, hairline seams, density-driven row
+   padding — the one panel material sits on the host exactly as it does on the desktop table. */
+:host {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--cs-glass-rim);
+  border-radius: var(--cs-r-card);
+  background: var(--cs-panel);
+  box-shadow: var(--cs-glass-etch);
+}
+
+.measurement-list__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.measurement-list__item {
+  display: grid;
+  gap: 0.2rem;
+  padding: var(--cs-row-pad);
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+.measurement-list__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.measurement-list__icon {
+  flex: none;
+  color: var(--cs-muted);
+  font-size: calc(0.8125rem * var(--cs-density));
+}
+
+.measurement-list__series {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The reading is the item's headline: mono value, smaller muted unit beside it (§3). */
+.measurement-list__reading {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.measurement-list__value {
+  font-size: calc(1.0625rem * var(--cs-density));
+  font-weight: 500;
+}
+
+.measurement-list__unit {
+  margin-inline-start: 0.3rem;
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+.measurement-list__time {
+  margin: 0;
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+/* ---- pager: the last item's hairline separates it from the list ---- */
+
+.measurement-list__pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cs-gap-field);
+  padding: var(--cs-row-pad);
+}
+
+/* K3 raised key at the touch floor. This face only renders on the phone tier, so the 44px
+   minimum applies unconditionally rather than waiting on a coarse-pointer query. */
+.measurement-list__page-key {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: max(var(--cs-control-height), 2.75rem);
+  height: max(var(--cs-control-height), 2.75rem);
+  border: 1px solid transparent;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  color: var(--cs-text);
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* Disabled keys sink flush with the panel; the glyph keeps muted ink, never a faded ghost. */
+.measurement-list__page-key:disabled {
+  background: var(--cs-panel);
+  box-shadow: none;
+  color: var(--cs-muted);
+  cursor: default;
+}
+
+/* Hover is a fine-pointer promise (§7); a fingertip would only leave the tint stuck on. */
+@media (hover: hover) and (pointer: fine) {
+  .measurement-list__page-key:not(:disabled):hover {
+    background: var(--cs-overlay);
+  }
+}
+
+/* The roster has one horizontal arrow; the back key turns it around, as the tape's trend
+   chevron does. Both catalogue languages read left-to-right. */
+.measurement-list__page-glyph--previous {
+  display: inline-flex;
+  transform: rotate(180deg);
+}
+
+.measurement-list__report {
+  color: var(--cs-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}

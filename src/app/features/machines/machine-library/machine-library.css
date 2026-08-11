@@ -1,0 +1,151 @@
+/* The panel material arrives as .cs-panel on the host (see machine-library.ts). Type sizes are
+   expressed in em so they follow --cs-font-base, the density type scale, instead of the fixed
+   root rem. */
+:host {
+  /* Caption, row label and footer share one indent: the list's own inset plus the row's start
+     padding must add up to the panel padding, or the columns stop lining up at some density. */
+  --library-inset: calc(0.375rem * var(--cs-density));
+
+  display: flex;
+  flex-direction: column;
+}
+
+.library__head {
+  padding: var(--cs-pad-panel-tight);
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+.library__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--library-inset);
+  list-style: none;
+}
+
+.lrow {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: var(--cs-r-ctl);
+  transition: background-color var(--cs-dur-fast) ease-out;
+}
+
+.lrow:hover {
+  background: var(--cs-hover-tint);
+}
+
+/* Restated under :hover so the pointer cannot dim a selected row back to the 7% hover tint. */
+.lrow--selected,
+.lrow--selected:hover {
+  background: color-mix(in srgb, var(--cs-accent) 9%, transparent);
+}
+
+.lrow__select {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  min-width: 0;
+  padding-block: calc(0.5625rem * var(--cs-density));
+  padding-inline: calc(var(--cs-pad-panel-tight) - var(--library-inset)) var(--library-inset);
+  border: none;
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  color: inherit;
+  font-family: var(--cs-font-sans);
+  text-align: start;
+  cursor: pointer;
+}
+
+.lrow__name {
+  overflow: hidden;
+  font-size: var(--cs-font-control);
+  font-weight: 500;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lrow__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.4375rem;
+}
+
+.lrow__id {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--cs-muted);
+  font-size: var(--cs-font-support);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The pill breathes in its own em, so it stays proportional to the label it wraps. */
+.lrow__badge {
+  padding: 0.125em 0.8em;
+  border: 1px solid var(--cs-hairline-strong);
+  border-radius: var(--cs-r-tag);
+  font-size: 0.667em;
+}
+
+.lrow__active {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  color: var(--cs-status-ok-text);
+  font-size: 0.74em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (pointer: coarse) {
+  .lrow__name {
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+
+  .lrow__id {
+    font-size: max(var(--cs-font-support), 0.75rem);
+  }
+
+  /* The row is THE navigation target of the compact library stage: a full 44px fingertip. */
+  .lrow__select {
+    min-height: 2.75rem;
+  }
+}
+
+.lrow__led {
+  --cs-led-color: var(--cs-ok);
+}
+
+.lrow__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-inline-end: var(--library-inset);
+}
+
+/* A narrow phone cannot pay three 44px keys out of the name's column: the action set wraps to
+   its own end-aligned line beneath the record instead of squeezing the label to a sliver. */
+@media (max-width: 480px) {
+  .lrow {
+    flex-wrap: wrap;
+  }
+
+  .lrow__actions {
+    margin-inline-start: auto;
+  }
+}
+
+.library__create {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(0.5rem * var(--cs-density));
+  padding: var(--cs-pad-panel-tight);
+  border-top: 1px solid var(--cs-hairline);
+}

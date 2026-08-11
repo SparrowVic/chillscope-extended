@@ -1,0 +1,309 @@
+<header class="schematic__head cs-caption-row">
+  <h2 class="cs-label">{{ titleKey() | transloco }}</h2>
+  @if (frame(); as vm) {
+    <div class="schematic__meta">
+      <span
+        class="schematic__state schematic__state--{{ telemetryDisplayState() }}"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="schematic__state-dot" aria-hidden="true"></span>
+        {{ 'dashboard.schematic.state.' + telemetryDisplayState() | transloco }}
+      </span>
+      <span class="schematic__revision cs-mono">{{ vm.caption }}</span>
+    </div>
+  }
+</header>
+
+@if (frame(); as vm) {
+  <!-- Only a panel narrower than the drawing renders this switch (CSS gates it at the edge-fade
+       line): detail keeps the deliberate pannable canvas, overview scales the circuit into view. -->
+  <div class="schematic__view">
+    <cs-segmented-control
+      label="dashboard.schematic.viewLabel"
+      [options]="viewOptions"
+      [value]="view()"
+      (selected)="view.set($event)"
+    />
+  </div>
+
+  <div
+    #scroll
+    class="schematic__scroll cs-focus-ring cs-edge-fade"
+    [class.schematic__scroll--fit]="view() === 'fit'"
+    role="region"
+    tabindex="0"
+    [attr.aria-label]="'dashboard.schematic.scrollLabel' | transloco"
+  >
+    <!-- Keyed on the caption so switching machines rebuilds the stage and replays the
+         draw-in choreography (§8: a state change may be choreographed). -->
+    @for (stage of vm.stages; track stage.id) {
+      <div
+        class="schematic__stage"
+        [class.schematic__stage--fit]="view() === 'fit'"
+        [class.schematic__stage--unknown]="flowState() === 'unknown'"
+        [class.schematic__stage--stopped]="flowState() === 'stopped'"
+        [class.schematic__stage--running]="flowState() === 'running'"
+        [style.--cs-flow-dur]="flowDuration()"
+      >
+        <svg
+          class="schematic__svg"
+          [attr.viewBox]="vm.viewBox"
+          role="group"
+          [attr.aria-label]="diagramLabel()"
+        >
+          <svg:title>{{ diagramLabel() }}</svg:title>
+          @for (pipe of vm.pipes; track pipe.id) {
+            @let motion = pipeMotion(pipe);
+            <svg:g
+              class="schematic__run"
+              [class.schematic__run--inspected]="pipeIsInspected(pipe)"
+              [class.schematic__run--dimmed]="pipeIsDimmed(pipe)"
+              [class.schematic__run--warning]="motion.status === 'warning'"
+              [class.schematic__run--critical]="motion.status === 'critical'"
+              [style.--draw-delay]="pipe.drawDelay"
+              [style.--packet-dur]="motion.packetDuration"
+              [style.--pipe-i]="$index"
+              aria-hidden="true"
+            >
+              <svg:polyline
+                class="schematic__pipe schematic__pipe--{{ pipe.side }}"
+                pathLength="100"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline
+                class="schematic__flow schematic__flow--{{ pipe.side }}"
+                [class.schematic__flow--running]="flowState() === 'running'"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline
+                class="schematic__anomaly-tint"
+                pathLength="100"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline
+                class="schematic__anomaly-wave"
+                [class.schematic__anomaly-wave--reverse]="motion.reverseAnomaly"
+                [class.schematic__anomaly-wave--warning]="
+                  motion.anomalyMoving && motion.status === 'warning'
+                "
+                [class.schematic__anomaly-wave--critical]="
+                  motion.anomalyMoving && motion.status === 'critical'
+                "
+                pathLength="100"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline
+                class="schematic__packet schematic__packet--{{ pipe.side }}"
+                [class.schematic__packet--running]="flowState() === 'running'"
+                pathLength="100"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline
+                class="schematic__packet-tail schematic__packet-tail--{{ pipe.side }}"
+                [class.schematic__packet-tail--running]="flowState() === 'running'"
+                pathLength="100"
+                [attr.points]="pipe.points"
+              />
+              <svg:polyline class="schematic__prime" pathLength="100" [attr.points]="pipe.points" />
+              <svg:circle
+                class="schematic__joint schematic__joint--{{ pipe.side }}"
+                r="2.6"
+                [attr.cx]="pipe.startX"
+                [attr.cy]="pipe.startY"
+              />
+              <svg:circle
+                class="schematic__joint schematic__joint--{{ pipe.side }}"
+                r="2.6"
+                [attr.cx]="pipe.endX"
+                [attr.cy]="pipe.endY"
+              />
+            </svg:g>
+          }
+
+          @for (leader of vm.leaders; track $index) {
+            <svg:line
+              class="schematic__leader"
+              [class.schematic__leader--inspected]="inspectedNode() === leader.nodeId"
+              [class.schematic__leader--dimmed]="nodeIsDimmed(leader.nodeId)"
+              [attr.x1]="leader.x1"
+              [attr.y1]="leader.y1"
+              [attr.x2]="leader.x2"
+              [attr.y2]="leader.y2"
+              aria-hidden="true"
+            />
+          }
+
+          @for (node of vm.nodes; track node.id) {
+            @let motion = nodeMotion(node);
+            <svg:g
+              class="schematic__node schematic__node--{{ node.type }} schematic__node--medium-{{
+                node.medium
+              }}"
+              [class.schematic__node--running]="motion.running"
+              [class.schematic__node--warning]="nodeStatus(node.id) === 'warning'"
+              [class.schematic__node--critical]="nodeStatus(node.id) === 'critical'"
+              [class.schematic__node--inspected]="inspectedNode() === node.id"
+              [class.schematic__node--dimmed]="nodeIsDimmed(node.id)"
+              [style.--draw-delay]="node.drawDelay"
+              [attr.transform]="node.transform"
+              [attr.aria-label]="nodeLabel(node)"
+              (pointerenter)="inspectWithPointer(node.id)"
+              (pointerleave)="clearPointerInspection(node.id)"
+              (focus)="inspectWithFocus(node.id)"
+              (blur)="clearFocusInspection(node.id)"
+              role="img"
+              tabindex="0"
+            >
+              <svg:rect
+                class="schematic__node-hit"
+                [attr.x]="node.hitX"
+                [attr.y]="node.hitY"
+                [attr.width]="node.hitWidth"
+                [attr.height]="node.hitHeight"
+                aria-hidden="true"
+              />
+              <svg:path
+                class="schematic__focus-brackets"
+                [attr.d]="node.focusPath"
+                aria-hidden="true"
+              />
+              <svg:g class="schematic__body" [csSchematicShapes]="node.shapes" />
+              <!-- One wrapper group per effect shape: the choreography animates these
+                   panel-owned groups, since the shapes themselves live in the child
+                   component's style scope. -->
+              @for (fx of node.fx; track fx.kind) {
+                @let fxMotion = effectMotion(node.id, fx);
+                <svg:g
+                  class="schematic__fx schematic__fx--{{ fx.kind }} schematic__fx--tone-{{
+                    fx.tone
+                  }}"
+                  [class.schematic__fx--active]="fxMotion.active"
+                  [class.schematic__fx--warning]="fxMotion.status === 'warning'"
+                  [class.schematic__fx--critical]="fxMotion.status === 'critical'"
+                  [style.--fx-dur]="fxMotion.duration"
+                  [style.--fx-opacity]="fxMotion.opacity"
+                  aria-hidden="true"
+                >
+                  @for (shapeGroup of fx.shapeGroups; track $index) {
+                    <svg:g
+                      class="schematic__fx-anim"
+                      [style.--i]="$index"
+                      [csSchematicShapes]="shapeGroup.shapes"
+                    />
+                  }
+                </svg:g>
+              }
+              @for (spin of node.spins; track $index) {
+                @let spinState = spinMotion(node.id);
+                <svg:g [attr.transform]="spin.pivot">
+                  <svg:g
+                    class="schematic__spin schematic__spin--{{ spin.kind }}"
+                    [class.schematic__spin--running]="spinState.running"
+                    [class.schematic__spin--reverse]="spin.reverse"
+                    [style.--spin-dur]="spinState.duration"
+                    [style.--spin-speed]="spin.speed"
+                  >
+                    <svg:g
+                      class="schematic__spin-shapes"
+                      [attr.transform]="spin.unpivot"
+                      [csSchematicShapes]="spin.shapes"
+                    />
+                  </svg:g>
+                </svg:g>
+              }
+            </svg:g>
+            <svg:text
+              class="schematic__node-label"
+              [class.schematic__node-label--inspected]="inspectedNode() === node.id"
+              [class.schematic__node-label--dimmed]="nodeIsDimmed(node.id)"
+              [attr.x]="node.labelX"
+              [attr.y]="node.labelY"
+              [attr.title]="node.fullLabel"
+              text-anchor="middle"
+              aria-hidden="true"
+              (pointerenter)="inspectWithPointer(node.id)"
+              (pointerleave)="clearPointerInspection(node.id)"
+            >
+              {{ node.label }}
+            </svg:text>
+          }
+        </svg>
+
+        @for (tag of tags(); track tag.isaTag) {
+          <!-- The reticle brackets ride the same signal as the inspected state: target acquired
+               is meaning, so the two must never disagree. -->
+          <div
+            class="schematic-tag schematic-tag--{{ tag.edge }} cs-reticle"
+            [class.schematic-tag--idle]="!tag.hasValue"
+            [class.schematic-tag--warning]="tag.status === 'warning'"
+            [class.schematic-tag--critical]="tag.status === 'critical'"
+            [class.schematic-tag--inspected]="inspectedNode() === tag.nodeId"
+            [class.cs-reticle--on]="inspectedNode() === tag.nodeId"
+            [class.schematic-tag--dimmed]="nodeIsDimmed(tag.nodeId)"
+            [style.left.%]="tag.leftPct"
+            [style.top.%]="tag.topPct"
+            [attr.title]="tag.hasValue ? null : ('dashboard.schematic.noReading' | transloco)"
+            (pointerenter)="inspectWithPointer(tag.nodeId)"
+            (pointerleave)="clearPointerInspection(tag.nodeId)"
+          >
+            <div class="schematic-tag__head">
+              <span
+                class="cs-led schematic-tag__led--{{ tag.status }}"
+                [class.schematic-tag__led--pulse]="tagPulse(tag)"
+                aria-hidden="true"
+              ></span>
+              <!-- The caption may truncate at compact density; the title keeps it readable. -->
+              <span class="schematic-tag__series" [attr.title]="tag.seriesKey | transloco">{{
+                tag.seriesKey | transloco
+              }}</span>
+              <span class="schematic-tag__isa cs-label">{{ tag.isaTag }}</span>
+            </div>
+            <p class="schematic-tag__value cs-mono">
+              @if (tag.hasValue) {
+                <cs-digit-morph [value]="tag.value" />
+                <span class="schematic-tag__unit">{{ tag.unitKey | transloco }}</span>
+                <!-- The LED and gauge tint are aria-hidden; the severity must also arrive as text. -->
+                <span class="sr-only">{{ 'severity.' + tag.status | transloco }}</span>
+              } @else {
+                <span aria-hidden="true"><cs-digit-morph [value]="tag.value" /></span>
+                <span class="sr-only">{{ 'dashboard.schematic.noReading' | transloco }}</span>
+              }
+            </p>
+            <div class="schematic-tag__gauge" aria-hidden="true">
+              @if (tag.gauge; as gauge) {
+                @for (zone of gauge.zones; track $index) {
+                  <span
+                    class="schematic-tag__zone schematic-tag__zone--{{ zone.kind }}"
+                    [style.left.%]="zone.leftPct"
+                    [style.width.%]="zone.widthPct"
+                  ></span>
+                }
+                <span class="schematic-tag__mark-position" [style.transform]="gauge.markTransform">
+                  <span class="schematic-tag__mark schematic-tag__mark--{{ gauge.status }}"></span>
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <div class="schematic__errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ 'dashboard.schematic.invalid' | transloco }}</p>
+    <p class="cs-alert__message">{{ 'dashboard.schematic.invalidMessage' | transloco }}</p>
+    <ul class="cs-alert__list cs-mono">
+      @for (error of errorCopies(); track $index) {
+        <li>{{ error.key | transloco: error.params }}</li>
+      }
+    </ul>
+  </div>
+}
+
+<!-- Registration marks: the panel is a drafting sheet, and a printed sheet is registered in all
+     four corners. Static console chrome (schematic-console.css), invisible to assistive tech. -->
+<span class="schematic__regmark schematic__regmark--tl" aria-hidden="true"></span>
+<span class="schematic__regmark schematic__regmark--tr" aria-hidden="true"></span>
+<span class="schematic__regmark schematic__regmark--bl" aria-hidden="true"></span>
+<span class="schematic__regmark schematic__regmark--br" aria-hidden="true"></span>

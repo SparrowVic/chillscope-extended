@@ -1,0 +1,25 @@
+/* The log's one status voice, shared by the desktop table and the phone list: LED plus a short
+   severity tag, never colour alone. Dark cockpit (§8b): a healthy row is a hollow ring —
+   transparent fill, hairline ring, no bloom — so warn/crit lamps are the only light in the log. */
+.log-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.log-status--ok .cs-led {
+  background: transparent;
+  border: 1px solid var(--cs-hairline-strong);
+}
+
+.log-status--ok .cs-led::after {
+  content: none;
+}
+
+.log-status--warning {
+  --cs-led-color: var(--cs-status-warning);
+}
+
+.log-status--critical {
+  --cs-led-color: var(--cs-status-critical);
+}

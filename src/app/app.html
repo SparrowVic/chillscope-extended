@@ -1,0 +1,5 @@
+<router-outlet />
+
+@if (updateReady()) {
+  <div class="app__update cs-panel" role="status">{{ 'common.updateReady' | transloco }}</div>
+}

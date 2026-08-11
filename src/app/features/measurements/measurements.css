@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.measurements__deck {
+  display: block;
+  margin-bottom: var(--cs-gap-section);
+}
+
+/* The log's head row: the title alone on desktop; on the phone tier the CSV export sits at its
+   far end, next to the journal the file describes. */
+.measurements__log-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cs-gap-field);
+  margin-bottom: var(--cs-gap-field);
+}
+
+.measurements__log-title {
+  margin: 0;
+}

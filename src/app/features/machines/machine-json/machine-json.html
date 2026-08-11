@@ -1,0 +1,130 @@
+<!-- File operations lead; the edit verdict/apply strip docks BELOW the editor (mobile: the
+     dock stays sticky above the mobile navigation reserve, so Apply never hides below the fold —
+     and acting on what was just typed reads top-to-bottom everywhere). -->
+<div class="mjson__toolbar">
+  <label class="mjson__import">
+    <input
+      class="mjson__file"
+      type="file"
+      accept=".json,application/json"
+      aria-describedby="machine-json-hint"
+      [disabled]="locked()"
+      (change)="importFile($event)"
+    />
+    <span class="mjson__import-face" [class.mjson__import-face--disabled]="locked()">
+      <cs-icon name="file-import" aria-hidden="true" />
+      {{ 'machines.json.import' | transloco }}
+    </span>
+  </label>
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.json.exportJson' | transloco"
+    (onClick)="exportJson()"
+  >
+    <ng-template #icon>
+      <cs-icon name="file-export" />
+    </ng-template>
+  </p-button>
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.json.exportXml' | transloco"
+    (onClick)="exportXml()"
+  >
+    <ng-template #icon>
+      <cs-icon name="file-export" />
+    </ng-template>
+  </p-button>
+</div>
+
+<p class="mjson__hint" id="machine-json-hint">
+  {{ 'machines.json.sizeHint' | transloco: { size: maxKiB } }}
+</p>
+
+<textarea
+  class="mjson__editor cs-mono cs-focus-ring"
+  spellcheck="false"
+  autocapitalize="off"
+  autocorrect="off"
+  [attr.aria-label]="'machines.json.editorLabel' | transloco"
+  aria-describedby="machine-json-hint machine-json-status"
+  [attr.aria-busy]="parsing()"
+  [attr.aria-invalid]="editorInvalid()"
+  [attr.maxlength]="maxCharacters"
+  [readonly]="locked()"
+  [value]="text()"
+  (input)="onTextInput($event)"
+  (blur)="flushPendingParse()"
+></textarea>
+
+<p class="sr-only" id="machine-json-status" role="status" aria-live="polite" aria-atomic="true">
+  @if (parsing()) {
+    {{ 'machines.json.checking' | transloco }}
+  }
+</p>
+
+@if (verdictOk()) {
+  <p class="mjson__ok" role="status">
+    <cs-icon name="circle-check" aria-hidden="true" />
+    {{ 'machines.json.valid' | transloco }}
+  </p>
+}
+
+@if (messageError(); as error) {
+  <div class="mjson__errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ error.titleKey | transloco }}</p>
+    <ul class="cs-alert__list cs-mono">
+      <li>{{ error.messageKey | transloco: error.params }}</li>
+    </ul>
+  </div>
+}
+
+@if (verdictCopies().length > 0) {
+  <div class="mjson__errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ 'machines.editor.errorsTitle' | transloco }}</p>
+    <ul class="cs-alert__list cs-mono">
+      @for (error of verdictCopies(); track $index) {
+        <li>{{ error.key | transloco: error.params }}</li>
+      }
+    </ul>
+  </div>
+}
+
+<!-- Keeps the base toolbar class: the button chrome and the specs' selector reach both rows. -->
+<div class="mjson__toolbar mjson__toolbar--dock">
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.json.validate' | transloco"
+    (onClick)="validateNow()"
+  >
+    <ng-template #icon>
+      <cs-icon name="circle-check" />
+    </ng-template>
+  </p-button>
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.json.format' | transloco"
+    [disabled]="locked()"
+    (onClick)="format()"
+  >
+    <ng-template #icon>
+      <cs-icon name="code" />
+    </ng-template>
+  </p-button>
+
+  <span class="mjson__spacer"></span>
+
+  <p-button
+    type="button"
+    [label]="'common.apply' | transloco"
+    [disabled]="locked()"
+    (onClick)="apply()"
+  >
+    <ng-template #icon>
+      <cs-icon name="check" />
+    </ng-template>
+  </p-button>
+</div>

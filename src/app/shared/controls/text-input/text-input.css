@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* Identifiers are data, but small mono values need their native spacing rather than artificial
+   tightening; tabular figures already provide the alignment. */
+:host input.cs-mono {
+  font-family: var(--cs-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}

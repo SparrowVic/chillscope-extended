@@ -1,0 +1,43 @@
+<cs-control-frame [state]="frame()">
+  <!-- appendTo body: an inline panel gets buried under sibling stacking contexts. -->
+  <p-multiselect
+    appendTo="body"
+    panelStyleClass="cs-multiselect-panel"
+    optionLabel="text"
+    optionValue="value"
+    optionDisabled="disabled"
+    [inputId]="controlId"
+    [ariaLabelledBy]="labelledBy()"
+    [pt]="passThrough()"
+    [options]="resolvedOptions()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (onBlur)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [display]="display()"
+    [showToggleAll]="showToggleAll()"
+    [filter]="filter()"
+    [autofocusFilter]="false"
+    [maxSelectedLabels]="maxSelectedLabels()"
+    [selectedItemsLabel]="'primeng.selection' | transloco"
+    [size]="primeSize()"
+    [fluid]="true"
+    [placeholder]="placeholder() | transloco"
+    [emptyMessage]="'common.noResults' | transloco"
+    [emptyFilterMessage]="'common.noResults' | transloco"
+  >
+    @if (showToggleAll()) {
+      <p-header>
+        <label
+          class="cs-multiselect__toggle-label"
+          [id]="toggleAllLabelId"
+          [attr.for]="toggleAllId"
+        >
+          {{ 'common.all' | transloco }}
+        </label>
+      </p-header>
+    }
+  </p-multiselect>
+</cs-control-frame>

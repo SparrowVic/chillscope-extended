@@ -1,0 +1,56 @@
+@if (rows().length > 0) {
+  <ol class="measurement-list__items" [attr.aria-label]="'measurements.table.caption' | transloco">
+    @for (row of rows(); track row.id) {
+      <li class="measurement-list__item">
+        <div class="measurement-list__meta">
+          <cs-icon class="measurement-list__icon" [name]="row.icon" />
+          <span class="cs-label measurement-list__series">{{ row.seriesKey | transloco }}</span>
+          <span class="log-status log-status--{{ row.status }}">
+            <span class="cs-led" aria-hidden="true"></span>
+            <span class="cs-tag cs-tag--{{ row.status }}">{{ row.statusKey | transloco }}</span>
+          </span>
+        </div>
+        <p class="measurement-list__reading">
+          <span class="cs-mono measurement-list__value">{{ row.valueText }}</span>
+          <span class="measurement-list__unit">{{ row.unitKey | transloco }}</span>
+        </p>
+        <p class="cs-mono measurement-list__time">{{ row.dateText }}</p>
+      </li>
+    }
+  </ol>
+
+  <nav
+    class="measurement-list__pager"
+    [attr.aria-label]="'measurements.log.pagination' | transloco"
+  >
+    <button
+      class="measurement-list__page-key cs-focus-ring"
+      type="button"
+      [disabled]="!hasPrevious()"
+      [attr.aria-label]="'table.previous' | transloco"
+      (click)="previous()"
+    >
+      <cs-icon class="measurement-list__page-glyph--previous" name="arrow-right" />
+    </button>
+
+    <span class="cs-mono measurement-list__report">
+      {{ 'table.showing' | transloco: reportParams() }}
+    </span>
+
+    <button
+      class="measurement-list__page-key cs-focus-ring"
+      type="button"
+      [disabled]="!hasNext()"
+      [attr.aria-label]="'table.next' | transloco"
+      (click)="next()"
+    >
+      <cs-icon name="arrow-right" />
+    </button>
+  </nav>
+} @else if (!loading()) {
+  <app-empty-state
+    icon="table-list"
+    titleKey="measurements.empty.title"
+    messageKey="measurements.empty.message"
+  />
+}

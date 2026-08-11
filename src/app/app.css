@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.app__update {
+  position: fixed;
+  inset-inline-end: clamp(1rem, 3vw, 2rem);
+  inset-block-end: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 1300;
+  max-inline-size: min(24rem, calc(100vw - 2rem));
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}

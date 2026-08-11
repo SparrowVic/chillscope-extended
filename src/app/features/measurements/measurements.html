@@ -1,0 +1,54 @@
+<app-page-header
+  icon="table-list"
+  titleKey="measurements.title"
+  subtitleKey="measurements.subtitle"
+>
+  @if (!phone()) {
+    <app-export-button [query]="query()" [descriptors]="facade.catalogue()" />
+  }
+</app-page-header>
+
+<app-tape-deck class="measurements__deck" />
+
+<section
+  class="measurements__log cs-rise"
+  style="--rise: 2"
+  [attr.aria-label]="'measurements.log.title' | transloco"
+>
+  <div class="measurements__log-head">
+    <h2 class="cs-label measurements__log-title">{{ 'measurements.log.title' | transloco }}</h2>
+    @if (phone()) {
+      <app-export-button [query]="query()" [descriptors]="facade.catalogue()" />
+    }
+  </div>
+
+  <app-measurements-filters
+    [availableSeries]="availableSeries()"
+    [selectedSeries]="facade.selectedSeries()"
+    [range]="facade.range()"
+    [bucket]="facade.bucket()"
+    (seriesChange)="facade.setSeries($event)"
+    (rangeChange)="facade.setRange($event.from, $event.to)"
+    (bucketChange)="facade.setBucket($event)"
+  />
+
+  @if (facade.rowsError()) {
+    <app-error-panel
+      titleKey="errors.loadMeasurements"
+      [retrying]="facade.isLoadingRows()"
+      (retry)="facade.reload()"
+    />
+  }
+  @if (!facade.rowsError() || tableRows().length > 0) {
+    <app-measurements-table
+      [rows]="tableRows()"
+      [total]="facade.total()"
+      [page]="facade.page()"
+      [pageSize]="facade.pageSize()"
+      [sort]="facade.sort()"
+      [direction]="facade.direction()"
+      [loading]="facade.isLoadingRows()"
+      (pageRequest)="onPageRequest($event)"
+    />
+  }
+</section>

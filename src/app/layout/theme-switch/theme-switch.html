@@ -1,0 +1,16 @@
+<span id="theme-switch-label" class="sr-only">{{ 'theme.label' | transloco }}</span>
+
+<span class="cs-segment" role="group" aria-labelledby="theme-switch-label">
+  @for (option of options; track option.value) {
+    <button
+      class="cs-segment__option theme-switch__option cs-focus-ring"
+      type="button"
+      [class.cs-segment__option--selected]="theme() === option.value"
+      [attr.aria-label]="option.labelKey | transloco"
+      [attr.aria-pressed]="theme() === option.value"
+      (click)="select(option.value)"
+    >
+      <cs-icon aria-hidden="true" [name]="option.icon" />
+    </button>
+  }
+</span>

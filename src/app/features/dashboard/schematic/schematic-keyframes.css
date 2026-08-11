@@ -1,0 +1,266 @@
+/* Keyframe vocabulary for the synoptic scene, split from schematic-motion.css to hold the
+   per-sheet style budget; the class rules there reference these names. Same media gate. */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cs-draw {
+    from {
+      stroke-dashoffset: var(--dd, 100);
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes cs-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes cs-flow-dash {
+    to {
+      stroke-dashoffset: -56;
+    }
+  }
+
+  @keyframes cs-packet {
+    from {
+      stroke-dashoffset: 100;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes cs-anomaly-wave {
+    from {
+      stroke-dashoffset: 100;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes cs-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Intake, squeeze, release: the dwell reads as compression rather than bounce. */
+  @keyframes cs-piston {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+
+    40%,
+    55% {
+      transform: scaleY(0.72);
+    }
+  }
+
+  @keyframes cs-fx-breathe {
+    0%,
+    100% {
+      opacity: 0.08;
+    }
+
+    50% {
+      opacity: var(--fx-opacity, 0.42);
+    }
+  }
+
+  @keyframes cs-fx-rise {
+    0% {
+      transform: translateY(2px);
+      opacity: 0;
+    }
+
+    18% {
+      opacity: var(--fx-opacity, 0.55);
+    }
+
+    70%,
+    100% {
+      transform: translateY(-7px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes cs-prime {
+    0% {
+      stroke-dashoffset: 112;
+      opacity: 0;
+    }
+
+    12% {
+      opacity: 0.9;
+    }
+
+    88% {
+      opacity: 0.9;
+    }
+
+    100% {
+      stroke-dashoffset: -14;
+      opacity: 0;
+    }
+  }
+
+  /* Condensate lets go: forms, falls a short way, and is gone. */
+  @keyframes cs-fx-fall {
+    0% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+
+    18% {
+      opacity: var(--fx-opacity, 0.3);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(9px);
+    }
+  }
+
+  /* Mist off the orifice: a cone that blooms and disperses. */
+  @keyframes cs-fx-spray {
+    0% {
+      opacity: 0;
+      transform: scale(0.55);
+    }
+
+    30% {
+      opacity: var(--fx-opacity, 0.3);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes cs-fx-drift {
+    0%,
+    100% {
+      transform: translateX(-2.5px);
+    }
+
+    50% {
+      transform: translateX(2.5px);
+    }
+  }
+
+  @keyframes cs-fx-flicker {
+    0%,
+    76%,
+    96%,
+    100% {
+      opacity: 0;
+    }
+
+    80% {
+      opacity: var(--fx-opacity, 0.85);
+    }
+
+    84% {
+      opacity: 0.12;
+    }
+
+    88% {
+      opacity: var(--fx-opacity, 0.65);
+    }
+  }
+
+  @keyframes cs-shimmer {
+    0%,
+    100% {
+      opacity: 0.66;
+    }
+
+    50% {
+      opacity: 0.48;
+    }
+  }
+
+  @keyframes cs-vibe {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+
+    33% {
+      transform: translate(0.3px, -0.2px);
+    }
+
+    66% {
+      transform: translate(-0.25px, 0.25px);
+    }
+  }
+
+  @keyframes cs-alarm {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.58;
+    }
+  }
+
+  @keyframes cs-led-attention {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.45);
+      opacity: 0.58;
+    }
+  }
+
+  @keyframes cs-bracket-reveal {
+    from {
+      stroke-dashoffset: 12;
+      opacity: 0;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schematic__flow,
+  .schematic__packet,
+  .schematic__spin,
+  .schematic__fx-anim,
+  .schematic__anomaly-wave,
+  .schematic-tag__led--pulse {
+    animation: none;
+  }
+
+  .schematic__flow,
+  .schematic__packet {
+    transition: none;
+  }
+
+  .schematic__packet,
+  .schematic__anomaly-wave {
+    display: none;
+  }
+
+  .schematic__fx {
+    transition: none;
+  }
+}

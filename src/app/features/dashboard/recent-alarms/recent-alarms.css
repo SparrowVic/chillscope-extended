@@ -1,0 +1,134 @@
+/* The surface comes from .cs-panel on the host. The journal rows inside stay flat — hairline
+   separators only, per the K3 guardrail. Type here is bespoke rem, so it rides --cs-density;
+   the named tokens carry the panel's own box. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  padding: var(--cs-pad-panel);
+}
+
+/* .cs-caption-row carries the row; the "view all" link can wrap under a long title, which needs
+   a second gap axis the shared recipe deliberately does not carry. */
+.recent-alarms__head {
+  flex-wrap: wrap;
+  gap: 0.35rem var(--cs-gap-field);
+}
+
+.recent-alarms__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  /* Keeps the link on the end edge when it wraps under a long title. */
+  margin-inline-start: auto;
+  color: var(--cs-accent);
+  font-size: calc(0.82rem * var(--cs-density));
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.recent-alarms__link:hover {
+  text-decoration: underline;
+}
+
+/* The ring itself is .cs-focus-ring; the link only adds the corner the ring wraps and the
+   underline that keeps focus legible without colour. */
+.recent-alarms__link:focus-visible {
+  border-radius: 2px;
+  text-decoration: underline;
+}
+
+/* Journal rows: hairline separators carry the rhythm, no per-row boxes (§7 guardrail spirit). */
+.recent-alarms__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recent-alarms__item {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.3rem * var(--cs-density));
+  padding-block: calc(0.55rem * var(--cs-density));
+}
+
+.recent-alarms__item + .recent-alarms__item {
+  border-block-start: 1px solid var(--cs-hairline);
+}
+
+.recent-alarms__row {
+  display: flex;
+  align-items: baseline;
+  gap: calc(0.6rem * var(--cs-density));
+  min-width: 0;
+}
+
+.recent-alarms__row--values {
+  justify-content: space-between;
+}
+
+.recent-alarms__series {
+  overflow: hidden;
+  flex: 1;
+  font-size: calc(0.85rem * var(--cs-density));
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-alarms__value {
+  font-size: calc(0.9rem * var(--cs-density));
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.recent-alarms__threshold {
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+  white-space: nowrap;
+}
+
+.recent-alarms__unit {
+  margin-inline-start: calc(0.3rem * var(--cs-density));
+  color: var(--cs-muted);
+  font-family: var(--cs-font-sans);
+  font-size: 0.8em;
+  font-weight: 400;
+}
+
+.recent-alarms__time {
+  color: var(--cs-muted);
+  font-size: calc(0.72rem * var(--cs-density));
+  white-space: nowrap;
+}
+
+/* The rows the skeletons stand in for ride the density scale, so their rhythm follows too. */
+.recent-alarms__skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.45rem * var(--cs-density));
+}
+
+/* §8b: a quiet journal may let its bell breathe — barely (0.9↔1 over 4s). Empty is a state, not
+   settled telemetry, so this is the page's one sanctioned idle loop besides the LEDs. Gated off
+   entirely under reduced motion instead of clamped to a flicker. The icon lives inside the
+   shared empty-state component, hence the piercing — the animation is journal flavour, not part
+   of the shared slab's contract. */
+@media (prefers-reduced-motion: no-preference) {
+  :host ::ng-deep .empty-state__icon {
+    animation: recent-alarms-breathe 4s ease-in-out infinite;
+  }
+}
+
+@keyframes recent-alarms-breathe {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

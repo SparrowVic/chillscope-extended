@@ -1,0 +1,162 @@
+/* A log line, not a card: hairline separation only, no box of its own. Phone-first the entry is
+   two decks — identity above, numbers below, both clocks on the right — and from tablet width up
+   the same DOM flattens back into the dense single log line (§7: density is a feature). */
+:host {
+  --alarm-row-gap: calc(0.9rem * var(--cs-density));
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: calc(0.5rem * var(--cs-density));
+  /* Rows breathe with density, but their inline inset stays put: it aligns every line with the
+     day heading above, which sits flush on the canvas. */
+  padding: calc(0.6rem * var(--cs-density)) 0.25rem;
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+/* The lamp column matches the head line's height so the LED centres on the severity tag. */
+.alarm-item__lamp {
+  display: inline-flex;
+  flex: none;
+  width: 0.5rem;
+  height: calc(1.25rem * var(--cs-density));
+  align-items: center;
+  justify-content: center;
+}
+
+.alarm-item__led {
+  --cs-led-color: var(--cs-status-critical);
+}
+
+.alarm-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.3rem * var(--cs-density));
+  min-width: 0;
+}
+
+.alarm-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(0.25rem * var(--cs-density)) calc(0.6rem * var(--cs-density));
+  min-width: 0;
+}
+
+/* Critical is filled and warning is tinted; the shape stays shared app-wide. */
+.alarm-item__tag {
+  justify-content: center;
+}
+
+/* Long PL/EN series names wrap onto the next line instead of clipping — nothing truncates. */
+.alarm-item__series {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.alarm-item__reading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: calc(0.35rem * var(--cs-density)) var(--alarm-row-gap);
+  min-width: 0;
+}
+
+.alarm-item__reading {
+  white-space: nowrap;
+}
+
+/* Log-line type is bespoke rem, so it rides --cs-density with the row box around it (§6) —
+   a frozen reading inside a scaled row reads as a mismatch at both ends of the range. */
+.alarm-item__value {
+  font-size: calc(0.9375rem * var(--cs-density));
+}
+
+.alarm-item__unit {
+  margin-inline-start: calc(0.25rem * var(--cs-density));
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+.alarm-item__detail {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.3rem * var(--cs-density));
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+/* Read aloud, not drawn: the hourglass carries the same meaning for anyone who can see it. */
+
+/* Exact clock over relative age, right-aligned as one time column. No cursor: help — there is
+   no hidden payload left to hint at. */
+.alarm-item__when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(0.125rem * var(--cs-density));
+  text-align: end;
+}
+
+.alarm-item__clock {
+  font-size: calc(0.8125rem * var(--cs-density));
+  line-height: calc(
+    1.25rem * var(--cs-density)
+  ); /* shares the head line's box, so the clocks align */
+}
+
+.alarm-item__ago {
+  color: var(--cs-muted);
+  font-size: calc(0.6875rem * var(--cs-density));
+  white-space: nowrap;
+}
+
+/* From tablet width up the decks fold back into one dense line; the fixed columns keep the
+   journal reading as a table without being one. Both clocks stay visible, now side by side. */
+@media (min-width: 768px) {
+  :host {
+    align-items: center;
+    column-gap: var(--alarm-row-gap);
+  }
+
+  .alarm-item__lamp {
+    height: auto;
+  }
+
+  .alarm-item__body {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(0.35rem * var(--cs-density)) var(--alarm-row-gap);
+  }
+
+  .alarm-item__head {
+    flex: none;
+  }
+
+  .alarm-item__tag {
+    min-width: 4.5rem;
+  }
+
+  .alarm-item__series {
+    min-width: 7rem;
+  }
+
+  .alarm-item__reading {
+    min-width: calc(5.5rem * var(--cs-density));
+  }
+
+  .alarm-item__when {
+    flex-direction: row;
+    align-items: baseline;
+    gap: calc(0.45rem * var(--cs-density));
+  }
+
+  /* Inline, the two clocks need a seam; stacked they separate themselves. Decorative only —
+     the screen-reader line above carries its own separator. */
+  .alarm-item__ago::before {
+    content: '· ';
+    color: var(--cs-muted);
+  }
+}

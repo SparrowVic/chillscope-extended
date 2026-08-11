@@ -1,0 +1,28 @@
+<p-message severity="error">
+  <ng-template #icon>
+    <cs-icon name="triangle-exclamation" />
+  </ng-template>
+
+  <div class="error-panel">
+    <div class="error-panel__text">
+      <p class="error-panel__title">{{ titleKey() | transloco }}</p>
+      <p class="error-panel__description">{{ messageKey() | transloco }}</p>
+      @if (detail(); as detailText) {
+        <p class="error-panel__detail cs-mono">{{ detailText }}</p>
+      }
+    </div>
+
+    <p-button
+      type="button"
+      [disabled]="retrying()"
+      [styleClass]="retrying() ? 'cs-loading-bar' : ''"
+      [attr.aria-busy]="retrying()"
+      [label]="'common.retry' | transloco"
+      (onClick)="retry.emit()"
+    >
+      <ng-template #icon>
+        <cs-icon name="arrow-rotate-right" />
+      </ng-template>
+    </p-button>
+  </div>
+</p-message>

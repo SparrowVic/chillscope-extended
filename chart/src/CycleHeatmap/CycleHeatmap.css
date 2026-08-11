@@ -1,0 +1,27 @@
+.heatmap {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 260px;
+}
+
+.heatmap__canvas {
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 260px;
+  /* This chart has no pinch gesture, so browser zoom stays available. */
+  touch-action: pan-y pinch-zoom;
+}
+
+.heatmap__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  pointer-events: none;
+  font-family: var(--cs-font-sans, sans-serif);
+  font-size: 0.8125rem;
+  color: var(--cs-muted);
+  background: color-mix(in srgb, var(--cs-panel) 68%, transparent);
+}

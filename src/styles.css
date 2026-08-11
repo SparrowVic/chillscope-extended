@@ -1,0 +1,1497 @@
+/* geist-sans ships a single `latin` subset whose files already carry the
+   latin-ext glyphs (verified against the woff2 cmap), so one import per weight is the whole face.
+   geist-mono splits the subsets but declares no unicode-range, so its `latin-ext` files — which
+   contain full latin + ext coverage — are imported alone; adding the `latin` files would only
+   shadow them. */
+@import '@fontsource/geist-sans/latin-400.css';
+@import '@fontsource/geist-sans/latin-500.css';
+@import '@fontsource/geist-sans/latin-600.css';
+@import '@fontsource/geist-mono/latin-ext-400.css';
+@import '@fontsource/geist-mono/latin-ext-500.css';
+
+/* Must stay in sync with theme.options.cssLayer.order in app.config.ts. */
+@layer theme, base, primeng;
+
+@layer base {
+  /* Tells the browser which scheme to paint scrollbars, form controls and the overscroll area in.
+     The class is the same one PrimeNG watches through theme.options.darkModeSelector. */
+  :root {
+    color-scheme: light;
+
+    --cs-font-sans: 'Geist Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+    --cs-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Elevation is a surface step plus a hairline. The four
+       steps canvas → panel → raised → overlay are the only surfaces that exist. */
+    --cs-canvas: #f4f5f7;
+    --cs-panel: #ffffff;
+    --cs-panel-raised: #f8f9fa;
+    --cs-overlay: #ffffff;
+    --cs-hairline: #e2e4e8;
+    --cs-hairline-strong: #c9ccd2;
+    --cs-text: #1b1d20;
+    --cs-muted: #5d636b;
+    --cs-accent: #1b1d20;
+    --cs-accent-ink: #ffffff;
+    --cs-ok: #0d7037;
+    --cs-warn: #875800;
+    --cs-crit: #cb3038;
+    /* Pipe temperature only — never UI chrome. */
+    --cs-cold: #0d7fa8;
+    --cs-hot: #d05a3a;
+    --cs-pipe-opacity: 0.85;
+
+    /* Radii, spacing, motion (§2.2). Rule of asymmetry: things OPEN on --cs-spring-soft,
+       CLOSE on --cs-ease; --cs-spring-pop is reserved for small transform entrances. */
+    --cs-r-ctl: 8px;
+    --cs-r-card: 10px;
+    --cs-r-ovl: 12px;
+    --cs-r-tag: 999px;
+    /* Wide-screen containment: content and the strip's inner row share this cap, so their
+       edges align on ultrawide monitors instead of stretching to the bezel. */
+    --cs-content-max: 1680px;
+    --cs-page-gutter: clamp(1rem, 3vw, 2.25rem);
+
+    --cs-dur-c: 200ms;
+    --cs-dur-t: 260ms;
+    /* Micro-transitions: hovers, tints, small colour flips (§2.2). */
+    --cs-dur-fast: 150ms;
+    --cs-ease: cubic-bezier(0.22, 0.7, 0.35, 1);
+    --cs-spring-soft: linear(
+      0,
+      0.0994 3.24%,
+      0.3577 7.32%,
+      0.6664 11.63%,
+      0.9106 15.94%,
+      1.0288 19.62%,
+      1.0454 21.85%,
+      1.0417 24.29%,
+      1.0072 31.15%,
+      0.9954 38.51%,
+      0.9976 51.32%,
+      1
+    );
+    --cs-spring-pop: linear(
+      0,
+      0.0185 2.29%,
+      0.0771 4.84%,
+      0.1919 8.03%,
+      0.3439 11.32%,
+      0.5193 14.74%,
+      0.6955 18.16%,
+      0.8489 21.45%,
+      0.9697 24.74%,
+      1.0561 28.03%,
+      1.1102 31.45%,
+      1.1343 34.87%,
+      1.1329 38.42%,
+      1.1108 42.24%,
+      1.0223 51.79%,
+      0.9899 59.16%,
+      0.9853 64.55%,
+      0.9954 78.55%,
+      1.0007 92.56%,
+      1
+    );
+
+    /* K3 shared recipes (§7): the one focus ring and the one field error ring. */
+    --cs-focus-ring:
+      0 0 0 1px var(--cs-accent), 0 0 0 4px color-mix(in srgb, var(--cs-accent) 22%, transparent);
+    --cs-error-ring: 0 0 0 3px color-mix(in srgb, var(--cs-crit) 20%, transparent);
+
+    /* Frosted material belongs only to transient overlays. The system rail stays nearly opaque
+       and blur-free. */
+    --cs-glass-overlay: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--cs-overlay) 88%, transparent) 0%,
+      color-mix(in srgb, var(--cs-panel) 72%, transparent) 52%,
+      color-mix(in srgb, var(--cs-panel-raised) 84%, transparent) 100%
+    );
+    --cs-glass-rail: color-mix(in srgb, var(--cs-panel) 92%, transparent);
+    --cs-glass-rim: color-mix(in srgb, var(--cs-text) 13%, var(--cs-hairline));
+    --cs-glass-highlight: rgb(255 255 255 / 0.72);
+    --cs-glass-shade: rgb(18 22 28 / 0.08);
+
+    /* Machined etch: the inset highlight/shade pair every glass-adjacent surface shares.
+       Base strength suits static cards; strong suits the rail and floating chrome. */
+    --cs-glass-etch:
+      inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 40%, transparent),
+      inset 0 -1px 0 var(--cs-glass-shade);
+    --cs-glass-etch-strong:
+      inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 64%, transparent),
+      inset 0 -1px 0 var(--cs-glass-shade);
+    /* The one active rim state for inspected instruments and pointer-responsive panels. */
+    --cs-glass-rim-active: color-mix(in srgb, var(--cs-glass-rim) 66%, var(--cs-muted));
+    /* The frosted backdrop recipe shared by transient overlays. */
+    --cs-glass-blur: blur(22px) saturate(0.86) contrast(1.04);
+    /* The one hover tint and the §7 floating-overlay depth. */
+    --cs-hover-tint: color-mix(in srgb, var(--cs-accent) 7%, transparent);
+    --cs-shadow-ovl: 0 12px 40px -12px rgb(0 0 0 / 0.18);
+    --cs-shadow-ctl: 0 3px 10px -6px rgb(18 22 28 / 0.28);
+
+    /* Ink on a critical fill is scheme-specific: light critical is deep enough for white, while
+       the vivid dark critical needs dark ink. The dark override lives with the palette below. */
+    --cs-crit-ink: #ffffff;
+
+    /* Density set (§6), stamped as html[data-density] by SettingsStore. PrimeNG control heights
+       come from the size pass-through (small/default/large) in the wrappers; everything the
+       framework does not own scales through these tokens. :root carries the "normal" values so
+       the first paint is right before the store runs.
+       --cs-density is the multiplier for bespoke chrome whose geometry is pixel-tuned (badges,
+       instrument chips) — reach for a named token first. */
+    --cs-density: 1;
+    --cs-font-base: 13.5px;
+    /* Controls are a tighter role than body copy. Keeping this scale independent from PrimeNG's
+       size steps prevents compact/comfortable density from turning into 11.5/16px typography.
+       The box metric still follows density; only the face is optically constrained. */
+    --cs-font-control: 12.5px;
+    --cs-font-support: 11.5px;
+    --cs-font-control-label: 10.5px;
+    --cs-row-pad: 0.5rem 0.75rem;
+    --cs-gap-section: 1.25rem;
+    --cs-gap-field: 0.75rem;
+    --cs-pad-panel: 1.25rem;
+    --cs-pad-panel-tight: 0.875rem;
+    --cs-mobile-navigation-height: 3.75rem;
+    --cs-mobile-navigation-reserve: calc(
+      var(--cs-mobile-navigation-height) + 0.75rem + env(safe-area-inset-bottom)
+    );
+
+    /* v1 aliases — feature styles written against the old names resolve to SYGNAL values.
+       The status-as-text variants equal the base tokens: each scheme's ok/warn/crit already
+       holds >= 4.5:1 on its own surfaces (§2.1). */
+    --cs-status-ok: var(--cs-ok);
+    --cs-status-warning: var(--cs-warn);
+    --cs-status-critical: var(--cs-crit);
+    --cs-status-ok-text: var(--cs-ok);
+    --cs-status-warning-text: var(--cs-warn);
+    --cs-status-critical-text: var(--cs-crit);
+    --cs-dur: var(--cs-dur-c);
+  }
+
+  :root.app-dark {
+    color-scheme: dark;
+
+    /* SYGNAL dark (§2.1). */
+    --cs-canvas: #0c0d0f;
+    --cs-panel: #161719;
+    --cs-panel-raised: #202225;
+    --cs-overlay: #2c2e32;
+    --cs-hairline: #2b2d31;
+    --cs-hairline-strong: #404349;
+    --cs-text: #dfe1e4;
+    --cs-muted: #9ba0a7;
+    /* Accent is near-white; the ink sits on it. */
+    --cs-accent: #e9ebee;
+    --cs-accent-ink: #151619;
+    --cs-ok: #48d072;
+    --cs-warn: #f0a93e;
+    --cs-crit: #ff5f57;
+    --cs-cold: #4fc3e8;
+    --cs-hot: #ff7f5f;
+    --cs-pipe-opacity: 0.65;
+    --cs-crit-ink: #151619;
+    --cs-glass-overlay: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--cs-overlay) 78%, transparent) 0%,
+      color-mix(in srgb, var(--cs-panel-raised) 64%, transparent) 52%,
+      color-mix(in srgb, var(--cs-panel) 72%, transparent) 100%
+    );
+    --cs-glass-highlight: rgb(255 255 255 / 0.13);
+    --cs-glass-shade: rgb(0 0 0 / 0.34);
+    --cs-shadow-ovl: 0 24px 60px -16px rgb(0 0 0 / 0.55);
+    --cs-shadow-ctl: 0 4px 12px -7px rgb(0 0 0 / 0.6);
+  }
+
+  html[data-density='compact'] {
+    --cs-density: 0.88;
+    --cs-font-base: 12.5px;
+    --cs-font-control: 12px;
+    --cs-font-support: 11px;
+    --cs-font-control-label: 10px;
+    --cs-row-pad: 0.3rem 0.625rem;
+    --cs-gap-section: 0.875rem;
+    --cs-gap-field: 0.5rem;
+    --cs-pad-panel: 0.875rem;
+    --cs-pad-panel-tight: 0.625rem;
+  }
+
+  html[data-density='comfortable'] {
+    --cs-density: 1.1;
+    --cs-font-base: 14.5px;
+    --cs-font-control: 13.5px;
+    --cs-font-support: 12px;
+    --cs-font-control-label: 11px;
+    --cs-row-pad: 0.75rem 0.875rem;
+    --cs-gap-section: 1.5rem;
+    --cs-gap-field: 1rem;
+    --cs-pad-panel: 1.5rem;
+    --cs-pad-panel-tight: 1.125rem;
+  }
+
+  html {
+    /* Safari on iOS otherwise inflates text when the device is rotated. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* §8 v3: the room the instruments stand in. A fine engineering dot-grid, a top "power" glow
+     and a floor fade — one static, composited layer; nothing here ever animates or repaints. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, transparent 58%, var(--cs-canvas) 94%),
+      radial-gradient(
+        ellipse 90% 44% at 50% -12%,
+        color-mix(in srgb, var(--cs-glass-highlight) 34%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(color-mix(in srgb, var(--cs-text) 6%, transparent) 1px, transparent 1.2px);
+    background-size:
+      100% 100%,
+      100% 100%,
+      26px 26px;
+    background-position:
+      0 0,
+      0 0,
+      50% 8px;
+  }
+
+  /* A static film of SVG noise so near-black surfaces read as brushed material instead of dead
+     pixels, and gradients stop banding. Never animated — a one-time rasterisation. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  :root.app-dark body::after {
+    opacity: 0.07;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    /* PrimeNG components declare font-family: inherit, so this is the only place a face is
+       chosen for the whole application. */
+    font-family: var(--cs-font-sans);
+    font-size: var(--cs-font-base);
+    font-synthesis: none;
+    line-height: 1.5;
+    /* Same token as the shell host background (src/app/layout/app-shell/app-shell.css), so the
+       overscroll area never flashes a different colour than the shell. */
+    background: var(--cs-canvas);
+    color: var(--cs-text);
+  }
+
+  /* Native controls otherwise fall back to the platform face (notably month/year buttons inside
+     PrimeNG's calendar and the two deliberate machine-editor native controls). */
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  /* Every numeral a human reads — measurements, timestamps, thresholds, counters. */
+  .cs-mono {
+    font-family: var(--cs-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  /* Micro-label above a reading: the instrument's engraved caption (§3). Engraved captions ride
+     the density scale with the readings they title — a frozen caption over a scaled value reads
+     as a mismatch at both ends of the range (§6). Headings wearing it are engraved captions,
+     never flow text, so the browser's heading margin is dropped here rather than in seven
+     component sheets. */
+  .cs-label {
+    margin: 0;
+    font-size: calc(0.6875rem * var(--cs-density));
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cs-muted);
+  }
+
+  /* The one panel surface (§7): machined rim + gentle etch, always blur-free. Sections, toolbars
+     and cards wear it; data tables stay flat INSIDE it.
+     Host-styled panels restate these four declarations with the same tokens. */
+  .cs-panel {
+    position: relative;
+    border: 1px solid var(--cs-glass-rim);
+    border-radius: var(--cs-r-card);
+    background: var(--cs-panel);
+    box-shadow: var(--cs-glass-etch);
+  }
+
+  /* The panel rim brightens around the pointer. Painted from --spot-x/-y/-o, written by
+     PanelFieldEngine (layout/panel-field.ts) through one
+     delegated listener — wearing .cs-panel IS the opt-in. The two-layer mask keeps only the
+     1px ring, so the gradient never tints content. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .cs-panel::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(
+        200px circle at var(--spot-x, -300px) var(--spot-y, -300px),
+        var(--cs-glass-highlight),
+        color-mix(in srgb, var(--cs-glass-rim-active) 80%, transparent) 40%,
+        transparent 72%
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      opacity: var(--spot-o, 0);
+      transition: opacity 280ms ease-out;
+      pointer-events: none;
+    }
+  }
+
+  /* The one inline validation slab (§7): a title, an optional message and an optional list of
+     offences. Severity arrives via --cs-alert-color, which the title reads too — that is what
+     makes the --warning variant mean something rather than just retinting the frame. */
+  .cs-alert {
+    --cs-alert-color: var(--cs-crit);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: var(--cs-pad-panel-tight);
+    border: 1px solid color-mix(in srgb, var(--cs-alert-color) 35%, transparent);
+    border-radius: var(--cs-r-card);
+    background: color-mix(in srgb, var(--cs-alert-color) 6%, transparent);
+  }
+
+  .cs-alert--warning {
+    --cs-alert-color: var(--cs-warn);
+  }
+
+  .cs-alert__title {
+    margin: 0;
+    color: var(--cs-alert-color);
+    font-weight: 600;
+  }
+
+  .cs-alert__message {
+    margin: 0;
+    color: var(--cs-muted);
+  }
+
+  /* `em` so a long offence list tracks whatever type size the slab is rendered at. */
+  .cs-alert__list {
+    min-width: 0;
+    margin: 0.25rem 0 0;
+    padding-inline-start: 1.1rem;
+    overflow-wrap: anywhere;
+    font-size: 0.925em;
+  }
+
+  .cs-alert__list li + li {
+    margin-top: 0.2rem;
+  }
+
+  /* K3 recipe: the caption row that opens a panel — an engraved title with whatever the panel
+     puts opposite it (a link, a hint, a legend, nothing). */
+  .cs-caption-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  /* Target-acquired mark for an inspected object (§8 v3): two machined corner brackets that
+     snap inward when --on. Meaning-bearing only — never default chrome. */
+  .cs-reticle {
+    position: relative;
+  }
+
+  .cs-reticle::before,
+  .cs-reticle::after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--cs-accent);
+    opacity: 0;
+    transform: scale(1.3);
+    transition:
+      opacity var(--cs-dur-fast) ease-out,
+      transform var(--cs-dur-t) var(--cs-spring-soft);
+    pointer-events: none;
+  }
+
+  .cs-reticle::before {
+    top: -5px;
+    left: -5px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .cs-reticle::after {
+    right: -5px;
+    bottom: -5px;
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .cs-reticle--on::before,
+  .cs-reticle--on::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* The one severity tag (§7): a pill; critical is the only filled variant — it must shout once. */
+  .cs-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: calc(0.125rem * var(--cs-density)) calc(0.5625rem * var(--cs-density));
+    border-radius: var(--cs-r-tag);
+    font-size: calc(0.6875rem * var(--cs-density));
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cs-tag--critical {
+    background: var(--cs-crit);
+    color: var(--cs-crit-ink);
+  }
+
+  .cs-tag--warning {
+    background: color-mix(in srgb, var(--cs-warn) 14%, transparent);
+    color: var(--cs-warn);
+  }
+
+  /* Dark-cockpit doctrine (§8 v3): normal is QUIET so abnormal is the only light on the wall.
+     A healthy reading earns a hairline outline, not a green lamp — green floods belong to the
+     one LIVE indicator, and warn/crit keep their full voice. */
+  .cs-tag--ok {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--cs-hairline-strong);
+    color: var(--cs-muted);
+  }
+
+  /* The shell's segmented switch (theme / language / density): a hairline frame of quiet keys.
+     Variants add only their glyph metrics; the frame, states and a11y behaviour live here once.
+     The track spans the §7 line metric so the keys line up with any control beside them. */
+  .cs-segment {
+    display: inline-flex;
+    gap: 1px;
+    box-sizing: border-box;
+    height: var(--cs-control-height);
+    padding: 2px;
+    border: 1px solid var(--cs-hairline);
+    border-radius: var(--cs-r-ctl);
+    background: color-mix(in srgb, var(--cs-panel-raised) 82%, transparent);
+  }
+
+  .cs-segment__option {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.875rem;
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--cs-r-ctl) - 3px);
+    background: transparent;
+    color: var(--cs-muted);
+    font: inherit;
+    cursor: pointer;
+    transition:
+      background-color var(--cs-dur-fast) ease-out,
+      box-shadow var(--cs-dur-fast) ease-out,
+      color var(--cs-dur-fast) ease-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cs-segment__option:hover:not(.cs-segment__option--selected) {
+      background: var(--cs-hover-tint);
+      color: var(--cs-text);
+    }
+  }
+
+  .cs-segment__option--selected {
+    background: color-mix(in srgb, var(--cs-accent) 9%, var(--cs-panel-raised));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cs-accent) 16%, var(--cs-hairline));
+    color: var(--cs-text);
+  }
+
+  /* The ring itself comes from .cs-focus-ring on the element; only the stacking fix is local,
+     so a neighbouring option's hairline cannot clip it. */
+  .cs-segment__option:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A fingertip outranks the metric: the track releases and the keys keep the 44px floor. */
+  @media (pointer: coarse) {
+    .cs-segment {
+      height: max(var(--cs-control-height), 2.75rem);
+      padding: 0;
+      border: 0;
+      outline: 1px solid var(--cs-hairline);
+      outline-offset: -1px;
+    }
+
+    .cs-segment__option {
+      min-width: 2.75rem;
+      min-height: max(var(--cs-control-height), 2.75rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-segment__option {
+      transition: none;
+    }
+  }
+
+  /* Status LED. Set --cs-led-color; add .cs-led--pulse only for live/critical states (§8).
+     The bloom is a pre-painted halo whose OPACITY animates — never the shadow itself, which
+     would re-rasterise a blur every frame of every breathing lamp. */
+  .cs-led {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--cs-led-color, var(--cs-muted));
+  }
+
+  .cs-led::after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--cs-led-color, transparent) 55%, transparent),
+      transparent 72%
+    );
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .cs-led--pulse {
+    animation: cs-led-pulse 2s var(--cs-ease) infinite;
+  }
+
+  .cs-led--pulse::after {
+    animation: cs-led-bloom 2s var(--cs-ease) infinite;
+  }
+
+  /* Kept as an element-level opacity breath so the LED halo remains pre-painted. */
+  @keyframes cs-led-pulse {
+    0%,
+    100% {
+      opacity: 0.82;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes cs-led-bloom {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(0.82);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.12);
+    }
+  }
+
+  /* §8 route enter, declared once for every screen: 200ms fade + 4px rise on the component the
+     router inserts into the shell's <main>. Global on purpose — a router-created host never
+     receives the shell's emulated-encapsulation attribute, so the shell stylesheet cannot reach
+     it. Where the View Transitions API exists the shared-axis move below replaces it. */
+  #main-content > :not(router-outlet) {
+    animation: cs-route-enter var(--cs-dur-c) var(--cs-ease);
+  }
+
+  @keyframes cs-route-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* §8 v3 — power-on choreography. Sections wear .cs-rise with a --rise index; each rises on the
+     soft spring one beat after the previous. A .cs-panel additionally re-runs its top-edge etch
+     at full highlight once — the instrument visibly energises, then settles. One-shot work at
+     entry, nothing persists past the animation. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cs-rise {
+      animation: cs-rise 480ms var(--cs-spring-soft) both;
+      animation-delay: calc(var(--rise, 0) * 70ms);
+    }
+
+    .cs-panel.cs-rise {
+      animation:
+        cs-rise 480ms var(--cs-spring-soft) both,
+        cs-energize 780ms ease-out both;
+      animation-delay: calc(var(--rise, 0) * 70ms), calc(var(--rise, 0) * 70ms + 120ms);
+    }
+  }
+
+  @keyframes cs-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes cs-energize {
+    0%,
+    100% {
+      box-shadow: var(--cs-glass-etch);
+    }
+    30% {
+      box-shadow:
+        inset 0 1px 0 var(--cs-glass-highlight),
+        inset 0 -1px 0 var(--cs-glass-shade);
+    }
+  }
+
+  /* §8 v3 — route morphs. The strip and navigation are stable fixtures: naming them gives each
+     its own (visually inert) group, so only the content plays the shared-axis move. The plain
+     cs-route-enter above stays as the no-support fallback and is switched off here. */
+  @supports (view-transition-name: none) {
+    app-system-strip {
+      view-transition-name: system-strip;
+    }
+
+    app-navigation {
+      view-transition-name: navigation;
+    }
+
+    #main-content {
+      view-transition-name: main-content;
+    }
+
+    #main-content > :not(router-outlet) {
+      animation: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      transition-delay: 0ms !important;
+    }
+
+    /* §2.2 fallback: the crossfade stays, the travel goes. */
+    #main-content > :not(router-outlet) {
+      animation: cs-route-enter-fade var(--cs-dur-c) linear;
+    }
+
+    @keyframes cs-route-enter-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* Visually hidden, still read aloud. The one screen-reader-only utility for every template. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* K3 recipe: the focus treatment for anything interactive we draw ourselves.
+     Never the same as hover (§7). */
+  .cs-focus-ring:focus-visible {
+    outline: none;
+    box-shadow: var(--cs-focus-ring);
+  }
+
+  /* Forced colours drop box-shadow entirely, so the ring has to become a real outline there —
+     which is exactly what a hand-rolled `outline: none; box-shadow: …` forgets, leaving the
+     element with no visible focus at all. That branch is the reason to adopt this class rather
+     than restate the ring. Caveat: component styles are unlayered, so an element whose own sheet
+     sets `box-shadow` in its BASE rule beats this layered utility and it silently never paints —
+     those few keep their own rule. */
+
+  @media (forced-colors: active) {
+    .cs-focus-ring:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 3px;
+      box-shadow: none;
+    }
+  }
+
+  /* K3 recipe: the scroll affordance for a box that pans inside the page (§6). Below 900px its
+     edges fade so a clipped child reads as a peek rather than a defect; focus clears the mask so
+     a focused descendant is never dimmed. The mask is alpha only — `black` here means opaque,
+     not a colour. Carries the fade ONLY: overflow, layout and the region's role/tabindex/
+     aria-label stay at the call site. */
+  @media (max-width: 900px) {
+    .cs-edge-fade {
+      mask-image: linear-gradient(
+        90deg,
+        transparent 0,
+        black 16px,
+        black calc(100% - 16px),
+        transparent 100%
+      );
+    }
+
+    .cs-edge-fade:is(:focus-visible, :focus-within) {
+      mask-image: none;
+    }
+  }
+
+  /* K3 recipe: loading is a 2px bar sliding along the bottom edge — never a centered
+     spinner (§7). Apply to the loading element; it must establish its own stacking box. */
+  .cs-loading-bar {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cs-loading-bar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40%;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--cs-accent);
+    animation: cs-loading-bar 1.1s var(--cs-ease) infinite;
+  }
+
+  @keyframes cs-loading-bar {
+    from {
+      transform: translateX(-110%);
+    }
+    to {
+      transform: translateX(360%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-led--pulse {
+      animation: none;
+    }
+
+    /* The reduced-motion fallback is presence, not travel: a still bar that still says "busy". */
+    .cs-loading-bar::after {
+      animation: none;
+      width: 100%;
+      opacity: 0.35;
+    }
+
+    .p-ripple,
+    .p-ink,
+    .p-skeleton {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* ————— PrimeNG material pass (§7) — deliberately unlayered so it outranks the primeng layer.
+   Floating overlays share a machined rim, the overlay radius step and restrained frost. ————— */
+
+.p-select-overlay,
+.p-multiselect-overlay,
+.p-datepicker-panel,
+.p-confirmpopup {
+  border-color: var(--cs-glass-rim);
+  border-radius: var(--cs-r-ovl);
+  box-shadow: var(--cs-glass-etch-strong), var(--cs-shadow-ovl);
+
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    @media (prefers-reduced-transparency: no-preference) and (prefers-contrast: no-preference) {
+      background: var(--cs-glass-overlay);
+      -webkit-backdrop-filter: var(--cs-glass-blur);
+      backdrop-filter: var(--cs-glass-blur);
+    }
+  }
+}
+
+/* Toasts leave Aura's colored slabs for neutral floating glass: severity may only speak
+   through the leading accent edge and the LED-like summary (chroma = information). */
+.p-toast-message {
+  border: 1px solid var(--cs-glass-rim);
+  border-inline-start: 3px solid var(--cs-muted);
+  border-radius: var(--cs-r-ovl);
+  background: var(--cs-overlay);
+  color: var(--cs-text);
+  box-shadow: var(--cs-glass-etch-strong), var(--cs-shadow-ovl);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+
+  &.p-toast-message-success {
+    border-inline-start-color: var(--cs-ok);
+  }
+
+  &.p-toast-message-warn {
+    border-inline-start-color: var(--cs-warn);
+  }
+
+  &.p-toast-message-error {
+    border-inline-start-color: var(--cs-crit);
+  }
+
+  &.p-toast-message-info {
+    border-inline-start-color: var(--cs-accent);
+  }
+}
+
+.p-toast-summary {
+  color: var(--cs-text);
+}
+
+.p-toast-detail,
+.p-toast-message-icon,
+.p-toast-close-button {
+  color: var(--cs-muted);
+}
+
+/* ————— Floating chrome vs the visual viewport (mobile shell pass). Everything transient must
+   fit the viewport it appears in and respect the safe areas. ————— */
+
+/* Toasts are 25rem slabs by default; a phone viewport is narrower than that. */
+.p-toast {
+  max-width: min(25rem, calc(100vw - 1.5rem));
+}
+
+/* Bottom-anchored toasts clear the mobile navigation and the home indicator. */
+.p-toast-bottom-left,
+.p-toast-bottom-right,
+.p-toast-bottom-center {
+  bottom: var(--cs-mobile-navigation-reserve);
+}
+
+@media (min-width: 900px) {
+  .p-toast-bottom-left,
+  .p-toast-bottom-right,
+  .p-toast-bottom-center {
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+  }
+}
+
+.p-toast-bottom-right,
+.p-toast-top-right {
+  right: max(1.25rem, env(safe-area-inset-right));
+}
+
+.p-toast-bottom-left,
+.p-toast-top-left {
+  left: max(1.25rem, env(safe-area-inset-left));
+}
+
+/* Floating panels never exceed the visual viewport; the datepicker (the widest one, with its
+   time columns) additionally scrolls internally on short landscape phones. */
+.p-select-overlay,
+.p-multiselect-overlay,
+.p-confirmpopup {
+  max-width: min(26rem, calc(100vw - 0.75rem));
+}
+
+.p-datepicker-panel {
+  max-width: calc(100vw - 0.75rem);
+  max-height: calc(100dvh - 1rem);
+  overflow: auto;
+}
+
+@media (width <= 640px) {
+  .cs-date-range-panel.p-datepicker-panel {
+    box-sizing: border-box;
+    width: min(24rem, calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    min-width: 0 !important;
+    max-width: none;
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 1rem);
+    margin: max(0.5rem, env(safe-area-inset-top)) env(safe-area-inset-right)
+      max(0.5rem, env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    overscroll-behavior: contain;
+  }
+}
+
+@media (width <= 350px) {
+  .cs-date-range-panel.p-datepicker-panel {
+    padding-inline: 0.25rem;
+  }
+
+  .cs-date-range-panel .p-datepicker-day-cell {
+    padding-inline: 0;
+  }
+}
+
+/* §3 control typography is deliberately one step quieter than body copy. PrimeNG's built-in rem
+   sizes otherwise diverge from both the density scale and the bespoke controls. */
+.p-button,
+.p-inputtext,
+.p-select-label,
+.p-multiselect-label,
+.p-select-option,
+.p-multiselect-option,
+.p-paginator,
+.p-datepicker-panel {
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-control);
+  line-height: 1.4;
+}
+
+/* Notifications and confirmations carry prose rather than compact field values. */
+.p-toast-message,
+.p-confirmpopup-content {
+  font-family: var(--cs-font-sans);
+  font-size: var(--cs-font-base);
+  line-height: 1.5;
+}
+
+.p-inputtext,
+.p-select-label,
+.p-multiselect-label,
+.p-select-option,
+.p-multiselect-option {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.p-button-label {
+  font-weight: 500;
+}
+
+/* These classes are attached through PrimeNG's public inputStyleClass API. */
+.cs-number-input,
+.cs-date-range__input {
+  font-family: var(--cs-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.cs-date-range__input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The wrappers hand PrimeNG a `size` for the off-normal densities, but bare `p-button`s carry no
+   wrapper — their default-step metrics follow density here instead. The sm/lg steps stay static
+   (the preset already expresses them in density terms) so the two systems never compound. */
+:root {
+  --p-button-padding-y: calc(0.4rem * var(--cs-density));
+  --p-button-padding-x: calc(0.7rem * var(--cs-density));
+  --p-button-icon-only-width: var(--cs-control-height);
+  --p-button-gap: calc(0.5rem * var(--cs-density));
+  --p-form-field-padding-y: calc(0.4rem * var(--cs-density));
+  --p-form-field-padding-x: calc(0.65rem * var(--cs-density));
+
+  /* §7 the one line metric: every control's box is exactly this tall at a given density. */
+  --cs-control-height: calc(2.25rem * var(--cs-density));
+
+  /* The label line above a framed control: the frame's 1rem floor vs the .cs-label face at
+     0.6875rem x 1.5 line-height. Offset math that must land on the control line (symbol wells)
+     reads this token instead of restating the frame's metrics. */
+  --cs-label-line: max(1rem, calc(1.03125rem * var(--cs-density)));
+}
+
+/* Raised controls are machined parts rather than flat browser fields. The etch is static; hover
+   changes only the surface tone, so every interaction stays paint-cheap and interruptible. */
+input.p-inputtext:not(.p-inputnumber-input, .p-datepicker-input),
+.p-select,
+.p-multiselect,
+.p-inputnumber,
+.p-datepicker {
+  border-color: transparent;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  box-shadow: var(--cs-glass-etch);
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    border-color var(--cs-dur-fast) ease-out,
+    box-shadow var(--cs-dur-fast) ease-out;
+}
+
+.p-inputnumber-input,
+.p-datepicker-input {
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  input.p-inputtext:not(.p-inputnumber-input, .p-datepicker-input, :disabled):hover,
+  .p-select:not(.p-disabled):hover,
+  .p-multiselect:not(.p-disabled):hover,
+  .p-inputnumber:not(:has(.p-inputnumber-input:disabled)):hover,
+  .p-datepicker:not(:has(.p-datepicker-input:disabled)):hover {
+    background: color-mix(in srgb, var(--cs-panel-raised) 96%, var(--cs-text));
+  }
+}
+
+input.p-inputtext:not(.p-inputnumber-input, .p-datepicker-input):focus-visible,
+.p-select:has([role='combobox']:focus-visible),
+.p-multiselect:has(.p-hidden-accessible input[role='combobox']:focus-visible),
+.p-inputnumber:has(:is(.p-inputnumber-input, .p-inputnumber-button):focus-visible),
+.p-datepicker:has(:is(.p-datepicker-input, .p-datepicker-dropdown):focus-visible) {
+  outline: none;
+  box-shadow: var(--cs-glass-etch), var(--cs-focus-ring);
+}
+
+.p-inputnumber-input:focus,
+.p-datepicker-input:focus {
+  box-shadow: none;
+}
+
+.p-select-dropdown,
+.p-multiselect-dropdown,
+.p-datepicker-dropdown {
+  width: var(--cs-control-height);
+  min-width: var(--cs-control-height);
+  border-radius: 0 var(--cs-r-ctl) var(--cs-r-ctl) 0;
+  color: var(--cs-muted);
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    color var(--cs-dur-fast) ease-out;
+}
+
+.p-select:not(.p-disabled):hover .p-select-dropdown,
+.p-multiselect:not(.p-disabled):hover .p-multiselect-dropdown,
+.p-datepicker:not(:has(.p-datepicker-input:disabled)):hover .p-datepicker-dropdown {
+  color: var(--cs-text);
+}
+
+.p-inputnumber-button {
+  color: var(--cs-muted);
+}
+
+.p-inputnumber-button:hover:not(:disabled) {
+  color: var(--cs-text);
+  background: var(--cs-hover-tint);
+}
+
+.p-toggleswitch-slider {
+  border: 1px solid color-mix(in srgb, var(--cs-hairline-strong) 56%, transparent);
+  box-shadow: var(--cs-glass-etch);
+}
+
+.p-toggleswitch-handle {
+  box-shadow: 0 1px 3px var(--cs-glass-shade);
+}
+
+.p-slider {
+  box-shadow: inset 0 1px 2px var(--cs-glass-shade);
+}
+
+.p-slider-handle {
+  border: 1px solid color-mix(in srgb, var(--cs-hairline-strong) 60%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--cs-glass-highlight) 44%, transparent),
+    0 1px 3px var(--cs-glass-shade);
+}
+
+.p-select.p-disabled,
+.p-multiselect.p-disabled,
+.p-datepicker:has(.p-datepicker-input:disabled),
+.p-inputnumber:has(.p-inputnumber-input:disabled),
+.p-toggleswitch.p-disabled,
+.p-slider.p-disabled,
+.p-select.p-disabled .p-select-label,
+.p-multiselect.p-disabled .p-multiselect-label {
+  cursor: default;
+}
+
+.p-datepicker:has(.p-datepicker-input:disabled),
+.p-inputnumber:has(.p-inputnumber-input:disabled) {
+  background: color-mix(in srgb, var(--cs-panel-raised) 82%, var(--cs-canvas));
+}
+
+/* Floating lists keep the same type role and compact instrument rhythm as their trigger. */
+.p-select-list,
+.p-multiselect-list {
+  gap: calc(0.125rem * var(--cs-density));
+  padding: calc(0.25rem * var(--cs-density));
+}
+
+.p-select-option,
+.p-multiselect-option {
+  min-height: calc(2.125rem * var(--cs-density));
+  padding: calc(0.4375rem * var(--cs-density)) calc(0.625rem * var(--cs-density));
+  border-radius: calc(var(--cs-r-ctl) - 2px);
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    color var(--cs-dur-fast) ease-out;
+}
+
+.p-select-option-selected {
+  font-weight: 500;
+}
+
+/* A checkmark and selected surface already carry multi-selection; keeping its copy regular avoids
+   four simultaneous bold rows when "All" is active. Single-selection and actions stay 500. */
+.p-multiselect-option-selected {
+  font-weight: 400;
+}
+
+.cs-multiselect-panel .p-multiselect-header {
+  display: flex;
+  align-items: center;
+  gap: calc(0.5rem * var(--cs-density));
+  padding: calc(0.5rem * var(--cs-density)) calc(0.625rem * var(--cs-density));
+  border-bottom: 1px solid var(--cs-hairline);
+}
+
+.cs-multiselect-panel .p-multiselect-header p-header {
+  order: 1;
+  min-width: 0;
+  margin-inline-end: auto;
+}
+
+.cs-multiselect-panel .p-multiselect-header .p-checkbox {
+  order: 0;
+}
+
+.cs-multiselect-panel .p-multiselect-header .p-iconfield {
+  order: 2;
+  flex: 1 1 auto;
+}
+
+.cs-multiselect__toggle-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  color: var(--cs-text);
+  font-size: var(--cs-font-control);
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+/* The calendar is one control, not a mixture of Geist and platform-default 16px buttons. */
+.p-datepicker-panel {
+  padding: calc(0.625rem * var(--cs-density));
+}
+
+.p-datepicker-title,
+.p-datepicker-select-month,
+.p-datepicker-select-year,
+.p-datepicker-time-picker,
+.p-datepicker-buttonbar {
+  font-size: var(--cs-font-control);
+}
+
+.p-datepicker-title {
+  gap: 0.375rem;
+}
+
+.p-datepicker-select-month,
+.p-datepicker-select-year {
+  border-radius: calc(var(--cs-r-ctl) - 2px);
+  font-weight: 500;
+}
+
+.p-datepicker-weekday {
+  color: var(--cs-muted);
+  font-size: var(--cs-font-control-label);
+  font-weight: 500;
+  letter-spacing: 0.075em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.p-datepicker-day {
+  width: calc(2rem * var(--cs-density));
+  height: calc(2rem * var(--cs-density));
+  border-radius: calc(var(--cs-r-ctl) - 2px);
+  font-family: var(--cs-font-mono);
+  font-size: var(--cs-font-control);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.p-datepicker-day-selected {
+  font-weight: 500;
+}
+
+.p-datepicker-time-picker > div > span,
+.p-datepicker-time-picker > span {
+  font-family: var(--cs-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.p-datepicker-buttonbar .p-button {
+  font-weight: 500;
+}
+
+/* Control heights used to be emergent — font x line-height + each component's own padding —
+   so selects, text inputs, number inputs, buttons and switches all landed a few pixels apart
+   in the same row. Pinning the box on the single-line roots ends the drift; the size steps now
+   change internal spacing only. Multiline widgets (textareas, listboxes, overlays) are exempt by
+   construction: only single-line roots are targeted. */
+input.p-inputtext,
+.p-select,
+.p-multiselect,
+.p-inputnumber,
+.p-datepicker {
+  height: var(--cs-control-height);
+}
+
+/* Flex roots center their one-line label inside the pinned box; the label's own vertical
+   padding would otherwise re-derive a competing height. */
+.p-select,
+.p-multiselect {
+  align-items: center;
+}
+
+.p-select-label,
+.p-multiselect-label {
+  padding-block: 0;
+}
+
+.p-inputnumber .p-inputnumber-input {
+  height: 100%;
+}
+
+/* Buttons share the metric; the stepper halves inside a number input keep their split box. */
+.p-button:not(.p-inputnumber-button) {
+  height: var(--cs-control-height);
+  padding-block: 0;
+}
+
+/* Width rides --p-button-icon-only-width, re-anchored on the metric above. */
+.p-button.p-button-icon-only {
+  padding-inline: 0;
+}
+
+/* A fingertip outranks the metric (§6): every field, option and button clears 44px while its
+   typography keeps a 14px readability floor. */
+@media (pointer: coarse) {
+  .p-button,
+  .p-inputtext,
+  .p-select-label,
+  .p-multiselect-label,
+  .p-select-option,
+  .p-multiselect-option,
+  .p-datepicker-panel,
+  .p-datepicker-select-month,
+  .p-datepicker-select-year,
+  .p-datepicker-day,
+  .p-datepicker-time-picker,
+  .cs-multiselect__toggle-label {
+    font-size: max(var(--cs-font-control), 0.875rem);
+  }
+
+  .p-toast-message,
+  .p-confirmpopup-content {
+    font-size: max(var(--cs-font-base), 0.875rem);
+  }
+
+  input.p-inputtext,
+  .p-multiselect .p-hidden-accessible input[role='combobox'] {
+    font-size: max(var(--cs-font-control), 1rem);
+  }
+
+  input.p-inputtext,
+  .p-select,
+  .p-multiselect,
+  .p-inputnumber,
+  .p-datepicker {
+    height: max(var(--cs-control-height), 2.75rem);
+  }
+
+  .p-select-dropdown,
+  .p-multiselect-dropdown,
+  .p-datepicker-dropdown {
+    width: max(var(--cs-control-height), 2.75rem);
+    min-width: max(var(--cs-control-height), 2.75rem);
+  }
+
+  .p-select-option,
+  .p-multiselect-option,
+  .p-datepicker-day,
+  .p-datepicker-prev-button,
+  .p-datepicker-next-button,
+  .p-datepicker-increment-button,
+  .p-datepicker-decrement-button,
+  .p-datepicker-select-month,
+  .p-datepicker-select-year,
+  .p-datepicker-month,
+  .p-datepicker-year {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .cs-multiselect__toggle-label {
+    min-height: 2.75rem;
+  }
+
+  .cs-multiselect-panel .p-multiselect-header .p-checkbox {
+    position: relative;
+  }
+
+  .cs-multiselect-panel .p-multiselect-header .p-checkbox-input {
+    inset: -0.75rem;
+    width: auto;
+    height: auto;
+  }
+
+  .p-button:not(.p-inputnumber-button) {
+    height: max(var(--cs-control-height), 2.75rem);
+  }
+
+  .p-button.p-button-icon-only {
+    width: max(var(--cs-control-height), 2.75rem);
+  }
+
+  /* Paginator keys are plain buttons, not .p-button — the floor above never reaches them. */
+  .p-paginator button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+/* High-contrast preference: hairlines and hover tints are the two quiet ingredients that fall
+   below a raised threshold — promote both; everything else already speaks in full-voice ink. */
+@media (prefers-contrast: more) {
+  :root {
+    --cs-hairline: var(--cs-hairline-strong);
+    --cs-hover-tint: color-mix(in srgb, var(--cs-accent) 16%, transparent);
+  }
+}
+
+/* A switch keeps its pill, but the inline frame it sits in spans the metric, so a switch
+   line aligns with the field boxes beside it. */
+.cs-control-frame--inline {
+  min-height: var(--cs-control-height);
+}
+
+/* Prime fields share the one §7 error halo with the custom controls; focus remains visibly
+   distinct even when validation is already speaking. */
+.p-inputtext.p-invalid:not(.p-inputnumber-input, .p-datepicker-input),
+.p-select.p-invalid,
+.p-multiselect.p-invalid,
+.p-inputnumber.p-invalid,
+.p-datepicker.p-invalid,
+.p-toggleswitch.p-invalid,
+.cs-control-frame--invalid .p-slider {
+  box-shadow: var(--cs-glass-etch), var(--cs-error-ring);
+}
+
+.p-inputtext.p-invalid:not(.p-inputnumber-input, .p-datepicker-input):focus-visible,
+.p-select.p-invalid:has([role='combobox']:focus-visible),
+.p-multiselect.p-invalid:has(.p-hidden-accessible input[role='combobox']:focus-visible),
+.p-inputnumber.p-invalid:has(:focus-visible),
+.p-datepicker.p-invalid:has(:focus-visible),
+.p-toggleswitch.p-invalid:has(:focus-visible),
+.cs-control-frame--invalid .p-slider:has(:focus-visible) {
+  box-shadow: var(--cs-glass-etch), var(--cs-error-ring), var(--cs-focus-ring);
+}
+
+/* §7 button physics: hover lifts one optical step, the press lands. Text buttons stay flat. */
+.p-button:not(.p-button-text, :disabled) {
+  transition:
+    background-color var(--cs-dur-fast) ease-out,
+    color var(--cs-dur-fast) ease-out,
+    border-color var(--cs-dur-fast) ease-out,
+    box-shadow 200ms var(--cs-ease),
+    transform 200ms var(--cs-ease);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--cs-shadow-ctl);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+    transition-duration: 120ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-button {
+    &:hover,
+    &:active {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+/* ————— §8 v3 unlayered tail: view-transition pseudos and UA chrome. —————
+   The ::view-transition tree hangs off the root and is not reachable from inside @layer base
+   in every engine, so the route morph is spelled here. */
+
+::view-transition-old(main-content) {
+  animation: cs-vt-leave 160ms var(--cs-ease) both;
+}
+
+::view-transition-new(main-content) {
+  animation: cs-vt-enter 300ms var(--cs-ease) both;
+}
+
+@keyframes cs-vt-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.997);
+  }
+}
+
+@keyframes cs-vt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.997);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* The browser chrome is part of the instrument too: hairline scrollbars, achromatic selection. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cs-hairline-strong) transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--cs-accent) 24%, transparent);
+}

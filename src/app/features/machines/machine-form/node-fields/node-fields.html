@@ -1,0 +1,67 @@
+@let node = field();
+
+<div class="row-fields node-fields" [class.node-fields--locked]="locked()">
+  <div class="node-fields__well" aria-hidden="true">
+    <svg [attr.viewBox]="symbol().viewBox" preserveAspectRatio="xMidYMid meet">
+      <svg:g [csSchematicShapes]="previewShapes()" />
+    </svg>
+  </div>
+  <cs-text-input class="node-fields__id" label="machines.form.nodeId" mono [formField]="node.id" />
+  <cs-select
+    class="node-fields__type"
+    label="machines.form.nodeType"
+    [options]="typeOptions()"
+    [formField]="node.type"
+  />
+  <cs-text-input class="node-fields__label" label="machines.form.label" [formField]="node.label" />
+
+  <!-- DOM order = visual order: the remove key ends band 1, so Tab never jumps back up from
+       the meta band to the strip's top-right corner. -->
+  @if (!locked()) {
+    <p-button
+      class="row-fields__remove"
+      type="button"
+      severity="secondary"
+      [text]="true"
+      [ariaLabel]="'machines.form.removeNode' | transloco"
+      [attr.title]="'machines.form.removeNode' | transloco"
+      (onClick)="removed.emit()"
+    >
+      <ng-template #icon>
+        <cs-icon name="trash-can" />
+      </ng-template>
+    </p-button>
+  }
+
+  <div class="node-fields__meta">
+    <!-- No [min]/[max] here: the FormField directive feeds them from the schema's bounds. -->
+    <cs-input-number
+      class="node-fields__cell"
+      label="machines.form.column"
+      inputMode="numeric"
+      [showButtons]="true"
+      [formField]="node.column"
+    />
+    <cs-input-number
+      class="node-fields__cell"
+      label="machines.form.row"
+      inputMode="numeric"
+      [showButtons]="true"
+      [formField]="node.row"
+    />
+    @if (supportsAnimation()) {
+      <cs-text-input
+        class="node-fields__tag"
+        label="machines.form.nodeTag"
+        mono
+        [formField]="node.tag"
+      />
+    }
+    @if (supportsLevel()) {
+      <cs-switch label="machines.form.level" [formField]="node.level" />
+    }
+    @if (supportsHeatSource()) {
+      <cs-switch label="machines.form.heatSource" [formField]="node.heatSource" />
+    }
+  </div>
+</div>

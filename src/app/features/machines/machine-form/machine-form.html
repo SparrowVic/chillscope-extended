@@ -1,0 +1,157 @@
+<section class="mform__section">
+  <app-mform-caption labelKey="machines.form.machine" />
+  <div class="mform__machine">
+    <cs-text-input class="mform__machine-id" label="machines.form.id" mono [formField]="form.id" />
+    <cs-text-input class="mform__machine-name" label="machines.form.name" [formField]="form.name" />
+    <cs-text-input
+      class="mform__machine-revision"
+      label="machines.form.revision"
+      mono
+      [formField]="form.revision"
+    />
+  </div>
+</section>
+
+<!-- The three record sections fold on the compact stage (accordion captions); their rows are
+     HIDDEN, never destroyed, so the one Signal Forms tree survives every fold and stage. -->
+<section class="mform__section">
+  <app-mform-caption
+    labelKey="machines.form.nodes"
+    controlsId="mform-rows-nodes"
+    [count]="nodeCount()"
+    [collapsible]="compact()"
+    [expanded]="openSections().nodes"
+    [invalid]="nodesInvalid()"
+    (toggled)="toggleSection('nodes')"
+  />
+  <div id="mform-rows-nodes" class="mform__rows" [hidden]="sectionHidden('nodes')">
+    @for (node of form.nodes; track $index) {
+      <app-node-fields
+        [field]="node"
+        [typeOptions]="typeOptions()"
+        [locked]="locked()"
+        (removed)="removeNode($index)"
+      />
+    } @empty {
+      <p class="mform__empty">
+        <cs-icon name="circle-info" />
+        <span>{{ 'machines.form.noNodes' | transloco }}</span>
+      </p>
+    }
+    @if (!locked()) {
+      <!-- aria-disabled, not disabled: a blocked slot must stay in the tab order so keyboard
+           and screen-reader users still reach the label naming the blocking rule. -->
+      <button
+        #nodeGhost
+        type="button"
+        class="mform__ghost mform__ghost--node cs-focus-ring"
+        [attr.aria-disabled]="addNodeBlocked() !== null"
+        (click)="addNode()"
+      >
+        <span class="mform__ghost-well" aria-hidden="true"><cs-icon name="plus" /></span>
+        <span>{{ addNodeLabel() | transloco }}</span>
+      </button>
+    }
+  </div>
+</section>
+
+<section class="mform__section">
+  <app-mform-caption
+    labelKey="machines.form.pipes"
+    controlsId="mform-rows-pipes"
+    [count]="pipeCount()"
+    [collapsible]="compact()"
+    [expanded]="openSections().pipes"
+    [invalid]="pipesInvalid()"
+    (toggled)="toggleSection('pipes')"
+  />
+  <div id="mform-rows-pipes" class="mform__rows" [hidden]="sectionHidden('pipes')">
+    @for (pipe of form.pipes; track $index) {
+      <app-pipe-fields
+        [field]="pipe"
+        [nodeOptions]="nodeOptions()"
+        [locked]="locked()"
+        (removed)="removePipe($index)"
+      />
+    } @empty {
+      <p class="mform__empty">
+        <cs-icon name="circle-info" />
+        <span>{{ 'machines.form.noPipes' | transloco }}</span>
+      </p>
+    }
+    @if (!locked()) {
+      <button #pipeGhost type="button" class="mform__ghost cs-focus-ring" (click)="addPipe()">
+        <cs-icon name="plus" />
+        <span>{{ 'machines.form.addPipe' | transloco }}</span>
+      </button>
+    }
+  </div>
+</section>
+
+<section class="mform__section">
+  <app-mform-caption
+    labelKey="machines.form.sensors"
+    controlsId="mform-rows-sensors"
+    [count]="sensorCount()"
+    [collapsible]="compact()"
+    [expanded]="openSections().sensors"
+    [invalid]="sensorsInvalid()"
+    (toggled)="toggleSection('sensors')"
+  />
+  <div id="mform-rows-sensors" class="mform__rows" [hidden]="sectionHidden('sensors')">
+    @for (sensor of form.sensors; track $index) {
+      <app-sensor-fields
+        [field]="sensor"
+        [slot]="profile().sensorSlots[$index]"
+        [attachOptions]="attachOptions()[$index]"
+      />
+    }
+  </div>
+</section>
+
+@if (storeErrorCopies().length > 0) {
+  <div class="mform__errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ 'machines.editor.errorsTitle' | transloco }}</p>
+    <ul class="cs-alert__list cs-mono">
+      @for (error of storeErrorCopies(); track $index) {
+        <li>{{ error.key | transloco: error.params }}</li>
+      }
+    </ul>
+  </div>
+}
+
+@if (!locked()) {
+  <!-- On the compact stage this strip is the form's action dock: sticky above the mobile
+       navigation reserve, opaque, always confessing unsaved work. -->
+  <div class="mform__actions">
+    <!-- The wrapper stays mounted so the polite live region exists before the state flips;
+         the lamp is the one .cs-led vocabulary, steady (pulse stays live+critical, §7). -->
+    <span class="mform__dirty" role="status" aria-live="polite">
+      @if (dirty()) {
+        <span class="cs-led mform__dirty-lamp" aria-hidden="true"></span>
+        <span>{{ 'machines.form.unsaved' | transloco }}</span>
+      }
+    </span>
+    <p-button
+      type="button"
+      severity="secondary"
+      [label]="'machines.form.revert' | transloco"
+      [disabled]="!dirty()"
+      (onClick)="revert()"
+    >
+      <ng-template #icon>
+        <cs-icon name="arrow-rotate-right" />
+      </ng-template>
+    </p-button>
+    <p-button
+      type="button"
+      [label]="'machines.form.save' | transloco"
+      [disabled]="saveDisabled()"
+      (onClick)="save()"
+    >
+      <ng-template #icon>
+        <cs-icon name="check" />
+      </ng-template>
+    </p-button>
+  </div>
+}

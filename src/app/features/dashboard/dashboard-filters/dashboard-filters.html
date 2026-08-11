@@ -1,0 +1,33 @@
+<cs-filter-shell
+  label="dashboard.filters.title"
+  [activeCount]="activeCount()"
+  (applied)="commitStaged()"
+  (discarded)="discardStaged()"
+  (resetted)="discardStaged()"
+>
+  <span csFilterSummary>
+    {{ 'filters.seriesCount' | transloco: { count: selected().length } }}
+    · {{ summaryRangeKey() | transloco }} · {{ 'bucket.' + bucket() | transloco }}
+  </span>
+
+  <!-- The ONE control tree. The shell embeds it inline on desktop and inside the sheet/drawer
+       on phone/tablet — never both, so control ids exist exactly once. -->
+  <ng-template #controls>
+    <div class="dashboard-filters__row">
+      <app-series-picker
+        class="dashboard-filters__series"
+        [available]="available()"
+        [selected]="selected()"
+        (selectedChange)="onSeriesPicked($event)"
+      />
+
+      <app-range-picker
+        [range]="range()"
+        [bucket]="bucket()"
+        (rangeChange)="onRangePicked($event)"
+        (bucketChange)="onBucketPicked($event)"
+        (bucketReset)="onBucketReset()"
+      />
+    </div>
+  </ng-template>
+</cs-filter-shell>

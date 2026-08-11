@@ -1,0 +1,62 @@
+<cs-filter-shell
+  label="alarms.filters.title"
+  [activeCount]="activeCount()"
+  (applied)="commitStaged()"
+  (discarded)="discardStaged()"
+  (resetted)="discardStaged()"
+>
+  <span csFilterSummary>
+    {{ 'severity.' + severity() | transloco }}
+    ·
+    @if (series().length === 0) {
+      {{ 'filters.allSeries' | transloco }}
+    } @else {
+      {{ 'filters.seriesCount' | transloco: { count: series().length } }}
+    }
+    · {{ summaryRangeKey() | transloco }}
+  </span>
+
+  <!-- The ONE control tree. The shell embeds it inline on desktop and inside the sheet/drawer
+       on phone/tablet — never both, so control ids exist exactly once. -->
+  <ng-template #controls>
+    <div class="alarms-filters__row">
+      <cs-select
+        class="alarms-filters__severity"
+        label="alarms.filters.severity"
+        [options]="severityOptions"
+        [value]="severity()"
+        (valueChange)="onSeverityPicked($event)"
+      />
+
+      <cs-multi-select
+        class="alarms-filters__series"
+        label="alarms.filters.series"
+        hint="alarms.filters.seriesHint"
+        placeholder="common.placeholderSelectMany"
+        [options]="seriesOptions"
+        [value]="pickedSeries()"
+        (valueChange)="onSeriesPicked($event)"
+      />
+
+      <cs-select
+        class="alarms-filters__range"
+        label="alarms.filters.range"
+        [options]="rangeOptions"
+        [value]="rangeSelection()"
+        (valueChange)="onRangeSelectionChange($event)"
+      />
+
+      @if (rangeSelection() === 'custom') {
+        <cs-date-range
+          class="alarms-filters__custom-range"
+          label="range.custom"
+          placeholder="common.placeholderDateRange"
+          [minDate]="minDate()"
+          [maxDate]="maxDate()"
+          [value]="customRange()"
+          (valueChange)="onCustomRangeChange($event)"
+        />
+      }
+    </div>
+  </ng-template>
+</cs-filter-shell>

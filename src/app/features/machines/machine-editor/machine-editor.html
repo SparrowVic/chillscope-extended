@@ -1,0 +1,168 @@
+@let machine = doc();
+
+<header class="editor__head">
+  <div class="editor__title">
+    <h2 class="editor__name">{{ displayName() }}</h2>
+    <span class="editor__meta cs-mono" appDecode>
+      {{ machine.id }} · {{ machine.revision }}
+    </span>
+    <!-- Neutral pill: the profile is identity, not status — chroma stays information (§1). -->
+    <span class="editor__profile cs-label">{{ profile().nameKey | transloco }}</span>
+    @if (active()) {
+      <!-- The whole app follows this document; the compact stage has no library row to say so. -->
+      <span class="editor__active">
+        <span class="cs-led editor__active-led" aria-hidden="true"></span>
+        {{ 'machines.library.active' | transloco }}
+      </span>
+    }
+  </div>
+
+  @if (locked()) {
+    <div class="editor__locked">
+      <span class="editor__locked-hint">{{ 'machines.editor.builtInHint' | transloco }}</span>
+      <p-button
+        type="button"
+        severity="secondary"
+        [label]="'machines.library.duplicate' | transloco"
+        (onClick)="duplicateRequested.emit()"
+      >
+        <ng-template #icon>
+          <cs-icon name="copy" />
+        </ng-template>
+      </p-button>
+    </div>
+  }
+</header>
+
+@if (compact()) {
+  <!-- The compact preview disclosure: a folded preview still confesses an unclean draft. -->
+  <button
+    type="button"
+    class="editor__preview-toggle cs-focus-ring"
+    [attr.aria-expanded]="previewOpen()"
+    aria-controls="machine-editor-preview"
+    (click)="togglePreview()"
+  >
+    <span class="cs-label">{{ 'machines.editor.preview' | transloco }}</span>
+    <span class="editor__preview-rule" aria-hidden="true"></span>
+    @if (previewFlagged()) {
+      <span
+        class="cs-led editor__preview-alert"
+        role="img"
+        [attr.aria-label]="'machines.editor.previewInvalid' | transloco"
+      ></span>
+    }
+    <span
+      class="editor__preview-chevron"
+      [class.editor__preview-chevron--open]="previewOpen()"
+      aria-hidden="true"
+    >
+      <cs-icon name="arrow-right" />
+    </span>
+  </button>
+}
+
+@if (previewOpen()) {
+  <app-schematic-panel
+    id="machine-editor-preview"
+    class="editor__preview"
+    titleKey="machines.editor.preview"
+    [doc]="previewDoc()"
+    [externalErrors]="profileErrors()"
+    [series]="previewSeries()"
+    [telemetryLoading]="telemetryLoading()"
+    [telemetryFailed]="telemetryFailed()"
+  />
+}
+
+<div
+  #tablist
+  class="editor__tabs"
+  role="tablist"
+  [attr.aria-label]="'machines.editor.tabsLabel' | transloco"
+  aria-orientation="horizontal"
+>
+  <!-- ONE physical selection marker that glides and stretches to the active tab; geometry
+       arrives as --tab-thumb-*, measured in the component after each render. -->
+  <span class="editor__tabs-thumb" aria-hidden="true"></span>
+  @for (key of tabs; track key.id) {
+    <button
+      #tabButton
+      class="editor__tab cs-focus-ring"
+      type="button"
+      role="tab"
+      [id]="'machine-tab-' + key.id"
+      [attr.aria-controls]="'machine-panel-' + key.id"
+      [attr.aria-selected]="tab() === key.id"
+      [attr.tabindex]="tab() === key.id ? 0 : -1"
+      [class.editor__tab--on]="tab() === key.id"
+      (click)="select(key.id)"
+      (keydown)="onTablistKeydown($event)"
+    >
+      <cs-icon [name]="key.icon" aria-hidden="true" />
+      {{ key.labelKey | transloco }}
+    </button>
+  }
+</div>
+
+<!-- Text panels stay mounted so a half-typed draft survives a tab switch. -->
+<div
+  id="machine-panel-form"
+  class="editor__panel"
+  role="tabpanel"
+  aria-labelledby="machine-tab-form"
+  [hidden]="tab() !== 'form'"
+>
+  <app-machine-form
+    [doc]="machine"
+    [seed]="formSeed()"
+    [profile]="profile()"
+    [locked]="locked()"
+    (draftChange)="onDraft($event)"
+    (saved)="saved.emit($event)"
+  />
+</div>
+<div
+  id="machine-panel-json"
+  class="editor__panel"
+  role="tabpanel"
+  aria-labelledby="machine-tab-json"
+  [hidden]="tab() !== 'json'"
+>
+  <app-machine-json
+    [doc]="machine"
+    [seed]="jsonSeed()"
+    [locked]="locked()"
+    (draftChange)="onDraft($event)"
+    (editPendingChange)="onJsonEditPending($event)"
+    (applied)="saved.emit($event)"
+  />
+</div>
+<div
+  id="machine-panel-diagram"
+  class="editor__panel"
+  role="tabpanel"
+  aria-labelledby="machine-tab-diagram"
+  [hidden]="tab() !== 'diagram'"
+>
+  @defer (when diagramVisited()) {
+    <app-machine-diagram
+      [doc]="machine"
+      [profile]="profile()"
+      [locked]="locked()"
+      [draft]="previewDoc()"
+      (draftChange)="onDraft($event)"
+      (saved)="saved.emit($event)"
+    />
+  } @placeholder {
+    <p class="editor__diagram-loading" role="status">{{ 'common.loading' | transloco }}</p>
+  } @loading (after 100ms; minimum 200ms) {
+    <p class="editor__diagram-loading" role="status">{{ 'common.loading' | transloco }}</p>
+  } @error {
+    <app-error-panel
+      titleKey="machines.editor.diagramLoadError"
+      messageKey="errors.generic"
+      (retry)="reloadPage()"
+    />
+  }
+</div>

@@ -1,0 +1,100 @@
+/* One node record strip: a live symbol well beside the identity band, with the placement and
+   render metadata on a second band. Shared strip chrome lives in row-fields.css. */
+
+.node-fields {
+  display: grid;
+  grid-template-columns:
+    calc(2.75rem * var(--cs-density))
+    minmax(5.5rem, 0.8fr)
+    minmax(9rem, 1.1fr)
+    minmax(9rem, 1.5fr)
+    var(--cs-control-height);
+  grid-template-areas:
+    'sym id type label remove'
+    'sym meta meta meta .';
+  gap: var(--cs-gap-field);
+}
+
+.node-fields__id {
+  grid-area: id;
+}
+
+.node-fields__type {
+  grid-area: type;
+}
+
+.node-fields__label {
+  grid-area: label;
+}
+
+/* The live symbol well: the row's type drawn by the schematic engine itself. Top-anchored onto
+   the control line — the frame's label line + gap plus the control box, minus the well's own
+   edge — so a validation message under a band-1 field cannot drag it. */
+.node-fields__well {
+  grid-area: sym;
+  align-self: start;
+  box-sizing: border-box;
+  width: calc(2.75rem * var(--cs-density));
+  height: calc(2.75rem * var(--cs-density));
+  margin-block-start: calc(
+    var(--cs-label-line) + 0.375rem + var(--cs-control-height) - 2.75rem * var(--cs-density)
+  );
+  padding: calc(0.3125rem * var(--cs-density));
+  border: 1px solid var(--cs-hairline);
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  color: var(--cs-muted);
+  transition: color var(--cs-dur-fast) var(--cs-ease);
+}
+
+.node-fields__well svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hairline symbols must stay device-crisp at thumbnail scale. */
+.node-fields__well svg ::ng-deep * {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Attention eases the document's ink up; a locked strip is a fact, not an affordance. */
+.node-fields:not(.node-fields--locked):hover .node-fields__well,
+.node-fields:not(.node-fields--locked):focus-within .node-fields__well {
+  color: var(--cs-text);
+}
+
+.node-fields__meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--cs-gap-field);
+}
+
+.node-fields__cell {
+  flex: 0 0 calc(6.5rem * var(--cs-density));
+}
+
+.node-fields__tag {
+  flex: 0 1 10rem;
+  min-width: 7rem;
+}
+
+.node-fields__meta cs-switch {
+  flex: none;
+}
+
+@container (max-width: 640px) {
+  .node-fields {
+    grid-template-columns:
+      calc(2.75rem * var(--cs-density))
+      minmax(0, 1fr)
+      var(--cs-control-height);
+    grid-template-areas:
+      'sym id remove'
+      'type type type'
+      'label label label'
+      'meta meta meta';
+  }
+}

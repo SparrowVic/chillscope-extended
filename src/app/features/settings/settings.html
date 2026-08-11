@@ -1,0 +1,49 @@
+<app-page-header titleKey="settings.title" subtitleKey="settings.subtitle" icon="sliders" />
+
+<form class="settings" [formRoot]="form">
+  <div class="settings__workspace">
+    <section class="settings__section cs-panel cs-rise" style="--rise: 0">
+      <h2 class="cs-label settings__caption">{{ 'settings.appearance.title' | transloco }}</h2>
+      <div class="settings__body">
+        <app-appearance-fields />
+      </div>
+    </section>
+
+    <section class="settings__section cs-panel cs-rise" style="--rise: 1">
+      <h2 class="cs-label settings__caption">{{ 'settings.simulation.title' | transloco }}</h2>
+      <div class="settings__body">
+        <app-simulation-fields
+          [liveIntervalMs]="form.liveIntervalMs"
+          [failureRatePercent]="form.failureRatePercent"
+        />
+      </div>
+    </section>
+  </div>
+
+  <section class="settings__section cs-panel cs-rise" style="--rise: 2">
+    <h2 class="cs-label settings__caption">{{ 'settings.thresholds.title' | transloco }}</h2>
+    <div class="settings__body">
+      <p class="settings__description">{{ 'settings.thresholds.description' | transloco }}</p>
+
+      <div class="settings__thresholds">
+        @for (group of thresholdGroups; track group.id) {
+          <app-threshold-fields
+            [series]="group.id"
+            [unit]="group.unit"
+            [color]="group.color"
+            [band]="group.band"
+          />
+        }
+      </div>
+    </div>
+  </section>
+
+  <app-settings-actions
+    [saveDisabled]="saveDisabled()"
+    [dirty]="formDirty()"
+    [invalid]="formInvalid()"
+    (resetRequested)="restoreDefaults()"
+  />
+</form>
+
+<p-toast position="bottom-right" />

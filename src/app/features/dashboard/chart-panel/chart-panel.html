@@ -1,0 +1,37 @@
+<header class="chart-panel__head">
+  <div class="chart-panel__copy">
+    <h2 class="cs-label">{{ 'dashboard.chart.title' | transloco }}</h2>
+    <p class="chart-panel__hint chart-panel__hint--fine">{{ 'chart.zoomHint' | transloco }}</p>
+    <p class="chart-panel__hint chart-panel__hint--coarse">
+      {{ 'chart.zoomHintTouch' | transloco }}
+    </p>
+  </div>
+
+  @if (zoomDepth() > 0) {
+    <div
+      class="chart-panel__actions"
+      role="group"
+      [attr.aria-label]="'chart.rangeActions' | transloco"
+    >
+      <button type="button" class="chart-panel__action" (click)="undoRange.emit()">
+        {{ 'chart.undoRange' | transloco }}
+      </button>
+      <button type="button" class="chart-panel__action" (click)="restoreRange.emit()">
+        {{ 'chart.restoreRange' | transloco }}
+      </button>
+    </div>
+  }
+</header>
+
+<chillscope-chart
+  class="chart-panel__canvas"
+  [series]="chartSeries()"
+  [thresholds]="chartThresholds()"
+  [labels]="chartLabels()"
+  [locale]="language()"
+  [theme]="theme()"
+  [loading]="loading()"
+  [resetKey]="resetKey()"
+  (rangeSelected)="onRangeSelected($event)"
+  (restoreRequested)="onRestoreRequested()"
+/>

@@ -1,0 +1,62 @@
+@let fields = band();
+
+<fieldset class="threshold-fields">
+  <legend class="threshold-fields__legend">
+    <button
+      type="button"
+      class="threshold-fields__toggle cs-focus-ring"
+      [attr.aria-expanded]="open()"
+      [attr.aria-controls]="bodyId"
+      (click)="toggle()"
+    >
+      <span class="threshold-fields__dot" aria-hidden="true" [style.background]="color()"></span>
+      <span class="threshold-fields__title">
+        <span class="threshold-fields__name">{{ seriesLabelKey() | transloco }}</span>
+        <span class="threshold-fields__unit cs-mono" aria-hidden="true">{{ unit() }}</span>
+      </span>
+      @if (groupInvalid()) {
+        <span class="threshold-fields__flag">
+          <cs-icon name="triangle-exclamation" aria-hidden="true" />
+          <span class="sr-only">{{ 'settings.thresholds.groupInvalid' | transloco }}</span>
+        </span>
+      }
+      <cs-icon name="arrow-right" class="threshold-fields__chevron" aria-hidden="true" />
+      <span class="threshold-fields__summary cs-mono" aria-hidden="true">{{ summary() }}</span>
+    </button>
+  </legend>
+
+  <cs-threshold-envelope
+    class="threshold-fields__envelope"
+    [criticalMin]="fields.criticalMin().value()"
+    [warningMin]="fields.warningMin().value()"
+    [warningMax]="fields.warningMax().value()"
+    [criticalMax]="fields.criticalMax().value()"
+  />
+
+  <div class="threshold-fields__body" [id]="bodyId" [attr.inert]="open() ? null : ''">
+    <div class="threshold-fields__clip">
+      <div class="threshold-fields__grid">
+        <cs-input-number
+          label="settings.thresholds.criticalMin"
+          [formField]="fields.criticalMin"
+          [maxFractionDigits]="3"
+        />
+        <cs-input-number
+          label="settings.thresholds.warningMin"
+          [formField]="fields.warningMin"
+          [maxFractionDigits]="3"
+        />
+        <cs-input-number
+          label="settings.thresholds.warningMax"
+          [formField]="fields.warningMax"
+          [maxFractionDigits]="3"
+        />
+        <cs-input-number
+          label="settings.thresholds.criticalMax"
+          [formField]="fields.criticalMax"
+          [maxFractionDigits]="3"
+        />
+      </div>
+    </div>
+  </div>
+</fieldset>

@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.error-panel {
+  display: flex;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  flex-wrap: wrap;
+}
+
+/* A real basis lets the retry button wrap below the copy on narrow screens instead of
+   squeezing the message into a one-word-per-line column beside it. */
+.error-panel__text {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.error-panel__title {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* The title has no size of its own, so it sits at --cs-font-base; both lines below it must stay
+   under that, which a fixed rem could not do — at 0.875rem the description outgrew its own title. */
+.error-panel__description {
+  margin: 0.15rem 0 0;
+  font-size: calc(0.8125rem * var(--cs-density));
+}
+
+.error-panel__detail {
+  margin: 0.35rem 0 0;
+  font-size: calc(0.75rem * var(--cs-density));
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+}
+
+.error-panel__text + p-button {
+  margin-inline-start: auto;
+}

@@ -1,0 +1,101 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--cs-gap-field);
+  width: 100%;
+  padding-block-start: var(--cs-gap-field);
+  border-block-start: 1px solid var(--cs-hairline);
+}
+
+/* Keeps the collapsed popup host from claiming a flex slot and a gap. */
+p-confirmpopup {
+  display: contents;
+}
+
+/* The narration takes the left spring so the two actions hold the right edge. */
+.settings-actions__status {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.5rem * var(--cs-density));
+  margin-inline-end: auto;
+  color: var(--cs-muted);
+  font-size: var(--cs-font-support);
+  line-height: 1.45;
+}
+
+.settings-actions__status-flag {
+  color: var(--cs-crit);
+}
+
+/* The one .cs-led vocabulary in its steady warn voice — no pulse (§7: live + critical only). */
+.settings-actions__lamp {
+  --cs-led-color: var(--cs-warn);
+}
+
+/*
+ * PrimeNG fades a disabled button to 60% opacity, which drops the primary label below the
+ * 4.5:1 floor. Disabled Save instead dims to a half-strength raised surface (§7 "surface
+ * dimmed") — unmistakably inert, yet the muted label keeps full contrast. It stays a fill,
+ * not a hairline box, so it cannot read as the outlined variant K3 retired; at half strength
+ * it also stays quieter than the filled secondary standing next to it.
+ */
+:host ::ng-deep .p-button:disabled {
+  opacity: 1;
+  background: color-mix(in srgb, var(--cs-panel-raised) 60%, transparent);
+  border-color: transparent;
+  color: var(--cs-muted);
+}
+
+/* The ACTION DOCK (compact widths) pins above the mobile navigation reserve. Sticky keeps it in
+   flow, so with an on-screen keyboard open it can always
+   be scrolled back into view. The strip sits at canvas level, so its opaque canvas surface and
+   full-bleed margins (mirroring app-shell's gutters exactly) let sections pass beneath without
+   any blur — blur belongs only to floating, transient chrome. */
+@media (width < 900px) {
+  :host {
+    margin-inline: calc(-1 * max(var(--cs-page-gutter), env(safe-area-inset-left)))
+      calc(-1 * max(var(--cs-page-gutter), env(safe-area-inset-right)));
+    padding: var(--cs-gap-field) max(var(--cs-page-gutter), env(safe-area-inset-left))
+      var(--cs-gap-field) max(var(--cs-page-gutter), env(safe-area-inset-right));
+    border-block-start: 1px solid var(--cs-hairline);
+    background: var(--cs-canvas);
+  }
+
+  :host.settings-actions--sticky {
+    position: sticky;
+    bottom: var(--settings-dock, 0px);
+    z-index: 1;
+  }
+}
+
+/* app-shell narrows its gutters to 1rem below 640px; the full bleed follows. */
+@media (max-width: 640px) {
+  :host {
+    margin-inline: calc(-1 * max(1rem, env(safe-area-inset-left)))
+      calc(-1 * max(1rem, env(safe-area-inset-right)));
+    padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 520px) {
+  :host {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :host.settings-actions--sticky {
+    position: static;
+    bottom: auto;
+  }
+
+  .settings-actions__status,
+  p-button {
+    width: 100%;
+  }
+
+  :host ::ng-deep .p-button {
+    width: 100%;
+  }
+}

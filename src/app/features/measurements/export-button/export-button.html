@@ -1,0 +1,15 @@
+<p-button
+  type="button"
+  severity="secondary"
+  [disabled]="busy()"
+  [styleClass]="buttonClass()"
+  [attr.aria-busy]="busy()"
+  [label]="'measurements.export.label' | transloco"
+  (onClick)="download()"
+>
+  <ng-template #icon>
+    <cs-icon name="file-export" />
+  </ng-template>
+</p-button>
+
+<p-toast position="bottom-right" />

@@ -1,0 +1,37 @@
+@if (collapsible()) {
+  <h3 class="caption__head">
+    <button
+      type="button"
+      class="caption__toggle cs-focus-ring"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-controls]="controlsId()"
+      (click)="toggled.emit()"
+    >
+      <span class="cs-label caption__text">{{ labelKey() | transloco }}</span>
+      <span class="caption__rule" aria-hidden="true"></span>
+      @if (invalid()) {
+        <span
+          class="cs-led caption__alert"
+          role="img"
+          [attr.aria-label]="'machines.form.sectionInvalid' | transloco"
+        ></span>
+      }
+      @if (count() !== undefined) {
+        <!-- Part of the accessible name on purpose: a folded section's list cannot speak. -->
+        <span class="caption__count cs-mono">{{ count() }}</span>
+      }
+      <span class="caption__chevron" [class.caption__chevron--open]="expanded()" aria-hidden="true">
+        <cs-icon name="arrow-right" />
+      </span>
+    </button>
+  </h3>
+} @else {
+  <h3 class="cs-label caption__row">
+    <span>{{ labelKey() | transloco }}</span>
+    <span class="caption__rule" aria-hidden="true"></span>
+    @if (count() !== undefined) {
+      <!-- aria-hidden count: screen readers get the list itself. -->
+      <span class="caption__count cs-mono" aria-hidden="true">{{ count() }}</span>
+    }
+  </h3>
+}

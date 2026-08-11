@@ -1,0 +1,13 @@
+:host {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(calc(12rem * var(--cs-density)), 100%), 1fr)
+  );
+  gap: var(--cs-gap-field) var(--cs-gap-section);
+  align-items: start;
+}
+
+cs-segmented-control {
+  grid-column: 1 / -1;
+}

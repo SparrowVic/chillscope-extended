@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+/* The dashboard's quiet toolbar row (moved here from dashboard.css with the same terms): every
+   filter on a single row where the width allows, the custom range and aggregation wrapping onto
+   a second row when it does not. Inside the phone sheet the same bases stack one per line. */
+.dashboard-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--cs-gap-field) var(--cs-gap-section);
+}
+
+/* Control widths are content minimums — a date range reads "01.01.2026 12:00 – …" and truncates
+   if the field shrinks faster than its text does — so they stay out of the density scale. */
+.dashboard-filters__series {
+  flex: var(--cs-filter-field-grow, 1) 1 var(--cs-filter-field-basis, 15rem);
+  min-width: 13rem;
+  max-width: var(--cs-filter-field-max, 22rem);
+}

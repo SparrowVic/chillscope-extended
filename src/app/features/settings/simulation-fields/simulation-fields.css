@@ -1,0 +1,85 @@
+:host {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(calc(13rem * var(--cs-density)), 100%), 1fr));
+  gap: var(--cs-gap-field) var(--cs-gap-section);
+  align-items: start;
+}
+
+/* One value, two hands: the labelled number field above, its full-width slider twin below.
+   The frame's error/hint stays glued to the input it describes; the slider follows. */
+.simulation-fields__pair {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cs-gap-field);
+  min-width: 0;
+}
+
+/* Breathing room around the track so a thumb lands on the slider, not its neighbours. The
+   wrapper already inflates the handle's hit area on coarse pointers; this keeps the whole
+   band clear of the number field above it. */
+.simulation-fields__slider {
+  padding-block: 0.25rem 0.5rem;
+}
+
+.simulation-fields__seed {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.25rem var(--cs-gap-field);
+  padding-top: var(--cs-gap-field);
+  border-top: 1px solid var(--cs-hairline);
+}
+
+/* Type sizes are em so they follow --cs-font-base, the density type scale. */
+.simulation-fields__seed-value {
+  font-size: 1.11em;
+}
+
+.simulation-fields__seed-hint {
+  grid-column: 2;
+  font-size: 0.889em;
+  line-height: 1.35;
+  color: var(--cs-muted);
+}
+
+@media (max-width: 420px) {
+  .simulation-fields__seed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simulation-fields__seed-hint {
+    grid-column: 1;
+  }
+}
+
+/* The slider is the number field's twin, so it must not repeat the one visible label — but its
+   handle still needs an accessible name, which the wrapper wires through `aria-labelledby`.
+   The label is therefore kept and made screen-reader-only (the sr-only recipe restated, because
+   a utility class cannot reach inside the wrapper). ::ng-deep is the sanctioned reach here —
+   the slider wrapper itself already uses it for the coarse-pointer hit area. */
+:host ::ng-deep .simulation-fields__slider .cs-control-frame__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* §8b calibration bench: a static 1px tick rail under each track makes the slider read as a
+   scaled instrument. A plain paint — no animation, so no reduced-motion branch is owed. */
+:host ::ng-deep .simulation-fields__slider .p-slider::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 0.25rem);
+  height: 0.1875rem;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--cs-hairline-strong) 0 0) 100% 0 / 1px 100% no-repeat,
+    repeating-linear-gradient(90deg, var(--cs-hairline-strong) 0 1px, transparent 1px 10%);
+}

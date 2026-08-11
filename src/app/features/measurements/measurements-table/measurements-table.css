@@ -1,0 +1,123 @@
+:host {
+  display: block;
+}
+
+/* The phone sort row renders only on the sheet tier (host @if), never beside the table's own
+   sortable header — so its rules carry no media condition of their own. */
+.measurements-table__mobile-sort {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.5rem;
+  margin-bottom: var(--cs-gap-field);
+}
+
+.measurements-table__sort-select {
+  min-width: 0;
+}
+
+/* K3 control recipe: a raised fill on the panel, rising one surface step on hover.
+   `font: inherit` because a native button otherwise keeps the browser's own face, not
+   the app's density-driven base. Phone-only chrome, so the 44px floor is unconditional. */
+.measurements-table__sort-direction {
+  min-height: max(var(--cs-control-height), 2.75rem);
+  padding-inline: 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--cs-r-ctl);
+  background: var(--cs-panel-raised);
+  color: var(--cs-text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* Hover is a fine-pointer promise (§7); a fingertip would only leave the tint stuck on. */
+@media (hover: hover) and (pointer: fine) {
+  .measurements-table__sort-direction:hover {
+    background: var(--cs-overlay);
+  }
+}
+
+.measurements-table__loading {
+  height: 2px;
+}
+
+/*
+ * The log's one physical panel: rows and paginator sit inside the shared `.cs-panel` material
+ * (restated here because the element belongs to PrimeNG). Inline padding stays 0 so the
+ * hairline dividers run edge-to-edge; per-cell `--cs-row-pad` provides the content inset.
+ * The rows themselves stay flat and dense — the K3 guardrail materializes the container only.
+ */
+p-table {
+  /* PrimeNG freezes the paginator's own padding, so the panel's footer would keep "normal"
+     metrics at every density; it follows the row inset instead. The nav buttons keep their
+     2.5rem target — a pointer target is not a density knob. */
+  --p-paginator-padding: var(--cs-row-pad);
+
+  display: block;
+  border: 1px solid var(--cs-glass-rim);
+  border-radius: var(--cs-r-card);
+  background: var(--cs-panel);
+  box-shadow: var(--cs-glass-etch);
+}
+
+/* One surface only: PrimeNG's inner header, row and paginator slabs would square off the
+   panel's rounded corners, so they yield their backgrounds to the panel. */
+:host ::ng-deep .p-datatable-thead > tr > th,
+:host ::ng-deep .p-datatable-tbody > tr,
+:host ::ng-deep .p-paginator {
+  background: transparent;
+}
+
+/* An instrument log: engraved header, hairline dividers, mono readings. Row tightness is the
+   density token's job (§6) — the log is the screen the setting exists for. */
+th {
+  padding: var(--cs-row-pad);
+  border-bottom: 1px solid var(--cs-hairline-strong);
+}
+
+tr > td {
+  padding: var(--cs-row-pad);
+  border-bottom: 1px solid var(--cs-hairline);
+  transition: background-color var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* Header cells hold th, so only body rows pick up the tint. */
+tr:hover > td:not(.measurements-table__cell--empty) {
+  background: color-mix(in srgb, var(--cs-muted) 8%, transparent);
+}
+
+.measurements-table__cell--numeric {
+  text-align: end;
+}
+
+/* Data type rides the density scale with the rest of the row (§6) — a frozen numeral next to
+   a scaling series name reads as a mismatch at both ends of the range. */
+.measurements-table__date {
+  font-size: calc(0.8125rem * var(--cs-density));
+}
+
+/* The value and its unit are one reading: they never break apart across lines. */
+.measurements-table__reading {
+  white-space: nowrap;
+}
+
+.measurements-table__value {
+  font-size: calc(0.875rem * var(--cs-density));
+}
+
+.measurements-table__unit {
+  margin-inline-start: 0.3rem;
+  color: var(--cs-muted);
+  font-size: calc(0.75rem * var(--cs-density));
+}
+
+/* Page numbers are numerals a human reads, so they wear the mono face too — including the
+   rows-per-page readout sitting between them. */
+:host ::ng-deep .p-paginator-page,
+:host ::ng-deep .p-paginator-current,
+:host ::ng-deep .p-paginator .p-select-label {
+  font-family: var(--cs-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}

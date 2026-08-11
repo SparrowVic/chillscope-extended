@@ -1,0 +1,77 @@
+/* The caption carries the section rule — one hairline system, no stacked section borders.
+   Both variants keep the same anatomy so the fold only adds affordance, never re-typesets. */
+
+.caption__row,
+.caption__head {
+  display: flex;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  margin: 0 0 var(--cs-gap-field);
+}
+
+.caption__head {
+  margin: 0;
+}
+
+/* An open fold restores the caption's breathing room above its first record strip; a shut one
+   sits flush so the folded overview reads as a tight list of captions. */
+.caption__head:has(.caption__toggle[aria-expanded='true']) {
+  margin-block-end: var(--cs-gap-field);
+}
+
+.caption__toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--cs-gap-field);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--cs-control-height);
+  padding: 0 var(--cs-gap-field);
+  border: none;
+  border-radius: var(--cs-r-ctl);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--cs-dur-fast) ease-out;
+}
+
+.caption__toggle:hover {
+  background: var(--cs-hover-tint);
+}
+
+/* The button variant restates the engraved caption type itself: .cs-label on a child span
+   cannot inherit a heading's dropped margin, and the count must match the caption size. */
+.caption__rule {
+  flex: 1;
+  border-top: 1px solid var(--cs-hairline);
+}
+
+.caption__count {
+  color: var(--cs-muted);
+}
+
+.caption__alert {
+  --cs-led-color: var(--cs-crit);
+}
+
+.caption__chevron {
+  display: inline-flex;
+  color: var(--cs-muted);
+  transition: rotate var(--cs-dur-fast) var(--cs-ease);
+}
+
+.caption__chevron--open {
+  rotate: 90deg;
+}
+
+@media (pointer: coarse) {
+  .caption__toggle {
+    min-height: max(var(--cs-control-height), 2.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caption__chevron {
+    transition: none;
+  }
+}

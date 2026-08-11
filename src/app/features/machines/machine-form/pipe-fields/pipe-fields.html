@@ -1,0 +1,48 @@
+@let pipe = field();
+
+<div class="row-fields pipe-fields" [class.pipe-fields--hot]="hot()">
+  <cs-select
+    class="pipe-fields__from"
+    label="machines.form.from"
+    placeholder="common.placeholderSelect"
+    literalLabels
+    [options]="nodeOptions()"
+    [formField]="pipe.from"
+  />
+  <div class="pipe-fields__conduit" aria-hidden="true">
+    <svg viewBox="0 0 40 12" preserveAspectRatio="xMidYMid meet">
+      <svg:line x1="1" y1="6" x2="30" y2="6" stroke-dasharray="5 4" />
+      <svg:path d="M30 2 L38 6 L30 10 Z" />
+    </svg>
+  </div>
+  <cs-select
+    class="pipe-fields__to"
+    label="machines.form.to"
+    placeholder="common.placeholderSelect"
+    literalLabels
+    [options]="nodeOptions()"
+    [formField]="pipe.to"
+  />
+  <cs-segmented-control
+    class="pipe-fields__side"
+    label="machines.form.side"
+    [options]="sideOptions"
+    [formField]="pipe.side"
+  />
+
+  @if (!locked()) {
+    <p-button
+      class="row-fields__remove"
+      type="button"
+      severity="secondary"
+      [text]="true"
+      [ariaLabel]="'machines.form.removePipe' | transloco"
+      [attr.title]="'machines.form.removePipe' | transloco"
+      (onClick)="removed.emit()"
+    >
+      <ng-template #icon>
+        <cs-icon name="trash-can" />
+      </ng-template>
+    </p-button>
+  }
+</div>

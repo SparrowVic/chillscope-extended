@@ -1,0 +1,619 @@
+{
+  "app": {
+    "title": "Chillscope",
+    "skipToContent": "Przejdź do treści",
+    "machineId": "CHŁODZIARKA K-207 · LINIA B",
+    "uptime": "Czas pracy"
+  },
+  "menu": {
+    "label": "Menu główne",
+    "dashboard": "Pulpit",
+    "dashboardCompact": "Pulpit",
+    "measurements": "Pomiary",
+    "measurementsCompact": "Pomiary",
+    "alarms": "Alarmy",
+    "settings": "Ustawienia",
+    "machines": "Maszyny"
+  },
+  "navigation": {
+    "activeAlarms": "Aktywne alarmy: {{count}}"
+  },
+  "common": {
+    "apply": "Zastosuj",
+    "cancel": "Anuluj",
+    "clear": "Wyczyść",
+    "close": "Zamknij",
+    "confirm": "Potwierdź",
+    "retry": "Spróbuj ponownie",
+    "refresh": "Odśwież",
+    "yes": "Tak",
+    "no": "Nie",
+    "loading": "Wczytywanie…",
+    "noResults": "Brak wyników",
+    "all": "Wszystkie",
+    "today": "Dziś",
+    "selectAll": "Zaznacz wszystko",
+    "clearAll": "Odznacz wszystko",
+    "placeholderSelect": "Wybierz…",
+    "placeholderSelectMany": "Wybierz jedną lub więcej…",
+    "placeholderDateRange": "Wybierz zakres dat",
+    "discardChanges": "Odrzucić niezapisane zmiany?",
+    "updateReady": "Nowa wersja aplikacji — za chwilę nastąpi przeładowanie"
+  },
+  "states": {
+    "emptyTitle": "Brak danych do pokazania",
+    "errorTitle": "Nie udało się pobrać danych",
+    "errorMessage": "Coś poszło nie tak po stronie serwera. Spróbuj ponownie."
+  },
+  "errors": {
+    "generic": "Wystąpił nieoczekiwany błąd.",
+    "loadMeasurements": "Nie udało się pobrać pomiarów.",
+    "loadAlarms": "Nie udało się pobrać alarmów."
+  },
+  "validation": {
+    "required": "Pole jest wymagane.",
+    "min": "Wartość nie może być mniejsza niż {{min}}.",
+    "max": "Wartość nie może być większa niż {{max}}.",
+    "minLength": "Wymagane są co najmniej {{minLength}} znaki.",
+    "maxLength": "Dozwolone jest najwyżej {{maxLength}} znaków.",
+    "pattern": "Wartość ma nieprawidłowy format.",
+    "email": "Podaj poprawny adres e-mail.",
+    "invalid": "Wartość jest nieprawidłowa.",
+    "thresholdOrder": "Próg dolny musi być mniejszy niż górny.",
+    "criticalOutsideWarning": "Progi krytyczne muszą leżeć poza progami ostrzegawczymi.",
+    "isaTag": "Tag musi mieć format LL-NNN (np. TT-101).",
+    "tagPrefix": "Tag musi zaczynać się od „{{prefix}}-”.",
+    "pipeSelf": "Rura nie może łączyć węzła z nim samym."
+  },
+  "series": {
+    "label": "Serie",
+    "select": "Wybierz serie",
+    "selected": "Wybrano {{count}} z {{total}}",
+    "temperature": "Temperatura",
+    "pressure": "Ciśnienie",
+    "flow": "Przepływ",
+    "rpm": "Obroty"
+  },
+  "units": {
+    "celsius": "°C",
+    "bar": "bar",
+    "litersPerMinute": "l/min",
+    "rpm": "obr/min"
+  },
+  "severity": {
+    "all": "Wszystkie",
+    "ok": "Poprawne",
+    "warning": "Ostrzeżenie",
+    "critical": "Krytyczne"
+  },
+  "bucket": {
+    "auto": "Automatyczna",
+    "raw": "Bez agregacji",
+    "5m": "5 minut",
+    "15m": "15 minut",
+    "1h": "1 godzina",
+    "6h": "6 godzin",
+    "1d": "1 dzień"
+  },
+  "range": {
+    "label": "Zakres czasu",
+    "from": "Od",
+    "to": "Do",
+    "custom": "Zakres własny",
+    "preset": {
+      "lastHour": "Ostatnia godzina",
+      "last6Hours": "Ostatnie 6 godzin",
+      "last24Hours": "Ostatnie 24 godziny",
+      "last7Days": "Ostatnie 7 dni",
+      "last30Days": "Ostatnie 30 dni"
+    },
+    "presetShort": {
+      "lastHour": "1h",
+      "last6Hours": "6h",
+      "last24Hours": "24h",
+      "last7Days": "7d",
+      "last30Days": "30d"
+    }
+  },
+  "live": {
+    "short": "Na żywo",
+    "enabled": "Podgląd na żywo włączony",
+    "disabled": "Podgląd na żywo wyłączony"
+  },
+  "theme": {
+    "label": "Motyw",
+    "light": "Jasny",
+    "dark": "Ciemny"
+  },
+  "language": {
+    "label": "Język",
+    "pl": "Polski",
+    "en": "Angielski",
+    "shortPl": "PL",
+    "shortEn": "EN"
+  },
+  "stats": {
+    "trendUp": "Trend rosnący",
+    "trendDown": "Trend malejący",
+    "trendFlat": "Bez zmian"
+  },
+  "chart": {
+    "title": "Przebieg pomiarów",
+    "empty": "Brak danych w wybranym zakresie",
+    "loading": "Wczytywanie wykresu…",
+    "zoomHint": "Przeciągnij w polu wykresu, aby przybliżyć. Pasek poniżej przesuwa widok; podwójne kliknięcie w wykres pokazuje cały zakres.",
+    "error": "Nie udało się wczytać wykresu",
+    "ariaLabel": "Przebieg pomiarów w czasie",
+    "zoomHintTouch": "Rozsuń palce, aby przybliżyć; pasek poniżej przesuwa widok. Cały zakres przywraca widok.",
+    "rangeActions": "Zakres wykresu",
+    "undoRange": "Cofnij",
+    "restoreRange": "Cały zakres"
+  },
+  "table": {
+    "rowsPerPage": "Wierszy na stronie",
+    "page": "Strona",
+    "first": "Pierwsza strona",
+    "previous": "Poprzednia strona",
+    "next": "Następna strona",
+    "last": "Ostatnia strona",
+    "showing": "Pozycje {{first}}–{{last}} z {{total}}"
+  },
+  "dashboard": {
+    "title": "Pulpit",
+    "subtitle": "Bieżący stan układu chłodzenia",
+    "filters": {
+      "title": "Filtry",
+      "series": "Serie pomiarowe",
+      "bucket": "Agregacja"
+    },
+    "chart": {
+      "title": "Przebieg w czasie"
+    },
+    "cycle": {
+      "title": "Rytm dobowy",
+      "hint": "Średnie godzinowe: kolumny to godziny doby, wiersze to kolejne dni.",
+      "seriesLabel": "Seria",
+      "rangeLabel": "Okno",
+      "days7": "7 dni",
+      "days14": "14 dni",
+      "days30": "30 dni",
+      "ariaLabel": "Mapa rytmu dobowego pomiarów"
+    },
+    "alarms": {
+      "title": "Ostatnie alarmy",
+      "viewAll": "Zobacz wszystkie",
+      "empty": "Brak alarmów w wybranym zakresie"
+    },
+    "schematic": {
+      "title": "OBIEG CHŁODZENIA — SCHEMAT",
+      "ariaLabel": "Żywy schemat synoptyczny maszyny {{machine}}. Ustaw fokus na podzespole, aby prześledzić jego połączenia.",
+      "scrollLabel": "Przewijany schemat maszyny",
+      "invalid": "Nieprawidłowy dokument schematu",
+      "invalidMessage": "Walidacja dokumentu maszyny nie powiodła się — poniżej lista błędów.",
+      "noReading": "Brak dostępnego odczytu telemetrycznego",
+      "state": {
+        "syncing": "Stan przepływu: synchronizacja telemetrii",
+        "error": "Stan przepływu: błąd pobierania telemetrii",
+        "stale": "Stan przepływu: opóźniony — zachowano ostatni odczyt",
+        "unknown": "Stan przepływu: brak telemetrii",
+        "stopped": "Stan przepływu: zatrzymany",
+        "running": "Stan przepływu: aktywny"
+      },
+      "viewLabel": "Widok",
+      "view": {
+        "pan": "Zbliżenie",
+        "fit": "Całość"
+      }
+    },
+    "journal": {
+      "threshold": "próg"
+    }
+  },
+  "measurements": {
+    "title": "Pomiary",
+    "subtitle": "Pełna historia odczytów",
+    "filters": {
+      "title": "Filtry",
+      "series": "Serie pomiarowe",
+      "range": "Zakres czasu",
+      "bucket": "Agregacja"
+    },
+    "table": {
+      "date": "Data i godzina",
+      "series": "Seria",
+      "value": "Wartość",
+      "unit": "Jednostka",
+      "status": "Status",
+      "caption": "Lista pomiarów",
+      "sortBy": "Sortuj według",
+      "ascending": "Rosnąco",
+      "descending": "Malejąco",
+      "sortAscending": "Sortuj rosnąco",
+      "sortDescending": "Sortuj malejąco"
+    },
+    "export": {
+      "label": "Eksportuj do CSV",
+      "filename": "pomiary",
+      "empty": "Brak danych do wyeksportowania"
+    },
+    "empty": {
+      "title": "Brak pomiarów",
+      "message": "Zmień zakres czasu lub wybierz inne serie."
+    },
+    "deck": {
+      "title": "Taśmy serii",
+      "legendWarning": "Strefa ostrzegawcza",
+      "legendCritical": "Strefa krytyczna",
+      "scrollLabel": "Przewijane taśmy serii"
+    },
+    "log": {
+      "title": "Dziennik pomiarów",
+      "pagination": "Stronicowanie dziennika pomiarów"
+    },
+    "tape": {
+      "min": "min",
+      "avg": "śr.",
+      "max": "maks.",
+      "warningZone": "ostrz.",
+      "criticalZone": "kryt."
+    }
+  },
+  "alarms": {
+    "title": "Alarmy",
+    "subtitle": "Przekroczenia progów ostrzegawczych i krytycznych",
+    "filters": {
+      "title": "Filtry",
+      "severity": "Istotność",
+      "series": "Serie pomiarowe",
+      "seriesHint": "Puste pole oznacza wszystkie serie.",
+      "range": "Zakres czasu"
+    },
+    "item": {
+      "duration": "Czas trwania"
+    },
+    "list": {
+      "pagination": "Strony alarmów",
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona {{page}} z {{pages}} · alarmów: {{count}}",
+      "dayCount": "alarmów: {{count}}",
+      "dayCritical": "krytycznych: {{count}}"
+    },
+    "table": {
+      "threshold": "Próg"
+    },
+    "summary": {
+      "total": "Alarmów łącznie",
+      "warning": "Ostrzeżeń",
+      "critical": "Krytycznych"
+    },
+    "empty": {
+      "title": "Brak alarmów",
+      "message": "W wybranym zakresie żadna seria nie przekroczyła progów."
+    }
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "subtitle": "Konfiguracja aplikacji i symulacji",
+    "appearance": {
+      "title": "Wygląd",
+      "theme": "Motyw",
+      "themeHint": "Wartość początkowa pochodzi z ustawień systemu.",
+      "language": "Język interfejsu",
+      "density": {
+        "label": "Gęstość interfejsu",
+        "compact": "Kompaktowa",
+        "normal": "Normalna",
+        "comfortable": "Komfortowa"
+      }
+    },
+    "live": {
+      "interval": "Interwał odświeżania",
+      "intervalHint": "Od 1000 do 60000 milisekund."
+    },
+    "simulation": {
+      "title": "Symulacja",
+      "failureRate": "Poziom awaryjności",
+      "failureRateHint": "Odsetek zapytań, na które fałszywy backend odpowie błędem 500.",
+      "seed": "Ziarno generatora",
+      "seedHint": "Ta sama wartość zawsze daje ten sam przebieg danych."
+    },
+    "thresholds": {
+      "title": "Progi alarmowe",
+      "description": "Te wartości domyślne sterują alarmami i strefami wykresu. Nadpisanie w aktywnej maszynie ma pierwszeństwo.",
+      "warningMin": "Próg ostrzegawczy dolny",
+      "warningMax": "Próg ostrzegawczy górny",
+      "criticalMin": "Próg krytyczny dolny",
+      "criticalMax": "Próg krytyczny górny",
+      "groupInvalid": "Zawiera błędy walidacji"
+    },
+    "actions": {
+      "save": "Zapisz ustawienia",
+      "reset": "Przywróć domyślne",
+      "resetConfirm": "Przywrócić wszystkie ustawienia domyślne?",
+      "saved": "Ustawienia zapisane",
+      "resetDone": "Przywrócono ustawienia domyślne",
+      "persistenceFailed": "Ustawienia działają w tej sesji, ale pamięć przeglądarki jest niedostępna.",
+      "unsaved": "Niezapisane zmiany",
+      "blocked": "Popraw zaznaczone pola, aby zapisać"
+    }
+  },
+  "primeng": {
+    "dayNamesMin": "Nd Pn Wt Śr Cz Pt So",
+    "dateFormat": "dd.mm.yy",
+    "firstDayOfWeek": "1",
+    "chooseDate": "Wybierz datę",
+    "chooseMonth": "Wybierz miesiąc",
+    "chooseYear": "Wybierz rok",
+    "prevMonth": "Poprzedni miesiąc",
+    "nextMonth": "Następny miesiąc",
+    "prevYear": "Poprzedni rok",
+    "nextYear": "Następny rok",
+    "prevDecade": "Poprzednia dekada",
+    "nextDecade": "Następna dekada",
+    "prevHour": "Poprzednia godzina",
+    "nextHour": "Następna godzina",
+    "prevMinute": "Poprzednia minuta",
+    "nextMinute": "Następna minuta",
+    "prevSecond": "Poprzednia sekunda",
+    "nextSecond": "Następna sekunda",
+    "emptySelection": "Nie wybrano żadnej pozycji",
+    "selection": "Wybrane pozycje: {0}"
+  },
+  "machines": {
+    "builtIns": {
+      "k207": {
+        "name": "Chłodziarka K-207",
+        "nodes": {
+          "P1": "POMPA P-1",
+          "W1": "CHŁODNICA W-1",
+          "Z1": "ZBIORNIK Z-1",
+          "M1": "MASZYNA M-207"
+        }
+      },
+      "tcu01": {
+        "name": "Termostat TCU-01",
+        "nodes": {
+          "Z1": "ZBIORNIK Z-1",
+          "P1": "POMPA P-1",
+          "G1": "GRZAŁKA G-1",
+          "M1": "FORMA M-31",
+          "W1": "CHŁODNICA W-1",
+          "F1": "FILTR F-1",
+          "SV1": "ZAWÓR SV-1",
+          "Y1": "ZAWÓR CHŁODZENIA Y-1"
+        }
+      },
+      "ch02": {
+        "name": "Chłodziarka CH-02",
+        "nodes": {
+          "Z1": "ZBIORNIK Z-1",
+          "P1": "POMPA P-1",
+          "M1": "MASZYNA M-2",
+          "W1": "CHŁODNICA W-1",
+          "E1": "PAROWNIK E-1",
+          "S1": "SPRĘŻARKA S-1",
+          "K1": "SKRAPLACZ K-1",
+          "R1": "ZAWÓR ROZPRĘŻNY ZR-1",
+          "F1": "FILTR F-1",
+          "FD1": "FILTR ODWADNIACZ FD-1",
+          "SG1": "WZIERNIK SG-1"
+        }
+      }
+    },
+    "profiles": {
+      "tcu": "Termostat (TCU)",
+      "chiller": "Chłodziarka (chiller)"
+    },
+    "title": "Maszyny",
+    "subtitle": "Biblioteka maszyn i konfigurator schematów",
+    "library": {
+      "title": "Biblioteka",
+      "builtIn": "Wbudowana",
+      "custom": "Własna",
+      "active": "Aktywna",
+      "createTcu": "Nowy TCU",
+      "createChiller": "Nowa chłodziarka",
+      "duplicate": "Duplikuj",
+      "remove": "Usuń",
+      "removeConfirm": "Usunąć maszynę {{id}}? Tej operacji nie można cofnąć.",
+      "setActive": "Aktywuj",
+      "persistenceTitle": "Nie zapisano biblioteki maszyn",
+      "persistenceMessage": "Pamięć przeglądarki odrzuciła zmianę. Poprzednia biblioteka maszyn pozostała bez zmian."
+    },
+    "editor": {
+      "builtInHint": "Dokument wbudowany — zduplikuj go, aby edytować.",
+      "preview": "Podgląd na żywo",
+      "errorsTitle": "Błędy walidacji",
+      "profileErrorsTitle": "Naruszenia profilu maszyny",
+      "diagramLoadError": "Nie udało się wczytać edytora diagramu",
+      "tabsLabel": "Widoki edytora",
+      "tabs": {
+        "form": "Formularz",
+        "json": "JSON",
+        "diagram": "Diagram"
+      },
+      "previewInvalid": "Szkic zawiera błędy walidacji"
+    },
+    "validation": {
+      "documentObject": "Dokument schematu musi być obiektem JSON.",
+      "profileIdAllowed": "Wartość pola \"profileId\" to {{value}}. Dozwolone wartości: {{allowed}}.",
+      "nodeInstrumentUnknown": "Węzeł \"{{nodeId}}\" odwołuje się do nieznanego tagu przyrządu \"{{tag}}\".",
+      "nodeInstrumentAttachment": "Węzeł \"{{nodeId}}\" używa tagu przyrządu \"{{tag}}\", ale ten przyrząd jest przypisany do węzła \"{{attachedTo}}\".",
+      "collectionArray": "Kolekcja \"{{collection}}\" musi być tablicą.",
+      "collectionLimit": "Kolekcja \"{{collection}}\" może zawierać najwyżej {{limit}} elementów.",
+      "duplicateNodeId": "Identyfikator węzła \"{{nodeId}}\" powtarza się; identyfikatory węzłów muszą być unikatowe.",
+      "nodeCollision": "Węzły \"{{firstId}}\" i \"{{secondId}}\" kolidują w polu [{{column}}, {{row}}].",
+      "nodeOverlap": "Obrysy symboli węzłów \"{{firstId}}\" w polu [{{firstColumn}}, {{firstRow}}] i \"{{secondId}}\" w polu [{{secondColumn}}, {{secondRow}}] nachodzą na siebie.",
+      "pathObject": "{{path}} musi być obiektem JSON.",
+      "unknownNodeType": "{{path}}: {{value}} jest nieznanym typem węzła. Dozwolone wartości: {{allowed}}.",
+      "gridIntegerPair": "{{path}}: pole \"grid\" musi być parą liczb całkowitych [kolumna, wiersz].",
+      "gridNonNegative": "{{path}}: pozycja [{{column}}, {{row}}] nie może zawierać wartości ujemnych.",
+      "gridSafeInteger": "{{path}}: pozycja [{{column}}, {{row}}] musi używać bezpiecznych liczb całkowitych.",
+      "gridMaximum": "{{path}}: żadna współrzędna pozycji [{{column}}, {{row}}] nie może przekraczać {{maximum}}.",
+      "optionalBoolean": "{{path}}: pole \"{{field}}\", jeśli występuje, musi mieć wartość logiczną.",
+      "nodeTagFormat": "{{path}}: tag węzła {{value}} musi mieć format ISA LL-NNN, np. \"ST-104\".",
+      "nodePrimaryInstrument": "{{path}}: typ węzła \"{{nodeType}}\" nie obsługuje tagu przyrządu głównego \"{{tag}}\".",
+      "reservoirLevel": "{{path}}: pole \"level\" jest dozwolone tylko dla węzłów typu reservoir.",
+      "machineHeatSource": "{{path}}: pole \"heatSource\" jest dozwolone tylko dla węzłów typu machine.",
+      "pipeSide": "{{path}}: strona {{value}} musi mieć wartość \"cold\" albo \"hot\".",
+      "nodeReference": "{{path}}: pole \"{{field}}\" odwołuje się do nieznanego węzła \"{{nodeId}}\".",
+      "pipeSelf": "{{path}}: rura nie może łączyć węzła \"{{nodeId}}\" z nim samym.",
+      "pipeDuplicate": "{{path}}: połączenie rurowe \"{{from}}\" → \"{{to}}\" powtarza się.",
+      "instrumentTagFormat": "{{path}}: tag {{value}} musi mieć format ISA LL-NNN, np. \"TT-101\".",
+      "duplicateInstrumentTag": "Tag przyrządu \"{{tag}}\" powtarza się; tagi przyrządów muszą być unikatowe.",
+      "seriesId": "{{path}}: {{value}} nie jest znanym identyfikatorem serii. Dozwolone wartości: {{allowed}}.",
+      "thresholdOrder": "{{path}}: pole \"thresholds\" musi zawierać skończone liczby w kolejności criticalMin < warningMin < warningMax < criticalMax.",
+      "fieldRequiredAtPath": "{{path}}: pole \"{{field}}\" musi być niepustym tekstem.",
+      "fieldRequired": "Pole \"{{field}}\" musi być niepustym tekstem.",
+      "fieldLengthAtPath": "{{path}}: pole \"{{field}}\" może zawierać najwyżej {{limit}} znaków.",
+      "fieldLength": "Pole \"{{field}}\" może zawierać najwyżej {{limit}} znaków.",
+      "fieldControlAtPath": "{{path}}: pole \"{{field}}\" nie może zawierać znaków sterujących.",
+      "fieldControl": "Pole \"{{field}}\" nie może zawierać znaków sterujących.",
+      "unknownPropertyAtPath": "{{path}}: nieznana właściwość {{property}}.",
+      "unknownProperty": "Nieznana właściwość {{property}}.",
+      "profileMismatch": "Profil dokumentu \"{{documentProfile}}\" nie odpowiada sprawdzanemu profilowi \"{{profileId}}\".",
+      "nodeCountMin": "Profil \"{{profileId}}\" wymaga co najmniej {{minimum}} × {{nodeType}}; znaleziono: {{count}}.",
+      "nodeCountMax": "Profil \"{{profileId}}\" dopuszcza najwyżej {{maximum}} × {{nodeType}}; znaleziono: {{count}}.",
+      "nodeOutsideGrid": "Węzeł \"{{nodeId}}\" w polu [{{column}}, {{row}}] znajduje się poza siatką profilu {{columns}}×{{rows}}.",
+      "loopNoPipes": "Profil wymaga zamkniętego obiegu, ale dokument nie zawiera rur.",
+      "loopOnlyTerminalBranches": "Profil wymaga zamkniętego obiegu; same końcowe odnogi zaworów bezpieczeństwa go nie tworzą.",
+      "terminalSafetyValveIncoming": "Końcowy zawór bezpieczeństwa \"{{nodeId}}\" musi mieć dokładnie 1 ciśnieniową rurę wchodzącą; znaleziono: {{count}}.",
+      "loopNodeDisconnected": "Węzeł \"{{nodeId}}\" nie jest połączony z obiegiem rurowym.",
+      "loopNoOutgoing": "Obieg nie jest zamknięty: węzeł \"{{nodeId}}\" nie ma rury wychodzącej.",
+      "loopNoIncoming": "Obieg nie jest zamknięty: węzeł \"{{nodeId}}\" nie ma rury wchodzącej.",
+      "loopGroups": "Rury nie tworzą jednego obiegu; znaleziono {{count}} rozłącznych grup.",
+      "loopNotClosed": "Rury są połączone, ale nie tworzą jednego zamkniętego obiegu skierowanego.",
+      "sensorSlotAbsent": "Przyrząd \"{{tag}}\": profil \"{{profileId}}\" nie ma gniazda czujnika dla serii {{series}}.",
+      "sensorPrefix": "Przyrząd \"{{tag}}\": prefiks tagu dla serii {{series}} musi mieć wartość \"{{prefix}}\".",
+      "sensorAttachment": "Przyrząd \"{{tag}}\" jest przypisany do węzła \"{{nodeId}}\" typu {{nodeType}}. Dozwolone typy: {{allowed}}.",
+      "sensorSlotCount": "Profil \"{{profileId}}\" dopuszcza jedno gniazdo przyrządu serii {{series}}; znaleziono: {{count}}.",
+      "sensorRequired": "Profil \"{{profileId}}\" wymaga czujnika serii {{series}} z prefiksem tagu \"{{prefix}}\"; nie znaleziono takiego czujnika.",
+      "builtInEdit": "Maszyn wbudowanych nie można edytować; najpierw zduplikuj maszynę.",
+      "machineMissing": "Maszyna o identyfikatorze \"{{machineId}}\" nie istnieje.",
+      "machineExists": "Maszyna o identyfikatorze \"{{machineId}}\" już istnieje.",
+      "builtInRemove": "Maszyn wbudowanych nie można usuwać.",
+      "layoutUnknownNode": "Nie można rozmieścić schematu \"{{documentId}}\": węzeł \"{{nodeId}}\" nie istnieje. Najpierw sprawdź dokument.",
+      "layoutPipeBlocked": "Rura \"{{from}}\" → \"{{to}}\" nie ma wolnej trasy. Przesuń jeden z otaczających podzespołów.",
+      "unknown": "Nie można wyświetlić szczegółów tego błędu walidacji. Sprawdź strukturę dokumentu."
+    },
+    "form": {
+      "machine": "Maszyna",
+      "id": "Identyfikator",
+      "name": "Nazwa",
+      "revision": "Rewizja",
+      "nodes": "Węzły",
+      "noNodes": "Brak węzłów — dodaj pierwszy element obiegu.",
+      "addNode": "Dodaj węzeł",
+      "nodeLimit": "Osiągnięto limity profilu",
+      "gridFull": "Brak wolnych pól siatki",
+      "removeNode": "Usuń węzeł",
+      "nodeId": "Id",
+      "nodeType": "Typ",
+      "label": "Etykieta",
+      "column": "Kolumna",
+      "row": "Wiersz",
+      "nodeTag": "Tag ISA (opcjonalny)",
+      "level": "Poziom cieczy",
+      "heatSource": "Źródło ciepła",
+      "pipes": "Rurociąg",
+      "noPipes": "Brak rur — obieg wymaga zamkniętej pętli.",
+      "addPipe": "Dodaj rurę",
+      "removePipe": "Usuń rurę",
+      "from": "Z węzła",
+      "to": "Do węzła",
+      "side": "Strona",
+      "sideCold": "Zimna",
+      "sideHot": "Gorąca",
+      "sensors": "Czujniki",
+      "sensorTag": "Tag",
+      "attachTo": "Zawieszony na",
+      "overrideThresholds": "Nadpisz progi",
+      "save": "Zapisz",
+      "revert": "Cofnij zmiany",
+      "saved": "Zapisano maszynę.",
+      "unsaved": "Niezapisane zmiany",
+      "sectionInvalid": "Sekcja zawiera błędy walidacji"
+    },
+    "nodeTypes": {
+      "pump": "Pompa",
+      "heatExchanger": "Wymiennik ciepła",
+      "reservoir": "Zbiornik",
+      "machine": "Maszyna (odbiornik)",
+      "valve": "Zawór",
+      "heater": "Grzałka",
+      "compressor": "Sprężarka",
+      "condenser": "Skraplacz",
+      "expansionValve": "Zawór rozprężny",
+      "evaporator": "Parownik",
+      "filterDrier": "Filtr odwadniacz",
+      "sightGlass": "Wziernik",
+      "strainer": "Filtr siatkowy",
+      "safetyValve": "Zawór bezpieczeństwa"
+    },
+    "json": {
+      "validate": "Waliduj",
+      "format": "Formatuj",
+      "import": "Import JSON",
+      "exportJson": "Eksport JSON",
+      "exportXml": "Eksport XML",
+      "valid": "Dokument jest poprawny.",
+      "parseError": "Niepoprawny JSON",
+      "inputError": "Nie można użyć dokumentu JSON",
+      "syntaxInvalid": "Składnia JSON jest niepoprawna. Sprawdź przecinki, cudzysłowy i nawiasy.",
+      "tooLarge": "Dokument JSON przekracza limit {{size}} KB.",
+      "sizeHint": "Maksymalnie {{size}} KB. Podgląd odświeży się, gdy przerwiesz pisanie.",
+      "checking": "Sprawdzanie JSON.",
+      "editorLabel": "Edytor JSON dokumentu maszyny",
+      "applied": "Zastosowano dokument.",
+      "readFailed": "Nie udało się odczytać pliku.",
+      "serializationFailed": "Dokument JSON jest zagnieżdżony zbyt głęboko, aby go przetworzyć. Zmniejsz poziom zagnieżdżenia i spróbuj ponownie."
+    },
+    "diagram": {
+      "instructions": "Przeciągnij węzeł na wolne pole siatki albo przesuwaj zaznaczony węzeł strzałkami. Enter lub F2 otwiera właściwości; Esc usuwa zaznaczenie.",
+      "canvasLabel": "Płótno edycji schematu",
+      "scrollLabel": "Przewijany edytor schematu",
+      "nodeAria": "Węzeł {{id}}",
+      "pipeAria": "Rura z {{from}} do {{to}}",
+      "sensorAria": "Czujnik {{tag}}",
+      "invalid": "Szkic nie przechodzi walidacji",
+      "invalidMessage": "Popraw dokument (np. w zakładce JSON) — płótno wróci, gdy szkic znów będzie poprawny.",
+      "properties": "Właściwości",
+      "propertiesEmpty": "Kliknij węzeł, rurę lub czujnik, aby edytować jego właściwości.",
+      "node": "Węzeł",
+      "pipe": "Rura",
+      "sensor": "Czujnik",
+      "toolbarLabel": "Akcje zaznaczenia",
+      "editProperties": "Edytuj właściwości",
+      "deleteRequired": "Węzeł {{id}} jest wymagany przez ten profil maszyny i nie został usunięty.",
+      "deleteInstrumented": "Przenieś czujnik {{tag}} z węzła {{id}}, zanim go usuniesz.",
+      "deleteComplex": "Węzeł {{id}} ma rozgałęzione połączenie (wejścia: {{incoming}}, wyjścia: {{outgoing}}). Uprość rurociąg przed jego usunięciem.",
+      "deleteWouldInvalidate": "Węzeł nie został usunięty, ponieważ wynikowy obieg byłby niepoprawny.",
+      "deletePipeWouldInvalidate": "Rura nie została usunięta, ponieważ wynikowy obieg byłby niepoprawny.",
+      "zoomLabel": "Powiększenie schematu",
+      "zoomIn": "Powiększ",
+      "zoomOut": "Pomniejsz",
+      "zoomReset": "Domyślne powiększenie",
+      "nudgeLabel": "Przesuń zaznaczony węzeł",
+      "nudgeLeft": "Przesuń węzeł w lewo",
+      "nudgeRight": "Przesuń węzeł w prawo",
+      "nudgeUp": "Przesuń węzeł w górę",
+      "nudgeDown": "Przesuń węzeł w dół",
+      "touchHint": "Dotknij elementu, aby go zaznaczyć. Zaznaczony węzeł przesuniesz strzałkami na pasku akcji, a powiększenie zmienisz klawiszami − i +."
+    },
+    "stage": {
+      "back": "Wróć do biblioteki"
+    }
+  },
+  "strip": {
+    "machineSelect": "Wybierz aktywną maszynę",
+    "machineState": "Stan maszyny",
+    "currentTime": "Aktualny czas"
+  },
+  "filters": {
+    "activeCount": "Aktywne filtry: {{count}}",
+    "reset": "Resetuj",
+    "seriesCount": "Serie: {{count}}",
+    "allSeries": "Wszystkie serie"
+  }
+}

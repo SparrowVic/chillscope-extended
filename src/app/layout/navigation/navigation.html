@@ -1,0 +1,40 @@
+<nav class="navigation" [attr.aria-label]="'menu.label' | transloco">
+  <a class="navigation__brand cs-focus-ring" routerLink="/dashboard">
+    <span class="navigation__brand-mark" aria-hidden="true">
+      <cs-icon name="wave-pulse" />
+    </span>
+    <span class="navigation__brand-name">{{ 'app.title' | transloco }}</span>
+  </a>
+
+  <div class="navigation__items">
+    @for (item of items; track item.route) {
+      <a
+        class="navigation__item cs-focus-ring"
+        [routerLink]="item.route"
+        routerLinkActive="navigation__item--active"
+        ariaCurrentWhenActive="page"
+        [attr.aria-label]="item.labelKey | transloco"
+        [attr.aria-describedby]="
+          item.route === '/alarms' && alarmCount() > 0 ? 'navigation-active-alarm-count' : null
+        "
+      >
+        <span class="navigation__icon" aria-hidden="true">
+          <cs-icon [name]="item.icon" />
+        </span>
+        <span class="navigation__label navigation__label--compact" aria-hidden="true">{{
+          item.compactLabelKey | transloco
+        }}</span>
+        <span class="navigation__label navigation__label--desktop" aria-hidden="true">{{
+          item.labelKey | transloco
+        }}</span>
+
+        @if (item.route === '/alarms' && alarmCount() > 0) {
+          <span class="navigation__badge cs-mono" aria-hidden="true">{{ alarmBadge() }}</span>
+          <span class="sr-only" id="navigation-active-alarm-count">{{
+            'navigation.activeAlarms' | transloco: { count: alarmCount() }
+          }}</span>
+        }
+      </a>
+    }
+  </div>
+</nav>

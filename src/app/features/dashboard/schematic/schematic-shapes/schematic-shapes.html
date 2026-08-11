@@ -1,0 +1,47 @@
+@for (shape of csSchematicShapes(); track $index) {
+  @switch (shape.kind) {
+    @case ('path') {
+      <svg:path
+        [attr.d]="shape.d"
+        [attr.stroke]="strokeOf(shape)"
+        [attr.stroke-width]="strokeWidthOf(shape)"
+        [attr.fill]="fillOf(shape)"
+        [attr.fill-opacity]="shape.fillOpacity ?? null"
+      />
+    }
+    @case ('circle') {
+      <svg:circle
+        [attr.cx]="shape.cx"
+        [attr.cy]="shape.cy"
+        [attr.r]="shape.r"
+        [attr.stroke]="strokeOf(shape)"
+        [attr.stroke-width]="strokeWidthOf(shape)"
+        [attr.fill]="fillOf(shape)"
+        [attr.fill-opacity]="shape.fillOpacity ?? null"
+      />
+    }
+    @case ('rect') {
+      <svg:rect
+        [attr.x]="shape.x"
+        [attr.y]="shape.y"
+        [attr.width]="shape.width"
+        [attr.height]="shape.height"
+        [attr.rx]="shape.rx ?? null"
+        [attr.stroke]="strokeOf(shape)"
+        [attr.stroke-width]="strokeWidthOf(shape)"
+        [attr.fill]="fillOf(shape)"
+        [attr.fill-opacity]="shape.fillOpacity ?? null"
+      />
+    }
+    @case ('line') {
+      <svg:line
+        [attr.x1]="shape.x1"
+        [attr.y1]="shape.y1"
+        [attr.x2]="shape.x2"
+        [attr.y2]="shape.y2"
+        [attr.stroke]="strokeOf(shape)"
+        [attr.stroke-width]="strokeWidthOf(shape)"
+      />
+    }
+  }
+}

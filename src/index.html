@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chillscope</title>
+    <base href="/" />
+    <!-- viewport-fit=cover lets the app paint under notches; every fixed surface restores its
+         clearance with env(safe-area-inset-*). interactive-widget=resizes-content asks mobile
+         Chrome to shrink the layout viewport for the on-screen keyboard, so bottom-anchored
+         chrome (filter sheet, mobile navigation) rides above it instead of being covered. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <!-- Both schemes: the browser chrome should match whichever canvas the app boots into. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f5f7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0d0f" />
+    <!-- Safari reads none of the manifest's install metadata; these three are its dialect. -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script>
+      // Mirrors SettingsStore's initial-theme rule so dark mode never flashes white
+      // before Angular boots. Kept inline: it must run ahead of the first paint.
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('chillscope.settings') || '{}').theme;
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('app-dark');
+            // SYGNAL canvas — must match --cs-canvas (dark) in styles.css.
+            document.documentElement.style.background = '#0c0d0f';
+          }
+        } catch (e) {
+          /* first paint falls back to light */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+    <noscript>Please enable JavaScript to continue using this application.</noscript>
+  </body>
+</html>

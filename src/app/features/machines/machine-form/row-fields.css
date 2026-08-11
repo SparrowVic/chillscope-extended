@@ -1,0 +1,75 @@
+/* The shared strip base for the node / pipe / sensor rows. Each component brings its own record
+   grid in its sibling sheet; this one carries what they share — the container the folds measure
+   against, the one-shot §8 entrance and the remove key's ghosting + demolition affordance.
+   Separator chrome stays with the parents, which style these host elements directly. */
+
+:host {
+  display: block;
+  /* Strips fold on their own width, so the same components read well in the Form pane and in
+     the Diagram tab's narrow properties rail — the viewport knows neither. */
+  container-type: inline-size;
+}
+
+.row-fields {
+  position: relative;
+}
+
+/* The demolition edge is pre-painted; only its OPACITY transitions (§8b forbids animated
+   box-shadows, and an inset shadow fade is exactly that). */
+.row-fields::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  background: var(--cs-crit);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* The remove key rests ghosted; attention on the owning strip raises it. The key keeps its
+   grid track even when absent (locked), so geometry never reflows. */
+.row-fields__remove {
+  grid-area: remove;
+  align-self: end;
+  justify-self: end;
+  opacity: 0.4;
+  transition: opacity var(--cs-dur-fast) var(--cs-ease);
+}
+
+.row-fields:hover .row-fields__remove,
+.row-fields:focus-within .row-fields__remove {
+  opacity: 1;
+}
+
+.row-fields__remove cs-icon {
+  transition: color var(--cs-dur-fast) var(--cs-ease);
+}
+
+/* Aiming at the key marks the whole strip for demolition: crit glyph + a crit edge. Focus is
+   read on the host (`:focus-within`) because the real button lives behind PrimeNG's boundary,
+   where a scoped `:focus-visible` cannot reach. */
+.row-fields__remove:hover cs-icon,
+.row-fields__remove:focus-within cs-icon {
+  color: var(--cs-crit);
+}
+
+.row-fields:has(.row-fields__remove:hover)::before,
+.row-fields:has(.row-fields__remove:focus-within)::before {
+  opacity: 1;
+}
+
+/* One-shot §8 entrance for a freshly added strip (and the strip's arrival with its panel). */
+@media (prefers-reduced-motion: no-preference) {
+  :host {
+    animation: row-fields-enter var(--cs-dur-c) var(--cs-ease);
+  }
+}
+
+@keyframes row-fields-enter {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}

@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+/* The strip owns no padding of its own — the cells carry it. No overflow clipping: the panel's
+   pointer-ring (::after at -1px) must stay visible, so the docked meter rounds its own corners. */
+.alarms-summary__strip {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Three cells, always three across: on a phone the strip compresses instead of stacking into a
+   tower of cards — the summary is a glance, not a page. */
+.alarms-summary__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.alarms-summary__counter {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.4rem * var(--cs-density));
+  min-width: 0;
+  padding: var(--cs-pad-panel-tight);
+}
+
+/* The system strip's grouping grammar: hairlines between cells, one shared panel around them. */
+.alarms-summary__counter + .alarms-summary__counter {
+  border-inline-start: 1px solid var(--cs-hairline);
+}
+
+.alarms-summary__counter--warning {
+  --cs-led-color: var(--cs-status-warning);
+}
+
+.alarms-summary__counter--critical {
+  --cs-led-color: var(--cs-status-critical);
+}
+
+.alarms-summary__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(0.5rem * var(--cs-density));
+}
+
+/* Long PL captions wrap inside their cell rather than truncating — nothing hides on a phone. */
+.alarms-summary__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The lamp keeps one line's height so a wrapped caption pushes the count, never the LED. */
+.alarms-summary__head .cs-led {
+  margin-top: 0.1875rem;
+}
+
+/* Dark cockpit: an annunciator with a zero count goes out — hollow ring, no fill, no bloom.
+   The ring is an inset shadow so the lamp's box never changes size between states. */
+.alarms-summary__led--dim {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cs-muted) 55%, transparent);
+}
+
+.alarms-summary__led--dim::after {
+  content: none;
+}
+
+/* The counter is the reading on this screen, so the numeral carries the density step itself;
+   phones take a smaller step so three cells hold on one row at 320px. */
+.alarms-summary__count {
+  margin-top: auto;
+  font-size: calc(1.4rem * var(--cs-density));
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+@media (min-width: 640px) {
+  .alarms-summary__count {
+    font-size: calc(1.75rem * var(--cs-density));
+  }
+}
+
+/* The severity share of the loaded window as a 3px annunciator rail docked into the strip's
+   bottom edge. Chroma is allowed here because the rail encodes severity, nothing else. The
+   segment mask is static and alpha-only (`black` means opaque); the fills move beneath it as
+   pure scaleX transforms, so a share change costs the compositor only. */
+.alarms-summary__meter {
+  position: relative;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 0 0 calc(var(--cs-r-card) - 1px) calc(var(--cs-r-card) - 1px);
+  background: var(--cs-hairline);
+  /* Fine segmentation and sub-full saturation: the rail states the share without shouting
+     across the whole strip — the counters above it carry the exact numbers. */
+  mask-image: repeating-linear-gradient(90deg, black 0 6px, transparent 6px 8px);
+}
+
+.alarms-summary__meter-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  transition: transform var(--cs-dur-t) var(--cs-ease);
+}
+
+.alarms-summary__meter-fill--warning {
+  background: color-mix(in srgb, var(--cs-status-warning) 72%, transparent);
+}
+
+.alarms-summary__meter-fill--critical {
+  background: color-mix(in srgb, var(--cs-status-critical) 72%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alarms-summary__meter-fill {
+    transition: none;
+  }
+}

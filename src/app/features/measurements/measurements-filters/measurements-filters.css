@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  margin-bottom: var(--cs-gap-section);
+}
+
+/* A quiet toolbar row inside the adaptive shell: one row of controls wrapping when the width
+   narrows. Inside the phone sheet the same rule stacks them one per line — the 13rem basis
+   cannot fit twice, so no second layout exists. */
+.measurements-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--cs-gap-field);
+}
+
+.measurements-filters__row > * {
+  flex: var(--cs-filter-field-grow, 1) 1 var(--cs-filter-field-basis, 13rem);
+  max-width: var(--cs-filter-field-max, 22rem);
+  min-width: 0;
+}
+
+.measurements-filters__series {
+  flex-basis: var(--cs-filter-field-basis, 15rem);
+  min-width: min(13rem, 100%);
+}
+
+.measurements-filters__range {
+  flex-basis: var(--cs-filter-field-basis, 18.5rem);
+  min-width: min(18.5rem, 100%);
+}
+
+.measurements-filters__bucket {
+  flex-basis: var(--cs-filter-field-basis, 11.5rem);
+  min-width: min(11.5rem, 100%);
+}

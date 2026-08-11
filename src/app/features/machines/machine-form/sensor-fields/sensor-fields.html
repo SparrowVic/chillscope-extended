@@ -1,0 +1,63 @@
+@let sensor = field();
+
+<fieldset class="sensor-fields">
+  <legend class="sensor-fields__legend">
+    <cs-icon class="sensor-fields__icon" [name]="seriesIcon()" />
+    <span class="sensor-fields__name">{{ seriesLabelKey() | transloco }}</span>
+    <span class="sensor-fields__prefix cs-label cs-mono">{{ slot().tagPrefix }}-###</span>
+  </legend>
+
+  <div class="sensor-fields__row">
+    <cs-text-input
+      class="sensor-fields__tag"
+      label="machines.form.sensorTag"
+      mono
+      [formField]="sensor.tag"
+    />
+    <cs-select
+      class="sensor-fields__attach"
+      label="machines.form.attachTo"
+      placeholder="common.placeholderSelect"
+      literalLabels
+      [options]="attachOptions()"
+      [formField]="sensor.attachTo"
+    />
+    <cs-switch
+      class="sensor-fields__override"
+      label="machines.form.overrideThresholds"
+      [formField]="sensor.thresholds.enabled"
+    />
+  </div>
+
+  @if (sensor.thresholds.enabled().value()) {
+    <div class="sensor-fields__band">
+      <cs-threshold-envelope
+        class="sensor-fields__rail"
+        [criticalMin]="sensor.thresholds.criticalMin().value()"
+        [warningMin]="sensor.thresholds.warningMin().value()"
+        [warningMax]="sensor.thresholds.warningMax().value()"
+        [criticalMax]="sensor.thresholds.criticalMax().value()"
+      />
+      <cs-input-number
+        label="settings.thresholds.criticalMin"
+        [maxFractionDigits]="3"
+        [formField]="sensor.thresholds.criticalMin"
+      />
+      <cs-input-number
+        label="settings.thresholds.warningMin"
+        [maxFractionDigits]="3"
+        [formField]="sensor.thresholds.warningMin"
+      />
+      <cs-input-number
+        label="settings.thresholds.warningMax"
+        [maxFractionDigits]="3"
+        [formField]="sensor.thresholds.warningMax"
+      />
+      <cs-input-number
+        label="settings.thresholds.criticalMax"
+        [maxFractionDigits]="3"
+        [formField]="sensor.thresholds.criticalMax"
+      />
+    </div>
+  }
+</fieldset>

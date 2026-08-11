@@ -1,0 +1,111 @@
+<p-confirmpopup />
+
+<header class="library__head">
+  <h2 class="cs-label">{{ 'machines.library.title' | transloco }}</h2>
+</header>
+
+<ul class="library__list">
+  @for (row of rows(); track row.id) {
+    <li>
+      <!-- The reticle marks THE inspected object (§8b): the active machine the whole app
+           follows — not the row merely open in the editor. -->
+      <div
+        class="lrow cs-reticle"
+        [class.lrow--selected]="row.selected"
+        [class.cs-reticle--on]="row.active"
+      >
+        <button
+          class="lrow__select cs-focus-ring"
+          type="button"
+          [attr.aria-current]="row.selected ? 'true' : null"
+          (click)="selected.emit(row.id)"
+        >
+          <span class="lrow__name" [attr.title]="row.name">{{ row.name }}</span>
+          <span class="lrow__meta">
+            <!-- Safe under the churn's textContent writes: the @for tracks by this very id,
+                 so the element is recreated whenever the designation changes. -->
+            <span class="lrow__id cs-mono" appDecode [attr.title]="row.id">{{ row.id }}</span>
+            <span class="lrow__badge cs-label">{{ row.profileNameKey | transloco }}</span>
+            <span class="lrow__badge cs-label">
+              {{
+                (row.builtIn ? 'machines.library.builtIn' : 'machines.library.custom') | transloco
+              }}
+            </span>
+            @if (row.active) {
+              <span class="lrow__active">
+                <span class="cs-led lrow__led" aria-hidden="true"></span>
+                {{ 'machines.library.active' | transloco }}
+              </span>
+            }
+          </span>
+        </button>
+
+        <span class="lrow__actions">
+          @if (!row.active) {
+            <p-button
+              type="button"
+              severity="secondary"
+              [text]="true"
+              [ariaLabel]="'machines.library.setActive' | transloco"
+              [attr.title]="'machines.library.setActive' | transloco"
+              (onClick)="activated.emit(row.id)"
+            >
+              <ng-template #icon>
+                <cs-icon name="tower-broadcast" />
+              </ng-template>
+            </p-button>
+          }
+          <p-button
+            type="button"
+            severity="secondary"
+            [text]="true"
+            [ariaLabel]="'machines.library.duplicate' | transloco"
+            [attr.title]="'machines.library.duplicate' | transloco"
+            (onClick)="duplicated.emit(row.id)"
+          >
+            <ng-template #icon>
+              <cs-icon name="copy" />
+            </ng-template>
+          </p-button>
+          @if (!row.builtIn) {
+            <p-button
+              type="button"
+              severity="secondary"
+              [text]="true"
+              [ariaLabel]="'machines.library.remove' | transloco"
+              [attr.title]="'machines.library.remove' | transloco"
+              (onClick)="confirmRemove($event, row.id)"
+            >
+              <ng-template #icon>
+                <cs-icon name="trash-can" />
+              </ng-template>
+            </p-button>
+          }
+        </span>
+      </div>
+    </li>
+  }
+</ul>
+
+<footer class="library__create">
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.library.createTcu' | transloco"
+    (onClick)="created.emit('tcu')"
+  >
+    <ng-template #icon>
+      <cs-icon name="plus" />
+    </ng-template>
+  </p-button>
+  <p-button
+    type="button"
+    severity="secondary"
+    [label]="'machines.library.createChiller' | transloco"
+    (onClick)="created.emit('chiller')"
+  >
+    <ng-template #icon>
+      <cs-icon name="plus" />
+    </ng-template>
+  </p-button>
+</footer>

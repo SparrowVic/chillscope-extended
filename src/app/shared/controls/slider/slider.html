@@ -1,0 +1,22 @@
+<cs-control-frame [state]="frame()">
+  <div class="cs-slider">
+    <p-slider
+      [ngModel]="value()"
+      (ngModelChange)="value.set($event)"
+      (onSlideEnd)="touched.set(true)"
+      [disabled]="disabled()"
+      [min]="sliderMin()"
+      [max]="sliderMax()"
+      [step]="step()"
+      [ariaLabelledBy]="labelledBy()"
+    />
+    @if (showValue()) {
+      <span class="cs-slider__value">
+        <span class="cs-mono">{{ displayValue() }}</span>
+        @if (suffix(); as unit) {
+          <span class="cs-slider__unit">{{ unit }}</span>
+        }
+      </span>
+    }
+  </div>
+</cs-control-frame>

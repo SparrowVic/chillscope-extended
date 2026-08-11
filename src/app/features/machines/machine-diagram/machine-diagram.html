@@ -1,0 +1,512 @@
+@let vm = view();
+@let sel = selected();
+
+@if (vm) {
+  <div class="diagram__bar">
+    <div class="diagram__hints">
+      <p class="diagram__hint" id="machine-diagram-hint">
+        {{ 'machines.diagram.instructions' | transloco }}
+      </p>
+      <!-- Coarse pointers get the touch grammar too; CSS keeps it out of fine-pointer rooms. -->
+      <p class="diagram__hint diagram__hint--touch" id="machine-diagram-touch-hint">
+        {{ 'machines.diagram.touchHint' | transloco }}
+      </p>
+    </div>
+    <div
+      class="diagram__zoom"
+      role="group"
+      [attr.aria-label]="'machines.diagram.zoomLabel' | transloco"
+    >
+      <button
+        type="button"
+        class="diagram__zoom-key cs-focus-ring"
+        [disabled]="!canZoomOut()"
+        [attr.aria-label]="'machines.diagram.zoomOut' | transloco"
+        [attr.title]="'machines.diagram.zoomOut' | transloco"
+        (click)="zoomOut()"
+      >
+        <span aria-hidden="true">−</span>
+      </button>
+      <button
+        type="button"
+        class="diagram__zoom-key diagram__zoom-key--reset cs-mono cs-focus-ring"
+        [attr.aria-label]="'machines.diagram.zoomReset' | transloco"
+        [attr.title]="'machines.diagram.zoomReset' | transloco"
+        (click)="zoomReset()"
+      >
+        {{ zoomLabel() }}
+      </button>
+      <button
+        type="button"
+        class="diagram__zoom-key cs-focus-ring"
+        [disabled]="!canZoomIn()"
+        [attr.aria-label]="'machines.diagram.zoomIn' | transloco"
+        [attr.title]="'machines.diagram.zoomIn' | transloco"
+        (click)="zoomIn()"
+      >
+        <span aria-hidden="true">+</span>
+      </button>
+    </div>
+  </div>
+  <p class="sr-only diagram__status" role="status" aria-live="polite" aria-atomic="true">
+    {{ moveAnnouncement() }}
+  </p>
+  <!-- Fixed-scale drawing: on narrow widths it pans inside the panel, like the Dashboard hero. -->
+  <div
+    #scroll
+    class="diagram__scroll cs-focus-ring cs-edge-fade"
+    role="region"
+    tabindex="0"
+    [attr.aria-label]="'machines.diagram.scrollLabel' | transloco"
+  >
+    <div
+      #canvas
+      class="diagram__canvas cs-focus-ring"
+      tabindex="0"
+      role="group"
+      [attr.aria-label]="'machines.diagram.canvasLabel' | transloco"
+      aria-describedby="machine-diagram-hint machine-diagram-touch-hint"
+      (keydown)="onCanvasKeydown($event)"
+    >
+      <svg
+        #svg
+        class="diagram__svg"
+        [class.diagram--gridlit]="gridLit()"
+        [class.diagram--webbed]="web() !== undefined"
+        [attr.viewBox]="vm.viewBox"
+        [style.width.px]="zoomedWidth()"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointercancel)="onPointerCancel($event)"
+        (lostpointercapture)="onPointerCancel($event)"
+      >
+        <svg:rect
+          class="diagram__backdrop"
+          [attr.x]="vm.x"
+          [attr.y]="vm.y"
+          [attr.width]="vm.width"
+          [attr.height]="vm.height"
+          (click)="deselect()"
+        />
+
+        <!-- The drafting raster and the placement grid share one unit, so every visible square
+             is a real drag, keyboard and form-input position. -->
+        <svg:defs aria-hidden="true">
+          <svg:pattern
+            id="machine-diagram-draft"
+            patternUnits="userSpaceOnUse"
+            [attr.width]="placementStep"
+            [attr.height]="placementStep"
+          >
+            <svg:path
+              class="diagram__draft-line"
+              [attr.d]="'M 0 0.5 H ' + placementStep + ' M 0.5 0 V ' + placementStep"
+            />
+          </svg:pattern>
+        </svg:defs>
+        <svg:rect
+          class="diagram__draft"
+          aria-hidden="true"
+          fill="url(#machine-diagram-draft)"
+          [attr.x]="vm.x"
+          [attr.y]="vm.y"
+          [attr.width]="vm.width"
+          [attr.height]="vm.height"
+        />
+
+        <svg:g class="diagram__grid-lines" aria-hidden="true">
+          @for (line of vm.gridLines; track $index) {
+            <svg:line
+              class="diagram__grid"
+              [attr.x1]="line.x1"
+              [attr.y1]="line.y1"
+              [attr.x2]="line.x2"
+              [attr.y2]="line.y2"
+            />
+          }
+        </svg:g>
+
+        <svg:g class="diagram__grid-dots" aria-hidden="true">
+          @for (dot of vm.gridDots; track $index) {
+            <svg:circle class="diagram__dot" [attr.cx]="dot.x" [attr.cy]="dot.y" r="1.4" />
+          }
+        </svg:g>
+
+        <!-- No-go cells while a node is lifted: occupied or overlapping footprints, crit-tinted. -->
+        @if (blocked().length > 0) {
+          <svg:g class="diagram__blocked">
+            @for (cell of blocked(); track $index) {
+              <svg:rect
+                class="diagram__blocked-cell"
+                [attr.x]="cell.x"
+                [attr.y]="cell.y"
+                [attr.width]="cell.size"
+                [attr.height]="cell.size"
+                rx="4"
+              />
+            }
+          </svg:g>
+        }
+
+        <svg:g class="diagram__pipes" [class.diagram__pipes--settle]="pipesSettling()">
+          @for (pipe of vm.pipes; track pipe.index) {
+            <svg:polyline
+              class="diagram__pipe diagram__pipe--{{ pipe.side }}"
+              [class.diagram__pipe--related]="web()?.pipes?.has(pipe.index)"
+              [attr.points]="pipe.points"
+            />
+            <!-- The wide invisible twin is the pipe's hit area and its keyboard tab stop. -->
+            <svg:polyline
+              class="diagram__pipe-hit"
+              [attr.points]="pipe.points"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="
+                'machines.diagram.pipeAria' | transloco: { from: pipe.from, to: pipe.to }
+              "
+              [attr.aria-pressed]="isSelected('pipe', pipe.index)"
+              aria-keyshortcuts="Enter F2"
+              (click)="select('pipe', pipe.index)"
+              (focus)="select('pipe', pipe.index)"
+              (keydown)="onSelectionKeydown($event, 'pipe', pipe.index)"
+            />
+          }
+        </svg:g>
+
+        @if (ghost(); as g) {
+          <svg:g
+            class="diagram__ghost-pos"
+            [style.transform]="'translate(' + g.x + 'px, ' + g.y + 'px)'"
+          >
+            <svg:rect
+              class="diagram__ghost"
+              [class.diagram__ghost--reject]="g.rejected"
+              [attr.width]="g.size"
+              [attr.height]="g.size"
+              rx="4"
+            />
+          </svg:g>
+        }
+
+        @if (keyFlash(); as flash) {
+          <svg:rect
+            class="diagram__key-flash"
+            [class.diagram__key-flash--reject]="flash.rejected"
+            [attr.x]="flash.x"
+            [attr.y]="flash.y"
+            [attr.width]="flash.size"
+            [attr.height]="flash.size"
+            rx="4"
+          />
+        }
+
+        @for (node of vm.nodes; track node.id) {
+          <svg:g
+            class="diagram__node-pos"
+            [class.diagram__node-pos--dragging]="draggingIndex() === node.index"
+            [class.diagram__node-pos--dim]="isDimmedNode(node.id)"
+            [style.transform]="nodeStyle(node)"
+          >
+            <svg:g
+              class="diagram__node"
+              [class.diagram__node--cold]="node.medium === 'cold'"
+              [class.diagram__node--hot]="node.medium === 'hot'"
+              [class.diagram__node--mixed]="node.medium === 'mixed'"
+              [class.diagram__node--dragging]="draggingIndex() === node.index"
+              [class.diagram__node--shake]="shakeId() === node.id"
+              [class.diagram__node--locked]="locked()"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="
+                ('machines.diagram.nodeAria' | transloco: { id: node.id }) + ' · ' + node.fullLabel
+              "
+              [attr.title]="node.fullLabel"
+              [attr.aria-pressed]="isSelected('node', node.index)"
+              aria-keyshortcuts="Enter F2"
+              (pointerdown)="onNodePointerDown($event, node)"
+              (mouseenter)="hoveredNodeId.set(node.id)"
+              (mouseleave)="hoveredNodeId.set(undefined)"
+              (focus)="focusNode(node)"
+              (blur)="blurNode(node.id)"
+              (keydown)="onSelectionKeydown($event, 'node', node.index)"
+            >
+              <svg:g [csSchematicShapes]="node.shapes" />
+              @if (node.spinShapes; as spinShapes) {
+                <svg:g [csSchematicShapes]="spinShapes" />
+              }
+              <!-- Last in paint order: this invisible overlay owns the whole component surface. -->
+              <svg:rect
+                class="diagram__node-hit"
+                [attr.x]="node.hitX"
+                [attr.y]="node.hitY"
+                [attr.width]="node.hitWidth"
+                [attr.height]="node.hitHeight"
+                aria-hidden="true"
+              />
+            </svg:g>
+            <svg:text
+              class="diagram__node-label"
+              [attr.x]="node.labelX"
+              [attr.y]="node.labelY"
+              text-anchor="middle"
+              aria-hidden="true"
+            >
+              {{ node.label }}
+            </svg:text>
+          </svg:g>
+        }
+
+        @for (tag of vm.tags; track tag.index) {
+          <svg:g
+            class="diagram__tag"
+            [class.diagram__tag--related]="web()?.tags?.has(tag.index)"
+            [attr.transform]="'translate(' + tag.x + ' ' + tag.y + ')'"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'machines.diagram.sensorAria' | transloco: { tag: tag.tag }"
+            [attr.aria-pressed]="isSelected('sensor', tag.index)"
+            aria-keyshortcuts="Enter F2"
+            (click)="select('sensor', tag.index)"
+            (focus)="select('sensor', tag.index)"
+            (keydown)="onSelectionKeydown($event, 'sensor', tag.index)"
+          >
+            <svg:rect
+              class="diagram__tag-hit"
+              [attr.x]="-tagChipWidth / 2"
+              [attr.y]="-tagHitHeight / 2"
+              [attr.width]="tagChipWidth"
+              [attr.height]="tagHitHeight"
+            />
+            <svg:rect
+              class="diagram__tag-box"
+              [attr.x]="-tagChipWidth / 2"
+              [attr.y]="-tagChipHeight / 2"
+              [attr.width]="tagChipWidth"
+              [attr.height]="tagChipHeight"
+              rx="4"
+            />
+            <svg:text class="diagram__tag-text" text-anchor="middle" dominant-baseline="central">
+              {{ tag.tag }}
+            </svg:text>
+          </svg:g>
+        }
+
+        <!-- Keyed by selection identity so the bracket draw-in restarts per newly selected thing. -->
+        @for (entry of markers(); track entry.key) {
+          @let m = entry.marker;
+          @if (m.kind === 'box') {
+            <svg:rect
+              class="diagram__marker-fill"
+              [attr.x]="m.x"
+              [attr.y]="m.y"
+              [attr.width]="m.width"
+              [attr.height]="m.height"
+              rx="8"
+            />
+            @for (corner of m.corners; track $index) {
+              <svg:path class="diagram__bracket" [attr.d]="corner" pathLength="1" />
+            }
+          } @else {
+            <svg:polyline class="diagram__marker-pipe" [attr.points]="m.points" />
+            @for (end of m.ends; track $index) {
+              <svg:circle class="diagram__marker-end" [attr.cx]="end.x" [attr.cy]="end.y" r="3.5" />
+            }
+          }
+        }
+      </svg>
+
+      @if (toolbar(); as tb) {
+        <div
+          class="diagram__toolbar"
+          [class.diagram__toolbar--below]="tb.below"
+          role="group"
+          [attr.aria-label]="'machines.diagram.toolbarLabel' | transloco"
+          [style.left.px]="tb.left"
+          [style.top.px]="tb.top"
+          (keydown.escape)="onToolbarEscape($event)"
+        >
+          <button
+            type="button"
+            class="diagram__tool cs-focus-ring"
+            [attr.aria-label]="'machines.diagram.editProperties' | transloco"
+            [attr.title]="'machines.diagram.editProperties' | transloco"
+            (click)="focusProperties()"
+          >
+            <cs-icon name="sliders" />
+          </button>
+          @if (!locked() && tb.kind !== 'sensor') {
+            <span class="diagram__tool-sep" aria-hidden="true"></span>
+            <button
+              type="button"
+              class="diagram__tool diagram__tool--danger cs-focus-ring"
+              [attr.aria-label]="
+                (tb.kind === 'node' ? 'machines.form.removeNode' : 'machines.form.removePipe')
+                  | transloco
+              "
+              [attr.title]="
+                (tb.kind === 'node' ? 'machines.form.removeNode' : 'machines.form.removePipe')
+                  | transloco
+              "
+              (click)="removeSelected()"
+            >
+              <cs-icon name="trash-can" />
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <!-- §9: an invalid draft (typically JSON-tab damage) renders errors, never a broken canvas. -->
+  <div class="diagram__errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ 'machines.diagram.invalid' | transloco }}</p>
+    <p class="cs-alert__message">{{ 'machines.diagram.invalidMessage' | transloco }}</p>
+    <ul class="cs-alert__list cs-mono">
+      @for (error of errorCopies(); track $index) {
+        <li>{{ error.key | transloco: error.params }}</li>
+      }
+    </ul>
+  </div>
+}
+
+<section
+  class="diagram__props cs-focus-ring"
+  #props
+  tabindex="-1"
+  aria-labelledby="machine-diagram-properties-title"
+>
+  <h3 id="machine-diagram-properties-title" class="cs-label">
+    {{ 'machines.diagram.properties' | transloco }}
+  </h3>
+  @if (sel) {
+    @switch (sel.kind) {
+      @case ('node') {
+        <p class="diagram__props-kind">{{ 'machines.diagram.node' | transloco }}</p>
+        <app-node-fields
+          [field]="form.nodes[sel.index]"
+          [typeOptions]="typeOptions()"
+          [locked]="locked()"
+          (removed)="removeNode(sel.index)"
+        />
+      }
+      @case ('pipe') {
+        <p class="diagram__props-kind">{{ 'machines.diagram.pipe' | transloco }}</p>
+        <app-pipe-fields
+          [field]="form.pipes[sel.index]"
+          [nodeOptions]="nodeOptions()"
+          [locked]="locked()"
+          (removed)="removePipe(sel.index)"
+        />
+      }
+      @case ('sensor') {
+        <p class="diagram__props-kind">{{ 'machines.diagram.sensor' | transloco }}</p>
+        <app-sensor-fields
+          [field]="form.sensors[sel.index]"
+          [slot]="profile().sensorSlots[sel.index]"
+          [attachOptions]="attachOptions()[sel.index]"
+        />
+      }
+    }
+  } @else {
+    <p class="diagram__props-empty">{{ 'machines.diagram.propertiesEmpty' | transloco }}</p>
+  }
+</section>
+
+@if (operationError() || storeErrorCopies().length > 0) {
+  <div class="diagram__store-errors cs-alert" role="alert">
+    <p class="cs-alert__title">{{ 'machines.editor.errorsTitle' | transloco }}</p>
+    @if (operationError(); as operation) {
+      <p class="cs-alert__message">
+        {{ operation.key | transloco: operation.params }}
+      </p>
+    }
+    @if (storeErrorCopies().length > 0) {
+      <ul class="cs-alert__list cs-mono">
+        @for (error of storeErrorCopies(); track $index) {
+          <li>{{ error.key | transloco: error.params }}</li>
+        }
+      </ul>
+    }
+  </div>
+}
+
+@if (!locked()) {
+  <!-- On the compact stage this strip is the diagram's action dock, pinned above the mobile
+       navigation reserve. With a node selected it also carries the NUDGE cluster — the
+       precision-drag alternative for fingertips, riding the exact keyboard move pipeline. -->
+  <div class="diagram__actions">
+    @if (sel && sel.kind === 'node') {
+      <div
+        class="diagram__nudge"
+        role="group"
+        [attr.aria-label]="'machines.diagram.nudgeLabel' | transloco"
+      >
+        <button
+          type="button"
+          class="diagram__nudge-key cs-focus-ring"
+          [attr.aria-label]="'machines.diagram.nudgeLeft' | transloco"
+          [attr.title]="'machines.diagram.nudgeLeft' | transloco"
+          (click)="nudgeSelected('ArrowLeft')"
+        >
+          <span class="diagram__nudge-glyph diagram__nudge-glyph--left" aria-hidden="true">
+            <cs-icon name="arrow-right" />
+          </span>
+        </button>
+        <button
+          type="button"
+          class="diagram__nudge-key cs-focus-ring"
+          [attr.aria-label]="'machines.diagram.nudgeUp' | transloco"
+          [attr.title]="'machines.diagram.nudgeUp' | transloco"
+          (click)="nudgeSelected('ArrowUp')"
+        >
+          <span class="diagram__nudge-glyph diagram__nudge-glyph--up" aria-hidden="true">
+            <cs-icon name="arrow-right" />
+          </span>
+        </button>
+        <button
+          type="button"
+          class="diagram__nudge-key cs-focus-ring"
+          [attr.aria-label]="'machines.diagram.nudgeDown' | transloco"
+          [attr.title]="'machines.diagram.nudgeDown' | transloco"
+          (click)="nudgeSelected('ArrowDown')"
+        >
+          <span class="diagram__nudge-glyph diagram__nudge-glyph--down" aria-hidden="true">
+            <cs-icon name="arrow-right" />
+          </span>
+        </button>
+        <button
+          type="button"
+          class="diagram__nudge-key cs-focus-ring"
+          [attr.aria-label]="'machines.diagram.nudgeRight' | transloco"
+          [attr.title]="'machines.diagram.nudgeRight' | transloco"
+          (click)="nudgeSelected('ArrowRight')"
+        >
+          <span class="diagram__nudge-glyph" aria-hidden="true">
+            <cs-icon name="arrow-right" />
+          </span>
+        </button>
+      </div>
+    }
+    <p-button
+      type="button"
+      severity="secondary"
+      [label]="'machines.form.revert' | transloco"
+      [disabled]="!dirty()"
+      (onClick)="revert()"
+    >
+      <ng-template #icon>
+        <cs-icon name="arrow-rotate-right" />
+      </ng-template>
+    </p-button>
+    <p-button
+      type="button"
+      [label]="'machines.form.save' | transloco"
+      [disabled]="saveDisabled()"
+      (onClick)="save()"
+    >
+      <ng-template #icon>
+        <cs-icon name="check" />
+      </ng-template>
+    </p-button>
+  </div>
+}

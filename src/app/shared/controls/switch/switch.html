@@ -1,0 +1,13 @@
+<cs-control-frame inline [state]="frame()">
+  <p-toggleswitch
+    [inputId]="controlId"
+    [ariaLabelledBy]="labelledBy()"
+    [ngModel]="checked()"
+    (ngModelChange)="checked.set($event)"
+    (onChange)="touched.set(true)"
+    [disabled]="disabled()"
+    [invalid]="showError()"
+    [required]="required()"
+    [size]="primeSize()"
+  />
+</cs-control-frame>
